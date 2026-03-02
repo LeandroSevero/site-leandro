@@ -210,8 +210,8 @@ header.scrolled {
   color: var(--color-fg-muted);
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-weight: 400;
+  letter-spacing: 0;
   transition: all var(--transition);
 }
 
@@ -725,6 +725,7 @@ main {
 .timeline-item {
   position: relative;
   display: flex;
+  align-items: center;
   gap: var(--space-6);
   margin-bottom: var(--space-8);
 }
@@ -749,10 +750,10 @@ main {
 
 .timeline-dot {
   position: relative;
+  align-self: center;
   z-index: 10;
   width: 15px;
   height: 15px;
-  margin-top: var(--space-2);
   flex-shrink: 0;
   border-radius: 50%;
   border: 2px solid var(--color-border);
@@ -958,7 +959,10 @@ main {
   }
 
   .timeline-date {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    align-self: center;
   }
 
   .timeline-date-mobile {

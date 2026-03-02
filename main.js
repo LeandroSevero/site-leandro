@@ -6,9 +6,16 @@ const getThemePreference = () => {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 };
 
+const updateLogo = (theme) => {
+  const logo = document.getElementById('logo-img');
+  if (!logo) return;
+  logo.src = theme === 'dark' ? '/logo.png' : '/logoparaofundobranco.png';
+};
+
 const setTheme = (theme) => {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
+  updateLogo(theme);
 };
 
 const toggleTheme = () => {
@@ -48,7 +55,8 @@ const toggleLang = () => {
 };
 
 const initTheme = () => {
-  setTheme(getThemePreference());
+  const theme = getThemePreference();
+  setTheme(theme);
 };
 
 const initLang = () => {
