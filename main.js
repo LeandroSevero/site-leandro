@@ -33,11 +33,11 @@ const applyTranslations = (locale) => {
 
   document.documentElement.lang = locale === 'en' ? 'en' : 'pt-BR';
 
-  const labelEl = document.getElementById('lang-label');
-  const labelMobileEl = document.getElementById('lang-label-mobile');
-  const nextLang = locale === 'pt-BR' ? 'EN' : 'PT';
-  if (labelEl) labelEl.textContent = nextLang;
-  if (labelMobileEl) labelMobileEl.textContent = nextLang;
+  const flagEl = document.getElementById('lang-flag');
+  const flagMobileEl = document.getElementById('lang-flag-mobile');
+  const flag = locale === 'pt-BR' ? '🇧🇷' : '🇺🇸';
+  if (flagEl) flagEl.textContent = flag;
+  if (flagMobileEl) flagMobileEl.textContent = flag;
 };
 
 const toggleLang = () => {
@@ -122,6 +122,23 @@ const initYear = () => {
   if (el) el.textContent = new Date().getFullYear();
 };
 
+const initAccordion = () => {
+  document.querySelectorAll('.role-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const role = btn.getAttribute('data-role');
+      const desc = document.getElementById(`role-${role}`);
+      if (!desc) return;
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!isExpanded));
+      if (isExpanded) {
+        desc.setAttribute('hidden', '');
+      } else {
+        desc.removeAttribute('hidden');
+      }
+    });
+  });
+};
+
 const init = () => {
   initTheme();
   initLang();
@@ -131,6 +148,7 @@ const init = () => {
   initScrollHeader();
   initSmoothScroll();
   initYear();
+  initAccordion();
 };
 
 if (document.readyState === 'loading') {
