@@ -135,24 +135,6 @@
       </a>
     </section>
 
-    <section id="chat" class="section chat-section">
-      <div class="container">
-        <div class="chat-window" id="chat-window">
-          <div class="chat-header">
-            <div class="chat-header-avatar">
-              <img src="/logofoguete.png" alt="Bot">
-            </div>
-            <div class="chat-header-info">
-              <div class="chat-header-name">Assistente do Leandro</div>
-              <div class="chat-header-status">Online agora</div>
-            </div>
-          </div>
-          <div class="chat-messages" id="chat-messages"></div>
-          <div class="chat-options" id="chat-options"></div>
-        </div>
-      </div>
-    </section>
-
     <section id="sobre" class="section">
       <div class="container">
         <div class="section-header">
@@ -591,6 +573,28 @@
       <p>&copy; <span id="year">2025</span> Leandro Severo. <span data-i18n="footer.rights">Todos os direitos reservados.</span></p>
     </div>
   </footer>
+
+  <div class="chat-fab" id="chat-fab" aria-label="Abrir chat" hidden>
+    <img src="/logofoguete.png" alt="Chat">
+    <span class="chat-fab-badge" id="chat-fab-badge">1</span>
+  </div>
+
+  <div class="chat-float" id="chat-float" hidden>
+    <div class="chat-header">
+      <div class="chat-header-avatar">
+        <img src="/logofoguete.png" alt="Bot">
+      </div>
+      <div class="chat-header-info">
+        <div class="chat-header-name">Assistente do Leandro</div>
+        <div class="chat-header-status">Online agora</div>
+      </div>
+      <button class="chat-close-btn" id="chat-close-btn" aria-label="Fechar chat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-options" id="chat-options"></div>
+  </div>
 
   <script type="module" src="/main.js"></script>
   <script type="module" src="/chat.js"></script>
