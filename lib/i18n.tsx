@@ -77,10 +77,10 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     "exp.1.desc": "Liderança da equipe de DevOps, definindo estrategias de infraestrutura, automação de processos e garantindo a alta disponibilidade dos sistemas.",
     "exp.2.role": "DevOps",
     "exp.2.period": "Set 2024 - Jul 2025",
-    "exp.2.desc": "Implementacao e manutencao de pipelines CI/CD, gerenciamento de containers e orquestração com Kubernetes no Azure AKS.",
+    "exp.2.desc": "Implementação e manutenção de pipelines CI/CD, gerenciamento de containers e orquestração com Kubernetes no Azure AKS.",
     "exp.3.role": "Analista de Infraestrutura de TI",
     "exp.3.period": "Fev 2023 - Set 2024",
-    "exp.3.desc": "Administracao de servidores Windows e Linux, gerenciamento de backups com Veeam, monitoramento de infraestrutura e suporte a aplicacoes.",
+    "exp.3.desc": "Administração de servidores Windows e Linux, gerenciamento de backups com Veeam, monitoramento de infraestrutura e suporte a aplicações.",
     "exp.4.role": "Suporte de Helpdesk e Telecom",
     "exp.4.period": "Fev 2022 - Fev 2023",
     "exp.4.desc": "Atendimento de chamados de TI, suporte a usuarios e manutenção de infraestrutura de telecomunicações.",
@@ -89,7 +89,7 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     "exp.5.desc": "Gestão de telefonia corporativa e infraestrutura de telecomunicações.",
     "exp.6.role": "Soldado",
     "exp.6.period": "Fev 2018 - Fev 2021",
-    "exp.6.desc": "Servico militar com foco em disciplina, liderança e trabalho em equipe.",
+    "exp.6.desc": "Serviço militar com foco em disciplina, liderança e trabalho em equipe.",
 
     // Contact
     "contact.section": "05. Contato",
