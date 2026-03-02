@@ -1,8 +1,8 @@
+import { dictionaries } from './i18n.js';
+
 const getThemePreference = () => {
   const stored = localStorage.getItem('theme');
-  if (stored) {
-    return stored;
-  }
+  if (stored) return stored;
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 };
 
@@ -11,49 +11,72 @@ const setTheme = (theme) => {
   localStorage.setItem('theme', theme);
 };
 
-const initTheme = () => {
-  const theme = getThemePreference();
-  setTheme(theme);
-};
-
 const toggleTheme = () => {
   const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  setTheme(next);
+  setTheme(current === 'dark' ? 'light' : 'dark');
+};
+
+const getLangPreference = () => {
+  return localStorage.getItem('lang') || 'pt-BR';
+};
+
+const applyTranslations = (locale) => {
+  const dict = dictionaries[locale];
+  if (!dict) return;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key] !== undefined) {
+      el.textContent = dict[key];
+    }
+  });
+
+  document.documentElement.lang = locale === 'en' ? 'en' : 'pt-BR';
+
+  const labelEl = document.getElementById('lang-label');
+  const labelMobileEl = document.getElementById('lang-label-mobile');
+  const nextLang = locale === 'pt-BR' ? 'EN' : 'PT';
+  if (labelEl) labelEl.textContent = nextLang;
+  if (labelMobileEl) labelMobileEl.textContent = nextLang;
+};
+
+const toggleLang = () => {
+  const current = localStorage.getItem('lang') || 'pt-BR';
+  const next = current === 'pt-BR' ? 'en' : 'pt-BR';
+  localStorage.setItem('lang', next);
+  applyTranslations(next);
+};
+
+const initTheme = () => {
+  setTheme(getThemePreference());
+};
+
+const initLang = () => {
+  applyTranslations(getLangPreference());
 };
 
 const initThemeToggle = () => {
-  const toggleButtons = [
-    document.getElementById('theme-toggle'),
-    document.getElementById('theme-toggle-mobile')
-  ];
+  [document.getElementById('theme-toggle'), document.getElementById('theme-toggle-mobile')]
+    .forEach(btn => btn && btn.addEventListener('click', toggleTheme));
+};
 
-  toggleButtons.forEach(button => {
-    if (button) {
-      button.addEventListener('click', toggleTheme);
-    }
-  });
+const initLangToggle = () => {
+  [document.getElementById('lang-toggle'), document.getElementById('lang-toggle-mobile')]
+    .forEach(btn => btn && btn.addEventListener('click', toggleLang));
 };
 
 const initMobileMenu = () => {
   const menuToggle = document.getElementById('menu-toggle');
   const mobileMenu = document.getElementById('mobile-menu');
-
   if (!menuToggle || !mobileMenu) return;
 
   menuToggle.addEventListener('click', () => {
     const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
     menuToggle.setAttribute('aria-expanded', !isExpanded);
-
-    if (isExpanded) {
-      mobileMenu.setAttribute('hidden', '');
-    } else {
-      mobileMenu.removeAttribute('hidden');
-    }
+    isExpanded ? mobileMenu.setAttribute('hidden', '') : mobileMenu.removeAttribute('hidden');
   });
 
-  const menuLinks = mobileMenu.querySelectorAll('a');
-  menuLinks.forEach(link => {
+  mobileMenu.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       menuToggle.setAttribute('aria-expanded', 'false');
       mobileMenu.setAttribute('hidden', '');
@@ -71,54 +94,39 @@ const initMobileMenu = () => {
 const initScrollHeader = () => {
   const header = document.getElementById('header');
   if (!header) return;
-
-  let lastScroll = 0;
-
   window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-
-    if (currentScroll > 80) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-
-    lastScroll = currentScroll;
-  });
+    header.classList.toggle('scrolled', window.pageYOffset > 80);
+  }, { passive: true });
 };
 
 const initSmoothScroll = () => {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const href = this.getAttribute('href');
-
       if (href === '#') {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
-
       const target = document.querySelector(href);
       if (target) {
         e.preventDefault();
-        const headerHeight = 64;
-        const targetPosition = target.offsetTop - headerHeight;
-        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        window.scrollTo({ top: target.offsetTop - 64, behavior: 'smooth' });
       }
     });
   });
 };
 
 const initYear = () => {
-  const yearElement = document.getElementById('year');
-  if (yearElement) {
-    yearElement.textContent = new Date().getFullYear();
-  }
+  const el = document.getElementById('year');
+  if (el) el.textContent = new Date().getFullYear();
 };
 
 const init = () => {
   initTheme();
+  initLang();
   initThemeToggle();
+  initLangToggle();
   initMobileMenu();
   initScrollHeader();
   initSmoothScroll();

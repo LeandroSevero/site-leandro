@@ -1,16 +1,16 @@
 :root {
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f8fafc;
+  --color-bg: #f8fafc;
+  --color-bg-secondary: #f1f5f9;
   --color-fg: #0f172a;
-  --color-fg-muted: #64748b;
-  --color-border: #e2e8f0;
-  --color-primary: #3b82f6;
-  --color-primary-hover: #2563eb;
+  --color-fg-muted: #475569;
+  --color-border: #cbd5e1;
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e3a8a;
   --color-primary-fg: #ffffff;
-  --color-accent: #8b5cf6;
+  --color-accent: #1e40af;
   --color-card: #ffffff;
-  --color-header-bg: rgba(255, 255, 255, 0.8);
-  --color-header-shadow: rgba(0, 0, 0, 0.05);
+  --color-header-bg: rgba(248, 250, 252, 0.85);
+  --color-header-shadow: rgba(0, 0, 0, 0.06);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -39,18 +39,18 @@
 }
 
 [data-theme="dark"] {
-  --color-bg: #0f172a;
-  --color-bg-secondary: #1e293b;
-  --color-fg: #f1f5f9;
-  --color-fg-muted: #94a3b8;
-  --color-border: #334155;
-  --color-primary: #3b82f6;
-  --color-primary-hover: #60a5fa;
+  --color-bg: #04080f;
+  --color-bg-secondary: #0a1120;
+  --color-fg: #e2e8f0;
+  --color-fg-muted: #8898a8;
+  --color-border: #1a2540;
+  --color-primary: #2563eb;
+  --color-primary-hover: #3b82f6;
   --color-primary-fg: #ffffff;
-  --color-accent: #a78bfa;
-  --color-card: #1e293b;
-  --color-header-bg: rgba(15, 23, 42, 0.8);
-  --color-header-shadow: rgba(0, 0, 0, 0.3);
+  --color-accent: #1d4ed8;
+  --color-card: #081018;
+  --color-header-bg: rgba(4, 8, 15, 0.9);
+  --color-header-shadow: rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -198,6 +198,33 @@ header.scrolled {
   color: var(--color-fg);
 }
 
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.75rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-fg-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: all var(--transition);
+}
+
+.lang-toggle:hover {
+  background-color: var(--color-card);
+  color: var(--color-fg);
+  border-color: var(--color-primary);
+}
+
+.lang-toggle svg {
+  flex-shrink: 0;
+}
+
 .sun-icon {
   display: none;
 }
@@ -337,7 +364,7 @@ main {
   padding: var(--space-2) var(--space-4);
   border-radius: 999px;
   border: 1px solid var(--color-primary);
-  background-color: rgba(59, 130, 246, 0.05);
+  background-color: rgba(29, 78, 216, 0.05);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 500;
@@ -503,12 +530,12 @@ main {
 }
 
 .card-icon-primary {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(29, 78, 216, 0.12);
   color: var(--color-primary);
 }
 
 .card-icon-accent {
-  background-color: rgba(139, 92, 246, 0.1);
+  background-color: rgba(29, 78, 216, 0.12);
   color: var(--color-accent);
 }
 
@@ -546,7 +573,7 @@ main {
 
 .skill-card:hover {
   border-color: var(--color-primary);
-  background-color: rgba(59, 130, 246, 0.05);
+  background-color: rgba(29, 78, 216, 0.05);
   transform: translateY(-2px);
 }
 
@@ -572,13 +599,13 @@ main {
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-primary);
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.06) 0%, rgba(29, 78, 216, 0.02) 100%);
   transition: all var(--transition);
 }
 
 .cert-featured:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.2);
 }
 
 .cert-icon {
@@ -592,12 +619,12 @@ main {
 }
 
 .cert-icon-security {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(29, 78, 216, 0.12);
   color: var(--color-primary);
 }
 
 .cert-icon-cloud {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(29, 78, 216, 0.12);
   color: var(--color-primary);
 }
 
@@ -781,7 +808,7 @@ main {
   flex-shrink: 0;
   padding: var(--space-1) var(--space-3);
   border-radius: 999px;
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(29, 78, 216, 0.12);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 500;
@@ -833,12 +860,12 @@ main {
   height: 2.5rem;
   flex-shrink: 0;
   border-radius: var(--radius-md);
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(29, 78, 216, 0.12);
   color: var(--color-primary);
 }
 
 .contact-icon-accent {
-  background-color: rgba(139, 92, 246, 0.1);
+  background-color: rgba(29, 78, 216, 0.12);
   color: var(--color-accent);
 }
 
