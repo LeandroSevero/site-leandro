@@ -373,6 +373,7 @@ main {
   font-weight: 500;
   color: var(--color-primary);
   letter-spacing: 0.05em;
+  text-indent: 0.05em;
 }
 
 .hero-text h1 {
