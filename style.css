@@ -374,6 +374,7 @@ main {
   color: var(--color-primary);
   letter-spacing: 0.05em;
   text-indent: 0.05em;
+  line-height: 1;
 }
 
 .hero-text h1 {
