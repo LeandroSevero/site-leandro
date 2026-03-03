@@ -130,6 +130,32 @@ const initYear = () => {
   if (el) el.textContent = new Date().getFullYear();
 };
 
+const initLocationMap = () => {
+  const card = document.getElementById('location-card');
+  const popup = document.getElementById('map-popup');
+  if (!card || !popup) return;
+
+  let hoverTimer = null;
+
+  const showMap = () => {
+    popup.removeAttribute('hidden');
+  };
+
+  const hideMap = () => {
+    popup.setAttribute('hidden', '');
+    clearTimeout(hoverTimer);
+  };
+
+  card.addEventListener('mouseenter', () => {
+    hoverTimer = setTimeout(showMap, 2000);
+  });
+
+  card.addEventListener('mouseleave', () => {
+    clearTimeout(hoverTimer);
+    hideMap();
+  });
+};
+
 const initAccordion = () => {
   document.querySelectorAll('.role-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -157,6 +183,7 @@ const init = () => {
   initSmoothScroll();
   initYear();
   initAccordion();
+  initLocationMap();
 };
 
 if (document.readyState === 'loading') {

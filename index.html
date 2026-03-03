@@ -554,13 +554,26 @@
               <p class="contact-value">@leeandro.sv</p>
             </div>
           </a>
-          <div class="contact-card">
+          <div class="contact-card location-card" id="location-card">
             <div class="contact-icon contact-icon-accent">
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
             </div>
             <div class="contact-info">
               <p class="contact-label" data-i18n="contact.location">Localização</p>
               <p class="contact-value" data-i18n="contact.locationValue">Curitiba - PR, Brasil</p>
+            </div>
+            <div class="map-popup" id="map-popup" hidden>
+              <div class="map-popup-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>R. Imac. Conceição, 1155 – Curitiba, PR</span>
+              </div>
+              <iframe
+                class="map-iframe"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.7!2d-49.2676!3d-25.4378!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dce4b4b3c4b1a3%3A0x1!2sR.+Imac.+Concei%C3%A7%C3%A3o%2C+1155+-+Prado+Velho%2C+Curitiba+-+PR%2C+80215-901!5e0!3m2!1spt-BR!2sbr!4v1"
+                allowfullscreen>
+              </iframe>
             </div>
           </div>
         </div>
