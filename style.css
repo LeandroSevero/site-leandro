@@ -913,6 +913,12 @@ main {
   height: 0.5rem;
 }
 
+@media (max-width: 767px) {
+  .scroll-down {
+    bottom: var(--space-8);
+  }
+}
+
 @media (max-width: 400px) {
   .map-popup {
     width: calc(100vw - 2rem);
