@@ -179,7 +179,7 @@ const addBotBubble = (text) => {
   bubble.className = 'chat-bubble';
   bubble.innerHTML = `
     <div class="chat-bubble-avatar">
-      <img src="/logofoguete.png" alt="Bot">
+      <img src="/logoia.png" alt="Bot">
     </div>
     <div class="chat-bubble-text">${text.replace(/\n/g, '<br>')}</div>
   `;
@@ -201,7 +201,7 @@ const showTyping = () => {
   typing.id = 'typing-indicator';
   typing.innerHTML = `
     <div class="chat-bubble-avatar">
-      <img src="/logofoguete.png" alt="Bot">
+      <img src="/logoia.png" alt="Bot">
     </div>
     <div class="chat-typing">
       <span></span><span></span><span></span>
