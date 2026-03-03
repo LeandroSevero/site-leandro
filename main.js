@@ -192,6 +192,40 @@ const initAccordion = () => {
   });
 };
 
+const initScrollReveal = () => {
+  const selectors = [
+    { sel: '.section-header', cls: 'reveal' },
+    { sel: '.about-text', cls: 'reveal-left' },
+    { sel: '.about-cards', cls: 'reveal-right' },
+    { sel: '.skill-card', cls: 'reveal-scale' },
+    { sel: '.cert-featured', cls: 'reveal' },
+    { sel: '.cert-item', cls: 'reveal' },
+    { sel: '.timeline-item', cls: 'reveal' },
+    { sel: '.contact-card', cls: 'reveal-scale' },
+    { sel: '.card', cls: 'reveal' },
+  ];
+
+  selectors.forEach(({ sel, cls }) => {
+    document.querySelectorAll(sel).forEach((el, i) => {
+      el.classList.add(cls);
+      el.style.transitionDelay = `${(i % 6) * 60}ms`;
+    });
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+    observer.observe(el);
+  });
+};
+
 const init = () => {
   initTheme();
   initLang();
@@ -204,6 +238,7 @@ const init = () => {
   initAccordion();
   initLocationMap();
   initSkillIcons();
+  initScrollReveal();
 };
 
 if (document.readyState === 'loading') {
