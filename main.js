@@ -130,6 +130,30 @@ const initYear = () => {
   if (el) el.textContent = new Date().getFullYear();
 };
 
+const initSkillIcons = () => {
+  const extensions = ['png', 'svg', 'webp', 'jpg', 'jpeg'];
+  document.querySelectorAll('[data-skill-icon]').forEach(iconEl => {
+    const name = iconEl.getAttribute('data-skill-icon');
+    const tryLoad = (index) => {
+      if (index >= extensions.length) return;
+      const ext = extensions[index];
+      const img = new Image();
+      img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}`;
+      img.onload = () => {
+        iconEl.innerHTML = '';
+        img.width = 28;
+        img.height = 28;
+        img.alt = name;
+        img.className = 'skill-custom-icon';
+        iconEl.appendChild(img);
+        iconEl.classList.add('skill-icon-custom');
+      };
+      img.onerror = () => tryLoad(index + 1);
+    };
+    tryLoad(0);
+  });
+};
+
 const initLocationMap = () => {
   const card = document.getElementById('location-card');
   const popup = document.getElementById('map-popup');
@@ -137,22 +161,17 @@ const initLocationMap = () => {
 
   let hoverTimer = null;
 
-  const showMap = () => {
-    popup.removeAttribute('hidden');
-  };
-
-  const hideMap = () => {
-    popup.setAttribute('hidden', '');
-    clearTimeout(hoverTimer);
-  };
-
   card.addEventListener('mouseenter', () => {
-    hoverTimer = setTimeout(showMap, 2000);
+    hoverTimer = setTimeout(() => {
+      popup.removeAttribute('hidden');
+    }, 2000);
   });
 
-  card.addEventListener('mouseleave', () => {
+  card.addEventListener('mouseleave', (e) => {
+    const to = e.relatedTarget;
+    if (card.contains(to)) return;
     clearTimeout(hoverTimer);
-    hideMap();
+    popup.setAttribute('hidden', '');
   });
 };
 
@@ -184,6 +203,7 @@ const init = () => {
   initYear();
   initAccordion();
   initLocationMap();
+  initSkillIcons();
 };
 
 if (document.readyState === 'loading') {

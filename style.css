@@ -272,13 +272,16 @@ header.scrolled {
 }
 
 .mobile-menu {
-  display: flex;
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-4);
   background-color: var(--color-header-bg);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-menu:not([hidden]) {
+  display: flex;
 }
 
 .mobile-menu a {
@@ -580,6 +583,16 @@ main {
   border-radius: var(--radius-md);
 }
 
+.skill-icon-custom {
+  background: transparent !important;
+}
+
+.skill-custom-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .skill-icon-blue { background-color: rgba(37, 99, 235, 0.12); color: #2563eb; }
 .skill-icon-orange { background-color: rgba(234, 88, 12, 0.12); color: #ea580c; }
 .skill-icon-red { background-color: rgba(220, 38, 38, 0.12); color: #dc2626; }
@@ -877,7 +890,7 @@ main {
 
 .map-popup {
   position: absolute;
-  bottom: calc(100% + 0.75rem);
+  bottom: calc(100% + 0.5rem);
   left: 50%;
   transform: translateX(-50%);
   z-index: 200;
@@ -888,6 +901,16 @@ main {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
   overflow: hidden;
   animation: map-fade-in 200ms ease;
+  padding-bottom: 0.5rem;
+}
+
+.map-popup::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  right: 0;
+  height: 0.5rem;
 }
 
 @media (max-width: 400px) {
@@ -899,7 +922,7 @@ main {
 }
 
 @keyframes map-fade-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
