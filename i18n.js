@@ -73,7 +73,7 @@ export const dictionaries = {
     "role.3.desc": "O Analista de Infraestrutura administra servidores físicos e virtuais, redes e sistemas operacionais. Garante disponibilidade, segurança e performance do ambiente de TI, realizando backups e planos de recuperação de desastres.",
     "role.4.desc": "O profissional de Helpdesk é o primeiro ponto de contato do usuário com a TI. Atende chamados técnicos, diagnostica falhas de hardware, software e conectividade, e gerencia infraestrutura de telecomunicações corporativa.",
     "role.5.desc": "O profissional de Telecom gerencia a infraestrutura de comunicações da empresa — telefonia IP, links de internet, VoIP e sistemas PABX — garantindo conectividade e qualidade de voz para todos os usuários.",
-    "role.6.desc": "O Soldado desempenha missões de defesa nacional com rigor, disciplina e hierarquia. O serviço militar desenvolve habilidades de liderança, trabalho em equipe, resiliência e tomada de decisão sob pressão.",
+    "role.6.desc": "A rotina do soldado é marcada pela disciplina e pelo cumprimento de ordens superiores. Em seu cotidiano, ele participa de treinamentos físicos e operacionais para manter a preparação técnica, que incluem simulações de combate, manuseio de armamentos e exercícios de sobrevivência em diferentes ambientes. O serviço militar desenvolve habilidades de liderança, trabalho em equipe, resiliência e tomada de decisão sob pressão.",
     "role.expand.hint": "Clique para entender essa função",
     "tag.leadership": "Liderança",
     "tag.discipline": "Disciplina",
