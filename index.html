@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leandro Severo | Supervisor de DevOps & Infraestrutura Cloud</title>
+  <meta name="description" content="Profissional de DevOps com experiência em AWS, Azure, Kubernetes, Docker, Linux e Cybersecurity. Supervisor de DevOps em Curitiba - PR.">
+  <meta name="author" content="Leandro Severo">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Leandro Severo | Supervisor de DevOps & Infraestrutura Cloud">
+  <meta property="og:description" content="Profissional de DevOps com experiência em AWS, Azure, Kubernetes, Docker, Linux e Cybersecurity.">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#04080f">
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header id="header">
+    <nav class="nav-container">
+      <a href="#" class="logo" aria-label="Leandro Severo DevOps">
+        <img src="/logo.png" alt="Logo" width="56" height="56" loading="eager" id="logo-img">
+      </a>
+
+      <div class="nav-desktop">
+        <a href="#sobre" data-i18n="nav.about">Sobre</a>
+        <a href="#skills" data-i18n="nav.skills">Skills</a>
+        <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
+        <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
+        <a href="#contato" data-i18n="nav.contact">Contato</a>
+
+        <button id="lang-toggle" class="lang-toggle" aria-label="Mudar idioma">
+          <span class="flag-icon" id="lang-flag">🇧🇷</span>
+        </button>
+
+        <button id="theme-toggle" class="theme-toggle" aria-label="Alternar tema">
+          <span class="sun-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sun-svg">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+          </span>
+          <span class="moon-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="moon-svg">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <div class="nav-mobile">
+        <button id="lang-toggle-mobile" class="lang-toggle" aria-label="Mudar idioma">
+          <span class="flag-icon" id="lang-flag-mobile">🇧🇷</span>
+        </button>
+        <button id="theme-toggle-mobile" class="theme-toggle" aria-label="Alternar tema">
+          <span class="sun-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sun-svg">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+          </span>
+          <span class="moon-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="moon-svg">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+            </svg>
+          </span>
+        </button>
+        <button id="menu-toggle" class="menu-toggle" aria-label="Menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 5h16M4 12h16M4 19h16"></path>
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <div id="mobile-menu" class="mobile-menu" hidden>
+      <a href="#sobre" data-i18n="nav.about">Sobre</a>
+      <a href="#skills" data-i18n="nav.skills">Skills</a>
+      <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
+      <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
+      <a href="#contato" data-i18n="nav.contact">Contato</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-clouds" aria-hidden="true">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+        <div class="cloud cloud-5"></div>
+        <div class="cloud cloud-6"></div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-image">
+          <div class="image-wrapper">
+            <img src="/leandro.jpeg" alt="Leandro Severo" width="300" height="300" loading="eager">
+          </div>
+        </div>
+
+        <div class="hero-text">
+          <span class="badge" data-i18n="hero.badge">Supervisor de DevOps</span>
+          <h1>Leandro Severo</h1>
+          <p data-i18n="hero.description">Infraestrutura, Cloud e Cybersecurity. Construindo soluções robustas e escaláveis com foco em automação e excelência operacional.</p>
+
+          <div class="hero-links">
+            <a href="https://www.linkedin.com/in/leandrosevero" target="_blank" rel="noopener noreferrer" class="btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect width="4" height="12" x="2" y="9"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+              LinkedIn
+            </a>
+            <a href="https://www.instagram.com/leeandro.sv/" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+              </svg>
+              Instagram
+            </a>
+            <a href="#" class="btn-secondary" data-open-contact-modal data-i18n="hero.contact">Contato</a>
+          </div>
+        </div>
+      </div>
+
+      <a href="#sobre" class="scroll-down" aria-label="Rolar para baixo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M19 12l-7 7-7-7"></path>
+        </svg>
+      </a>
+    </section>
+
+    <section id="sobre" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number" data-i18n="about.section">01. Sobre</span>
+          <h2 data-i18n="about.title">Quem sou eu</h2>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-text">
+            <p>
+              <span data-i18n="about.p1.prefix">Formado em </span><strong data-i18n="about.p1.degree">Análise e Desenvolvimento de Sistemas</strong><span data-i18n="about.p1.mid"> pelo UNICURITIBA e com pós-graduação em </span><strong data-i18n="about.p1.postgrad">Gestão de Pessoas</strong><span data-i18n="about.p1.suffix"> pela PUCPR, atuo como DevOps com foco em soluções tecnológicas robustas e eficientes.</span>
+            </p>
+            <p data-i18n="about.p2">Tenho experiência prática em diversas tecnologias e plataformas, incluindo AWS, Azure, Azure DevOps, AKS, Docker, Microsoft 365, Windows Server, Sistemas Linux, MongoDB, Elastic Cloud e Veeam Backup.</p>
+            <p data-i18n="about.p3">Estou sempre em busca de novas oportunidades para aplicar meu conhecimento e colaborar em projetos inovadores com equipes multidisciplinares.</p>
+          </div>
+
+          <div class="about-cards">
+            <article class="card">
+              <div class="card-icon card-icon-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect>
+                  <rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect>
+                  <line x1="6" x2="6.01" y1="6" y2="6"></line>
+                  <line x1="6" x2="6.01" y1="18" y2="18"></line>
+                </svg>
+              </div>
+              <h3 data-i18n="about.card1.title">DevOps & Cloud</h3>
+              <p data-i18n="about.card1.desc">Automação de infraestrutura, CI/CD e orquestração de containers.</p>
+            </article>
+            <article class="card">
+              <div class="card-icon card-icon-accent">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
+                  <path d="M22 10v6M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
+                </svg>
+              </div>
+              <h3 data-i18n="about.card2.title">Formação Acadêmica</h3>
+              <p data-i18n="about.card2.desc">ADS - UNICURITIBA e Pós em Gestão de Pessoas - PUCPR.</p>
+            </article>
+            <article class="card">
+              <div class="card-icon card-icon-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <h3 data-i18n="about.card3.title">Liderança</h3>
+              <p data-i18n="about.card3.desc">Gestão de equipes e projetos com foco em resultados.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number" data-i18n="skills.section">02. Skills</span>
+          <h2 data-i18n="skills.title">Tecnologias e Ferramentas</h2>
+        </div>
+
+        <div class="skills-desktop-layout">
+          <div class="skills-grid" id="skills-grid-desktop">
+            <div class="skill-card" data-skill="azure-devops">
+              <div class="skill-icon" data-skill-icon="Azure DevOps"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M6.343 17.657A8 8 0 1 1 17.657 6.343" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 7l2 2M15 15l2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <span class="skill-name">Azure DevOps</span><span class="skill-category">CI/CD</span>
+            </div>
+            <div class="skill-card" data-skill="azure">
+              <div class="skill-icon" data-skill-icon="Azure"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">Azure</span><span class="skill-category">Cloud</span>
+            </div>
+            <div class="skill-card" data-skill="m365">
+              <div class="skill-icon" data-skill-icon="Microsoft 365"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="m8 21 4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">Microsoft 365</span><span class="skill-category">Productivity</span>
+            </div>
+            <div class="skill-card" data-skill="gcp">
+              <div class="skill-icon" data-skill-icon="GCP"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">GCP</span><span class="skill-category">Cloud</span>
+            </div>
+            <div class="skill-card" data-skill="aws">
+              <div class="skill-icon" data-skill-icon="AWS"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">AWS</span><span class="skill-category">Cloud</span>
+            </div>
+            <div class="skill-card" data-skill="kubernetes">
+              <div class="skill-icon" data-skill-icon="Kubernetes"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <span class="skill-name">Kubernetes</span><span class="skill-category">Containers</span>
+            </div>
+            <div class="skill-card" data-skill="linux">
+              <div class="skill-icon" data-skill-icon="Linux"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <span class="skill-name">Linux</span><span class="skill-category">OS</span>
+            </div>
+            <div class="skill-card" data-skill="windows">
+              <div class="skill-icon" data-skill-icon="Windows Server"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">Windows Server</span><span class="skill-category">OS</span>
+            </div>
+            <div class="skill-card" data-skill="grafana">
+              <div class="skill-icon" data-skill-icon="Grafana"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">Grafana</span><span class="skill-category">Monitoring</span>
+            </div>
+            <div class="skill-card" data-skill="rabbitmq">
+              <div class="skill-icon" data-skill-icon="RabbitMQ"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">RabbitMQ</span><span class="skill-category">Messaging</span>
+            </div>
+            <div class="skill-card" data-skill="mongodb">
+              <div class="skill-icon" data-skill-icon="MongoDB"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" stroke-width="2"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12" stroke="currentColor" stroke-width="2"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" stroke="currentColor" stroke-width="2"/></svg></div>
+              <span class="skill-name">MongoDB</span><span class="skill-category">Database</span>
+            </div>
+            <div class="skill-card" data-skill="ad">
+              <div class="skill-icon" data-skill-icon="Active Directory"><svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="skill-name">Active Directory</span><span class="skill-category">Identity</span>
+            </div>
+          </div>
+
+          <div class="skills-desc-panel" id="skills-desc-panel">
+            <div class="skills-desc-content" id="skills-desc-content">
+              <div class="skills-desc-name" id="skills-desc-name"></div>
+              <p class="skills-desc-text" id="skills-desc-text"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="skills-carousel-wrap" id="skills-carousel-wrap">
+          <div class="skills-carousel" id="skills-carousel">
+            <div class="skills-carousel-track" id="skills-carousel-track"></div>
+          </div>
+          <div class="skills-carousel-controls">
+            <button class="skills-carousel-btn" id="skills-carousel-prev" aria-label="Anterior">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="skills-carousel-dots" id="skills-carousel-dots"></div>
+            <button class="skills-carousel-btn" id="skills-carousel-next" aria-label="Próximo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="skills-carousel-desc" id="skills-carousel-desc">
+            <div class="skills-carousel-desc-header" id="skills-carousel-desc-header">
+              <div class="skills-carousel-desc-icon" id="skills-carousel-desc-icon"></div>
+              <div>
+                <div class="skills-carousel-desc-name" id="skills-carousel-desc-name"></div>
+                <div class="skills-carousel-desc-cat" id="skills-carousel-desc-cat"></div>
+              </div>
+            </div>
+            <p class="skills-carousel-desc-text" id="skills-carousel-desc-text"></p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="certificados" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number" data-i18n="certs.section">03. Certificados</span>
+          <h2 data-i18n="certs.title">Certificações e Cursos</h2>
+        </div>
+        <div class="featured-certs">
+          <article class="cert-featured">
+            <div class="cert-icon cert-icon-security">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+            <h3>Fortinet Certified Associate Cybersecurity</h3>
+            <p>Fortinet</p>
+            <time datetime="2023-12" data-i18n="certs.fortinet.date">Dez 2023</time>
+          </article>
+          <article class="cert-featured">
+            <div class="cert-icon cert-icon-cloud">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+              </svg>
+            </div>
+            <h3 data-i18n="certs.azure.name">Azure DevOps - CI/CD</h3>
+            <p>Udemy Brasil</p>
+            <time datetime="2023-12" data-i18n="certs.azure.date">Dez 2023</time>
+          </article>
+          <article class="cert-featured">
+            <div class="cert-icon cert-icon-cloud">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+              </svg>
+            </div>
+            <h3 data-i18n="certs.aws.name">AWS Cloud Essentials</h3>
+            <p>Amazon Web Services</p>
+            <time datetime="2023-08" data-i18n="certs.aws.date">Ago 2023</time>
+          </article>
+        </div>
+        <div class="certs-carousel-outer">
+        <div class="certs-carousel-wrapper">
+          <div class="certs-carousel-track" id="certs-carousel-track">
+            <article class="cert-item">
+              <div class="cert-icon-small"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></div>
+              <div class="cert-info"><h3 data-i18n="certs.seginfo.name">Segurança da Informação</h3><p>Fundação Bradesco</p><time datetime="2024-10" data-i18n="certs.seginfo.date">Out 2024</time></div>
+            </article>
+            <article class="cert-item">
+              <div class="cert-icon-small"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path><circle cx="12" cy="8" r="6"></circle></svg></div>
+              <div class="cert-info"><h3 data-i18n="certs.lideranca.name">Liderança Inovadora</h3><p>Supremo Tribunal Federal</p><time datetime="2024-05" data-i18n="certs.lideranca.date">Mai 2024</time></div>
+            </article>
+            <article class="cert-item">
+              <div class="cert-icon-small"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="16" y="16" width="6" height="6" rx="1"></rect><rect x="2" y="16" width="6" height="6" rx="1"></rect><rect x="9" y="2" width="6" height="6" rx="1"></rect><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3M12 12V8"></path></svg></div>
+              <div class="cert-info"><h3 data-i18n="certs.ad.name">Active Directory - Do Zero ao Avançado</h3><p>Udemy</p><time datetime="2023-08" data-i18n="certs.ad.date">Ago 2023</time></div>
+            </article>
+            <article class="cert-item">
+              <div class="cert-icon-small"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="16" y="16" width="6" height="6" rx="1"></rect><rect x="2" y="16" width="6" height="6" rx="1"></rect><rect x="9" y="2" width="6" height="6" rx="1"></rect><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3M12 12V8"></path></svg></div>
+              <div class="cert-info"><h3 data-i18n="certs.redes.name">Arquitetura de Redes</h3><p>Udemy Brasil</p><time datetime="2023-06" data-i18n="certs.redes.date">Jun 2023</time></div>
+            </article>
+            <article class="cert-item">
+              <div class="cert-icon-small"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="16" y="16" width="6" height="6" rx="1"></rect><rect x="2" y="16" width="6" height="6" rx="1"></rect><rect x="9" y="2" width="6" height="6" rx="1"></rect><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3M12 12V8"></path></svg></div>
+              <div class="cert-info"><h3 data-i18n="certs.hardware.name">Computer Hardware Basics</h3><p>Cisco</p><time datetime="2023-07" data-i18n="certs.hardware.date">Jul 2023</time></div>
+            </article>
+            <article class="cert-item">
+              <div class="cert-icon-small"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></div>
+              <div class="cert-info"><h3 data-i18n="certs.fortinetNse.name">Fortinet NSE 1 & 2</h3><p>Fortinet</p><time datetime="2023-07" data-i18n="certs.fortinetNse.date">Jul - Ago 2023</time></div>
+            </article>
+            <article class="cert-item">
+              <div class="cert-icon-small"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path><circle cx="12" cy="8" r="6"></circle></svg></div>
+              <div class="cert-info"><h3 data-i18n="certs.da.name">Noções básicas de Disciplined Agile</h3><p>Project Management Institute</p><time datetime="2022-08" data-i18n="certs.da.date">Ago 2022</time></div>
+            </article>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experiencia" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number" data-i18n="exp.section">04. Experiência</span>
+          <h2 data-i18n="exp.title">Trajetória Profissional</h2>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-dot-floating" id="timeline-dot-floating"></div>
+          <article class="timeline-item" data-index="0">
+            <time class="timeline-date" data-i18n="exp.1.period">Jul 2025 - Presente</time>
+            <div class="timeline-card">
+              <div class="timeline-header">
+                <div>
+                  <button class="role-toggle" data-role="1" aria-expanded="false">
+                    <h3 data-i18n="exp.1.role">Supervisor de DevOps</h3>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg>
+                  </button>
+                  <p>Employer Tudo do RH · Colombo, PR</p>
+                </div>
+                <span class="badge-current" data-i18n="exp.current">Atual</span>
+              </div>
+              <div class="role-description" id="role-1" hidden>
+                <p data-i18n="role.1.desc">O Supervisor de DevOps lidera equipes de engenharia, define padrões de infraestrutura e cultura de entrega contínua.</p>
+              </div>
+              <time class="timeline-date-mobile" data-i18n="exp.1.period">Jul 2025 - Presente</time>
+              <p class="exp-desc" data-i18n="exp.1.desc">Liderança da equipe de DevOps, definindo estratégias de infraestrutura, automação de processos e garantindo a alta disponibilidade dos sistemas.</p>
+              <div class="tags">
+                <span class="tag">AWS</span><span class="tag">Azure</span><span class="tag">Kubernetes</span><span class="tag">Docker</span><span class="tag">CI/CD</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="timeline-item" data-index="1">
+            <time class="timeline-date" data-i18n="exp.2.period">Set 2024 - Jul 2025</time>
+            <div class="timeline-card">
+              <div class="timeline-header">
+                <div>
+                  <button class="role-toggle" data-role="2" aria-expanded="false">
+                    <h3 data-i18n="exp.2.role">DevOps</h3>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg>
+                  </button>
+                  <p>Employer Tudo do RH · Colombo, PR</p>
+                </div>
+              </div>
+              <div class="role-description" id="role-2" hidden>
+                <p data-i18n="role.2.desc">O profissional DevOps une desenvolvimento e operações, automatizando pipelines de build, teste e deploy.</p>
+              </div>
+              <time class="timeline-date-mobile" data-i18n="exp.2.period">Set 2024 - Jul 2025</time>
+              <p class="exp-desc" data-i18n="exp.2.desc">Implementação e manutenção de pipelines CI/CD, gerenciamento de containers e orquestração com Kubernetes no Azure AKS.</p>
+              <div class="tags">
+                <span class="tag">Azure DevOps</span><span class="tag">AKS</span><span class="tag">Docker</span><span class="tag">Elastic Stack</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="timeline-item" data-index="2">
+            <time class="timeline-date" data-i18n="exp.3.period">Fev 2023 - Set 2024</time>
+            <div class="timeline-card">
+              <div class="timeline-header">
+                <div>
+                  <button class="role-toggle" data-role="3" aria-expanded="false">
+                    <h3 data-i18n="exp.3.role">Analista de Infraestrutura de TI</h3>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg>
+                  </button>
+                  <p>Employer Tudo do RH · Colombo, PR</p>
+                </div>
+              </div>
+              <div class="role-description" id="role-3" hidden>
+                <p data-i18n="role.3.desc">O Analista de Infraestrutura administra servidores físicos e virtuais, redes e sistemas operacionais.</p>
+              </div>
+              <time class="timeline-date-mobile" data-i18n="exp.3.period">Fev 2023 - Set 2024</time>
+              <p class="exp-desc" data-i18n="exp.3.desc">Administração de servidores Windows e Linux, gerenciamento de backups com Veeam, monitoramento de infraestrutura e suporte a aplicações.</p>
+              <div class="tags">
+                <span class="tag">Windows Server</span><span class="tag">Linux</span><span class="tag">Veeam</span><span class="tag">Microsoft 365</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="timeline-item" data-index="3">
+            <time class="timeline-date" data-i18n="exp.4.period">Fev 2022 - Fev 2023</time>
+            <div class="timeline-card">
+              <div class="timeline-header">
+                <div>
+                  <button class="role-toggle" data-role="4" aria-expanded="false">
+                    <h3 data-i18n="exp.4.role">Suporte de Helpdesk e Telecom</h3>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg>
+                  </button>
+                  <p>Employer Tudo do RH · Curitiba, PR</p>
+                </div>
+              </div>
+              <div class="role-description" id="role-4" hidden>
+                <p data-i18n="role.4.desc">O profissional de Helpdesk é o primeiro ponto de contato do usuário com a TI.</p>
+              </div>
+              <time class="timeline-date-mobile" data-i18n="exp.4.period">Fev 2022 - Fev 2023</time>
+              <p class="exp-desc" data-i18n="exp.4.desc">Atendimento de chamados de TI, suporte a usuários e manutenção de infraestrutura de telecomunicações.</p>
+              <div class="tags">
+                <span class="tag">Helpdesk</span><span class="tag">Telecom</span><span class="tag">Redes</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="timeline-item" data-index="4">
+            <time class="timeline-date" data-i18n="exp.5.period">Jun 2021 - Fev 2022</time>
+            <div class="timeline-card">
+              <div class="timeline-header">
+                <div>
+                  <button class="role-toggle" data-role="5" aria-expanded="false">
+                    <h3 data-i18n="exp.5.role">Telecom</h3>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg>
+                  </button>
+                  <p>Employer Tudo do RH · Curitiba, PR</p>
+                </div>
+              </div>
+              <div class="role-description" id="role-5" hidden>
+                <p data-i18n="role.5.desc">O profissional de Telecom gerencia a infraestrutura de comunicações da empresa.</p>
+              </div>
+              <time class="timeline-date-mobile" data-i18n="exp.5.period">Jun 2021 - Fev 2022</time>
+              <p class="exp-desc" data-i18n="exp.5.desc">Gestão de telefonia corporativa e infraestrutura de telecomunicações.</p>
+              <div class="tags">
+                <span class="tag">Telecom</span><span class="tag">VoIP</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="timeline-item" data-index="5">
+            <time class="timeline-date" data-i18n="exp.6.period">Fev 2018 - Fev 2021</time>
+            <div class="timeline-card">
+              <div class="timeline-header">
+                <div>
+                  <button class="role-toggle" data-role="6" aria-expanded="false">
+                    <h3 data-i18n="exp.6.role">Soldado</h3>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg>
+                  </button>
+                  <p data-i18n="exp.6.company">Exército Brasileiro · Curitiba, PR</p>
+                </div>
+              </div>
+              <div class="role-description" id="role-6" hidden>
+                <p data-i18n="role.6.desc">O Soldado desempenha missões de defesa nacional com rigor, disciplina e hierarquia.</p>
+              </div>
+              <time class="timeline-date-mobile" data-i18n="exp.6.period">Fev 2018 - Fev 2021</time>
+              <p class="exp-desc" data-i18n="exp.6.desc">Serviço militar com foco em disciplina, liderança e trabalho em equipe.</p>
+              <div class="tags">
+                <span class="tag" data-i18n="tag.leadership">Liderança</span><span class="tag" data-i18n="tag.discipline">Disciplina</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contato" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number" data-i18n="contact.section">05. Contato</span>
+          <h2 data-i18n="contact.title">Vamos conversar?</h2>
+          <p data-i18n="contact.desc">Estou aberto a novas oportunidades, colaborações e conversas sobre tecnologia. Entre em contato!</p>
+        </div>
+        <div class="contact-grid">
+          <a href="mailto:leandroolise@gmail.com" class="contact-card">
+            <div class="contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+            </div>
+            <div class="contact-info">
+              <p class="contact-label" data-i18n="contact.email">E-mail</p>
+              <p class="contact-value">leandroolise@gmail.com</p>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/in/leandrosevero" target="_blank" rel="noopener noreferrer" class="contact-card">
+            <div class="contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </div>
+            <div class="contact-info">
+              <p class="contact-label">LinkedIn</p>
+              <p class="contact-value">/in/leandrosevero</p>
+            </div>
+          </a>
+          <a href="https://www.instagram.com/leeandro.sv/" target="_blank" rel="noopener noreferrer" class="contact-card">
+            <div class="contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+            </div>
+            <div class="contact-info">
+              <p class="contact-label">Instagram</p>
+              <p class="contact-value">@leeandro.sv</p>
+            </div>
+          </a>
+          <div class="contact-card location-card" id="location-card">
+            <div class="contact-icon contact-icon-accent">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </div>
+            <div class="contact-info">
+              <p class="contact-label" data-i18n="contact.location">Localização</p>
+              <p class="contact-value" data-i18n="contact.locationValue">Curitiba - PR, Brasil</p>
+            </div>
+            <div class="map-popup" id="map-popup" hidden>
+              <div class="map-popup-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Curitiba - PR, Brasil</span>
+              </div>
+              <iframe
+                class="map-iframe"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.7!2d-49.2676!3d-25.4378!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dce4b4b3c4b1a3%3A0x1!2sR.+Imac.+Concei%C3%A7%C3%A3o%2C+1155+-+Prado+Velho%2C+Curitiba+-+PR%2C+80215-901!5e0!3m2!1spt-BR!2sbr!4v1"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; <span id="year">2025</span> Leandro Severo. <span data-i18n="footer.rights">Todos os direitos reservados.</span></p>
+    </div>
+  </footer>
+
+  <div class="chat-fab" id="chat-fab" aria-label="Abrir chat" hidden>
+    <img src="/atendimento.png" alt="Chat">
+    <span class="chat-fab-badge" id="chat-fab-badge">1</span>
+  </div>
+
+  <div class="chat-float" id="chat-float" hidden>
+    <div class="chat-header">
+      <div class="chat-header-avatar">
+        <img src="/atendimento.png" alt="Bot">
+      </div>
+      <div class="chat-header-info">
+        <div class="chat-header-name">Assistente do Leandro</div>
+        <div class="chat-header-status">Online agora</div>
+      </div>
+      <button class="chat-close-btn" id="chat-close-btn" aria-label="Fechar chat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-options" id="chat-options"></div>
+  </div>
+
+  <div class="contact-modal-overlay" id="contact-modal-overlay" hidden>
+    <div class="contact-modal" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+      <div class="contact-modal-header">
+        <div class="contact-modal-title-wrap">
+          <div class="contact-modal-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+          </div>
+          <h2 id="contact-modal-title" data-i18n="contactModal.title">Entre em contato</h2>
+        </div>
+        <button class="contact-modal-close" id="contact-modal-close" aria-label="Fechar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form class="contact-form" id="contact-form" novalidate>
+        <div class="contact-form-body">
+          <div class="contact-form-row">
+            <div class="contact-form-field">
+              <label class="contact-form-label" for="cf-name">Nome completo <span class="contact-form-required" aria-hidden="true">*</span></label>
+              <input class="contact-form-input" type="text" id="cf-name" name="name" autocomplete="name" required aria-required="true" aria-invalid="false" aria-describedby="cf-name-error" placeholder="Seu nome completo" maxlength="120">
+              <span class="contact-form-error" id="cf-name-error" role="alert" hidden></span>
+            </div>
+            <div class="contact-form-field">
+              <label class="contact-form-label" for="cf-email">E-mail <span class="contact-form-required" aria-hidden="true">*</span></label>
+              <input class="contact-form-input" type="email" id="cf-email" name="email" autocomplete="email" required aria-required="true" aria-invalid="false" aria-describedby="cf-email-error" placeholder="seu@email.com" maxlength="254">
+              <span class="contact-form-error" id="cf-email-error" role="alert" hidden></span>
+            </div>
+          </div>
+          <div class="contact-form-row">
+            <div class="contact-form-field">
+              <label class="contact-form-label" for="cf-phone">Telefone</label>
+              <input class="contact-form-input" type="tel" id="cf-phone" name="phone" autocomplete="tel" aria-invalid="false" aria-describedby="cf-phone-error" placeholder="(xx) xxxxx-xxxx" maxlength="15">
+              <span class="contact-form-error" id="cf-phone-error" role="alert" hidden></span>
+            </div>
+            <div class="contact-form-field">
+              <div class="contact-form-label-row">
+                <label class="contact-form-label" for="cf-subject">Assunto <span class="contact-form-required" aria-hidden="true">*</span></label>
+                <span class="contact-form-counter" data-field="subject" data-max="120" aria-live="polite">0/120</span>
+              </div>
+              <input class="contact-form-input" type="text" id="cf-subject" name="subject" required aria-required="true" aria-invalid="false" aria-describedby="cf-subject-error" placeholder="Sobre o que quer falar?" maxlength="120">
+              <span class="contact-form-error" id="cf-subject-error" role="alert" hidden></span>
+            </div>
+          </div>
+          <div class="contact-form-field">
+            <div class="contact-form-label-row">
+              <label class="contact-form-label" for="cf-message">Mensagem <span class="contact-form-required" aria-hidden="true">*</span></label>
+              <span class="contact-form-counter" data-field="message" data-max="1000" aria-live="polite">0/1000</span>
+            </div>
+            <textarea class="contact-form-input contact-form-textarea" id="cf-message" name="message" required aria-required="true" aria-invalid="false" aria-describedby="cf-message-error" placeholder="Escreva sua mensagem aqui..." maxlength="1000"></textarea>
+            <span class="contact-form-error" id="cf-message-error" role="alert" hidden></span>
+          </div>
+
+          <div class="contact-form-turnstile" id="cf-turnstile-container"></div>
+
+          <button class="contact-form-submit" type="submit" id="contact-form-submit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            <span>Enviar mensagem</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+  <script type="module" src="/chat.js"></script>
+</body>
+</html>
