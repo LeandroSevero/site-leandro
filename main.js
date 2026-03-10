@@ -346,6 +346,30 @@ const initSkillIcons = () => {
   });
 };
 
+const initCertIcons = () => {
+  const extensions = ['png', 'svg', 'webp', 'jpg', 'jpeg'];
+  document.querySelectorAll('[data-cert-icon]').forEach(iconEl => {
+    const name = iconEl.getAttribute('data-cert-icon');
+    const tryLoad = (index) => {
+      if (index >= extensions.length) return;
+      const ext = extensions[index];
+      const img = new Image();
+      img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}`;
+      img.onload = () => {
+        iconEl.innerHTML = '';
+        const size = iconEl.classList.contains('cert-icon-small') ? 16 : 22;
+        img.width = size;
+        img.height = size;
+        img.alt = name;
+        img.className = 'cert-custom-icon';
+        iconEl.appendChild(img);
+      };
+      img.onerror = () => tryLoad(index + 1);
+    };
+    tryLoad(0);
+  });
+};
+
 
 const setDescPanel = (key) => {
   const data = SKILL_DATA[key];
@@ -688,6 +712,7 @@ const init = () => {
   initAccordion();
   initLocationMap();
   initSkillIcons();
+  initCertIcons();
   initSkillsInteraction();
   initSkillsCarousel();
   initCertsCarousel();
