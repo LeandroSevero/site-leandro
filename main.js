@@ -257,15 +257,6 @@ const SKILL_DATA = {
     iconName: 'Kubernetes',
     desc: 'Kubernetes é a plataforma de orquestração de containers mais utilizada no mundo. Gerencio clusters Kubernetes no Azure AKS para orquestrar workloads em produção, incluindo deployments, services, ingress controllers, HPA e configurações de namespaces. Realizo atualizações de cluster, troubleshooting de pods e monitoramento de recursos para garantir a estabilidade dos ambientes.',
   },
-  'docker': {
-    name: 'Docker',
-    category: 'Containers',
-    color: '#2496ed',
-    bgIcon: 'rgba(36, 150, 237, 0.14)',
-    bg: 'rgba(36, 150, 237, 0.06)',
-    iconName: 'Docker',
-    desc: 'Docker é a principal tecnologia de containerização, permitindo empacotar aplicações e suas dependências em containers portáteis e consistentes. Utilizo Docker para criar imagens de aplicações, configurar Dockerfiles otimizados, gerenciar registries e integrar containers nos pipelines CI/CD, garantindo que ambientes de desenvolvimento, homologação e produção sejam equivalentes.',
-  },
   'linux': {
     name: 'Linux',
     category: 'OS',
@@ -654,6 +645,30 @@ const initCertsCarousel = () => {
   items.forEach(item => {
     const clone = item.cloneNode(true);
     clone.setAttribute('aria-hidden', 'true');
+
+    const iconEl = clone.querySelector('[data-cert-icon]');
+    if (iconEl) {
+      const name = iconEl.getAttribute('data-cert-icon');
+      const extensions = ['png', 'svg', 'webp', 'jpg', 'jpeg'];
+      const tryLoad = (index) => {
+        if (index >= extensions.length) return;
+        const ext = extensions[index];
+        const img = new Image();
+        img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}`;
+        img.onload = () => {
+          iconEl.innerHTML = '';
+          const size = iconEl.classList.contains('cert-icon-small') ? 16 : 22;
+          img.width = size;
+          img.height = size;
+          img.alt = name;
+          img.className = 'cert-custom-icon';
+          iconEl.appendChild(img);
+        };
+        img.onerror = () => tryLoad(index + 1);
+      };
+      tryLoad(0);
+    }
+
     track.appendChild(clone);
   });
 
