@@ -219,7 +219,7 @@ const showTyping = () => {
   typing.id = 'typing-indicator';
   typing.innerHTML = `
     <div class="chat-bubble-avatar">
-      <img src="/atendimento.png" alt="Bot">
+      <img src="/atendimento.svg" alt="Bot">
     </div>
     <div class="chat-typing">
       <span></span><span></span><span></span>
