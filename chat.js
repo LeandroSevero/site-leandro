@@ -39,7 +39,7 @@ const TOPICS = {
       ],
     },
     skills: {
-      message: 'Principais tecnologias:\n\n☁️ Cloud: AWS, Azure, GCP\n🐳 Containers: Docker, Kubernetes (AKS)\n🖥️ Sistemas: Linux, Windows Server\n📊 Monitoramento: Elastic Stack\n🗄️ Banco de dados: MongoDB\n🔐 Segurança: Fortinet\n⚙️ CI/CD: Azure DevOps\n💾 Backup: Veeam\n📨 Mensageria: RabbitMQ',
+      message: 'Principais tecnologias:\n\n☁️ Cloud: AWS, Azure, GCP\n🐳 Containers: Docker, AKS\n🖥️ Sistemas: Linux, Windows\n📊 Monitoramento: Grafana\n🗄️ Banco de dados: MongoDB\n🔐 Segurança: Fortinet\n⚙️ CI/CD: Azure DevOps\n💾 Backup: Veeam\n📨 Mensageria: RabbitMQ',
       options: [
         { label: 'Ver certificações', next: 'certs' },
         { label: 'Experiência prática', next: 'experience' },
@@ -118,7 +118,7 @@ const TOPICS = {
       ],
     },
     skills: {
-      message: 'Core technologies:\n\n☁️ Cloud: AWS, Azure, GCP\n🐳 Containers: Docker, Kubernetes (AKS)\n🖥️ OS: Linux, Windows Server\n📊 Monitoring: Elastic Stack\n🗄️ Database: MongoDB\n🔐 Security: Fortinet\n⚙️ CI/CD: Azure DevOps\n💾 Backup: Veeam\n📨 Messaging: RabbitMQ',
+      message: 'Core technologies:\n\n☁️ Cloud: AWS, Azure, GCP\n🐳 Containers: Docker, Kubernetes (AKS)\n🖥️ OS: Linux, Windows Server\n📊 Monitoring: Grafana\n🗄️ Database: MongoDB\n🔐 Security: Fortinet\n⚙️ CI/CD: Azure DevOps\n💾 Backup: Veeam\n📨 Messaging: RabbitMQ',
       options: [
         { label: 'View certifications', next: 'certs' },
         { label: 'Practical experience', next: 'experience' },
