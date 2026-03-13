@@ -10,7 +10,7 @@ const getThemePreference = () => {
 const updateLogo = (theme) => {
   const logo = document.getElementById('logo-img');
   if (!logo) return;
-  logo.src = theme === 'dark' ? '/logo.png' : '/logoparaofundobranco.png';
+  logo.src = theme === 'dark' ? '/logo.png' : '/logoparaofundobranco.svg';
 };
 
 const setTheme = (theme) => {
