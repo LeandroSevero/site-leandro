@@ -39,7 +39,7 @@ const TOPICS = {
       ],
     },
     skills: {
-      message: 'Principais tecnologias:\n\n☁️ Cloud: AWS, Azure, GCP\n🐳 Containers: Docker, Kubernetes (AKS)\n🖥️ Sistemas: Linux, Windows Server\n📊 Monitoramento: Grafana\n🗄️ Banco de dados: MongoDB\n🔐 Segurança: Fortinet\n⚙️ CI/CD: Azure DevOps\n💾 Backup: Veeam\n📨 Mensageria: RabbitMQ',
+      message: 'Principais tecnologias:\n\n☁️ Cloud: AWS, Azure, GCP\n🐳 Containers: Docker, AKS\n🖥️ Sistemas: Linux, Windows\n📊 Monitoramento: Grafana\n🗄️ Banco de dados: MongoDB\n🔐 Segurança: Fortinet\n⚙️ CI/CD: Azure DevOps\n💾 Backup: Veeam\n📨 Mensageria: RabbitMQ',
       options: [
         { label: 'Ver certificações', next: 'certs' },
         { label: 'Experiência prática', next: 'experience' },
