@@ -4,7 +4,7 @@ import { initContactModal } from './contact-modal.js';
 const getThemePreference = () => {
   const stored = localStorage.getItem('theme');
   if (stored) return stored;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark';
 };
 
 const updateLogo = (theme) => {
@@ -13,10 +13,17 @@ const updateLogo = (theme) => {
   logo.src = theme === 'dark' ? '/logo.svg' : '/logoparaofundobranco.svg';
 };
 
+const updateHeroImage = (theme) => {
+  const heroImg = document.querySelector('.hero-image .image-wrapper img');
+  if (!heroImg) return;
+  heroImg.src = theme === 'dark' ? '/leandro.svg' : '/leandrofundobranco.svg';
+};
+
 const setTheme = (theme) => {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
   updateLogo(theme);
+  updateHeroImage(theme);
 };
 
 const toggleTheme = () => {
@@ -714,6 +721,126 @@ const initCertsCarousel = () => {
   requestAnimationFrame(tick);
 };
 
+const initScrollTop = () => {
+  const btn = document.getElementById('scroll-top-btn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+};
+
+const initAzureEasterEgg = () => {
+  const trigger = document.getElementById('azure-cicd-egg');
+  if (!trigger) return;
+
+  let done = false;
+
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  const spawnTrail = (x, y) => {
+    const dot = document.createElement('div');
+    dot.className = 'egg-trail';
+    dot.style.left = `${x - 3}px`;
+    dot.style.top = `${y - 3}px`;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 500);
+  };
+
+  const animateGhost = (ghost, waypoints, duration, onDone) => {
+    const start = performance.now();
+
+    const step = (now) => {
+      const elapsed = now - start;
+      const rawProgress = elapsed / duration;
+
+      if (rawProgress >= 1) {
+        ghost.style.opacity = '0';
+        ghost.style.transform = 'scale(1) rotate(360deg)';
+        setTimeout(() => {
+          ghost.remove();
+          onDone();
+        }, 200);
+        return;
+      }
+
+      const progress = Math.min(rawProgress, 1);
+      const totalSegments = waypoints.length - 1;
+      const segProgress = progress * totalSegments;
+      const segIndex = Math.min(Math.floor(segProgress), totalSegments - 1);
+      const segT = segProgress - segIndex;
+
+      const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      const et = ease(segT);
+
+      const p0 = waypoints[segIndex];
+      const p1 = waypoints[segIndex + 1];
+      const x = lerp(p0.x, p1.x, et);
+      const y = lerp(p0.y, p1.y, et);
+      const scale = 1 + Math.sin(progress * Math.PI) * 0.3;
+      const rotation = progress * 360;
+
+      ghost.style.left = `${x - 22}px`;
+      ghost.style.top = `${y - 22}px`;
+      ghost.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+      ghost.style.opacity = progress < 0.08
+        ? String(progress / 0.08)
+        : progress > 0.85
+          ? String((1 - progress) / 0.15)
+          : '1';
+
+      if (Math.random() < 0.3) spawnTrail(x, y);
+
+      requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+  };
+
+  const handleClick = () => {
+    if (done) return;
+    done = true;
+
+    trigger.style.opacity = '0.35';
+    trigger.removeEventListener('click', handleClick);
+
+    const rect = trigger.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const waypoints = [
+      { x: originX,    y: originY    },
+      { x: vw * 0.75,  y: vh * 0.15 },
+      { x: vw * 0.5,   y: vh * 0.08 },
+      { x: vw * 0.2,   y: vh * 0.2  },
+      { x: vw * 0.1,   y: vh * 0.55 },
+      { x: vw * 0.3,   y: vh * 0.82 },
+      { x: vw * 0.65,  y: vh * 0.75 },
+      { x: vw * 0.88,  y: vh * 0.45 },
+      { x: vw * 0.7,   y: vh * 0.25 },
+      { x: originX,    y: originY    },
+    ];
+
+    const ghost = document.createElement('div');
+    ghost.className = 'egg-ghost';
+    ghost.innerHTML = trigger.innerHTML;
+    ghost.style.left = `${originX - 22}px`;
+    ghost.style.top = `${originY - 22}px`;
+    ghost.style.opacity = '0';
+    document.body.appendChild(ghost);
+
+    animateGhost(ghost, waypoints, 2200, () => {
+      trigger.style.opacity = '';
+      trigger.classList.add('egg-done');
+    });
+  };
+
+  trigger.addEventListener('click', handleClick);
+};
+
 const init = () => {
   initTheme();
   initLang();
@@ -734,6 +861,8 @@ const init = () => {
   initScrollReveal();
   initTimelineDot();
   initContactModal();
+  initScrollTop();
+  initAzureEasterEgg();
   handleDeepLink();
 };
 
@@ -742,10 +871,6 @@ const initTimelineDot = () => {
   const timeline = dot && dot.closest('.timeline');
   if (!dot || !timeline) return;
 
-  const lineFill = document.createElement('div');
-  lineFill.className = 'timeline-line-fill';
-  timeline.appendChild(lineFill);
-
   const items = Array.from(timeline.querySelectorAll('.timeline-item'));
   if (!items.length) return;
 
@@ -753,27 +878,12 @@ const initTimelineDot = () => {
   let targetY = 0;
   let currentY = 0;
   let rafId = null;
+  let leaveTimer = null;
 
   const getDotY = (item) => {
     const timelineRect = timeline.getBoundingClientRect();
     const itemRect = item.getBoundingClientRect();
     return itemRect.top - timelineRect.top + itemRect.height / 2 - dot.offsetHeight / 2;
-  };
-
-  const GLOW_HALF = 72;
-
-  const updateLineFill = (dotCenterY) => {
-    const top = dotCenterY - GLOW_HALF;
-    const height = GLOW_HALF * 2;
-    lineFill.style.top = top + 'px';
-    lineFill.style.height = height + 'px';
-    lineFill.style.background = `linear-gradient(to bottom,
-      transparent 0%,
-      rgba(var(--color-primary-rgb), 0.25) 20%,
-      rgba(var(--color-primary-rgb), 0.6) 50%,
-      rgba(var(--color-primary-rgb), 0.25) 80%,
-      transparent 100%
-    )`;
   };
 
   const snapToItem = (index) => {
@@ -786,12 +896,10 @@ const initTimelineDot = () => {
     if (Math.abs(diff) > 0.3) {
       currentY += diff * 0.22;
       dot.style.top = currentY + 'px';
-      updateLineFill(currentY + dot.offsetHeight / 2);
       rafId = requestAnimationFrame(animate);
     } else {
       currentY = targetY;
       dot.style.top = currentY + 'px';
-      updateLineFill(currentY + dot.offsetHeight / 2);
       rafId = null;
     }
   };
@@ -805,13 +913,48 @@ const initTimelineDot = () => {
     currentY = getDotY(items[0]);
     targetY = currentY;
     dot.style.top = currentY + 'px';
-    updateLineFill(currentY + dot.offsetHeight / 2);
   };
 
   items.forEach((item, i) => {
     const card = item.querySelector('.timeline-card');
     if (!card) return;
-    card.addEventListener('mouseenter', () => moveTo(i));
+
+    card.addEventListener('mouseenter', () => {
+      if (leaveTimer) {
+        clearTimeout(leaveTimer);
+        leaveTimer = null;
+      }
+      moveTo(i);
+    });
+
+    card.addEventListener('mouseleave', (e) => {
+      const to = e.relatedTarget;
+      const goingToCard = to && to.closest('.timeline-card');
+
+      if (goingToCard) return;
+
+      const rect = card.getBoundingClientRect();
+      const goingLeft = e.clientX <= rect.left;
+      const goingRight = e.clientX >= rect.right;
+      const goingUp = e.clientY < rect.top;
+      const goingDown = e.clientY > rect.bottom;
+
+      const isFirst = i === 0;
+      const isLast = i === items.length - 1;
+
+      const shouldReset =
+        goingLeft ||
+        goingRight ||
+        (goingUp && isFirst) ||
+        (goingDown && isLast);
+
+      if (shouldReset) {
+        leaveTimer = setTimeout(() => {
+          moveTo(0);
+          leaveTimer = null;
+        }, 80);
+      }
+    });
   });
 
   initPosition();
@@ -819,7 +962,6 @@ const initTimelineDot = () => {
     currentY = getDotY(items[activeIndex]);
     targetY = currentY;
     dot.style.top = currentY + 'px';
-    updateLineFill(currentY + dot.offsetHeight / 2);
   });
 };
 

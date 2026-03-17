@@ -460,6 +460,7 @@ export const initContactModal = () => {
   const closeModal = () => {
     overlay.setAttribute('hidden', '');
     document.body.style.overflow = '';
+    document.dispatchEvent(new CustomEvent('contact-modal-closed'));
 
     const resultPanel = form.querySelector('.contact-form-result-panel');
     if (resultPanel) {

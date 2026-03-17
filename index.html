@@ -132,6 +132,7 @@
       </div>
 
       <a href="#sobre" class="scroll-down" aria-label="Rolar para baixo">
+        <span class="scroll-down-label" data-i18n="hero.scrollDown">Explorar portfólio</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 5v14M19 12l-7 7-7-7"></path>
         </svg>
@@ -147,11 +148,12 @@
 
         <div class="about-grid">
           <div class="about-text">
-            <p>
-              <span data-i18n="about.p1.prefix">Formado em </span><strong data-i18n="about.p1.degree">Análise e Desenvolvimento de Sistemas</strong><span data-i18n="about.p1.mid"> pelo UNICURITIBA e com pós-graduação em </span><strong data-i18n="about.p1.postgrad">Gestão de Pessoas</strong><span data-i18n="about.p1.suffix"> pela PUCPR, atuo como DevOps com foco em soluções tecnológicas robustas e eficientes.</span>
-            </p>
-            <p data-i18n="about.p2">Tenho experiência prática em diversas tecnologias e plataformas, incluindo AWS, Azure, Azure DevOps, AKS, Docker, Microsoft 365, Windows Server, Sistemas Linux, MongoDB, Elastic Cloud e Veeam Backup.</p>
-            <p data-i18n="about.p3">Estou sempre em busca de novas oportunidades para aplicar meu conhecimento e colaborar em projetos inovadores com equipes multidisciplinares.</p>
+            <p>Sou formado em <strong>Análise e Desenvolvimento de Sistemas</strong> pelo UNICURITIBA, com pós-graduação em <strong>Gestão de Pessoas</strong> pela PUCPR. Atualmente atuo como <strong>Supervisor de DevOps</strong>, liderando iniciativas de infraestrutura, automação e garantindo alta disponibilidade de sistemas em ambientes críticos.</p>
+            <p>Atuo na evolução de plataformas em <strong>Cloud (AWS, Azure e GCP)</strong>, com foco em <strong>CI/CD, containers e orquestração com Kubernetes (AKS)</strong>. Ao longo da minha trajetória, implementei pipelines automatizados, gerenciei ambientes produtivos e otimizei processos, sempre orientado à escalabilidade, segurança e eficiência operacional.</p>
+            <p>Trabalho com tecnologias voltadas à criação de soluções resilientes e escaláveis, como <strong>Docker, Kubernetes (AKS), Azure DevOps e Gocache</strong>, além de sólida experiência com <strong>Active Directory, Microsoft 365, Windows Server e Linux</strong> na gestão de ambientes corporativos.</p>
+            <p>Tenho experiência com <strong>observabilidade e monitoramento utilizando Grafana, Prometheus e Kibana/APM</strong>, além de atuação com mensageria através de <strong>RabbitMQ</strong> e gerenciamento de infraestrutura em provedores como <strong>Hostinger</strong>, sempre focado em desempenho, disponibilidade e confiabilidade dos serviços.</p>
+            <p>Também atuo com <strong>controle e otimização de custos (FinOps)</strong> em cloud, realizando validações de provisionamento, análise contínua de uso e eliminação de desperdícios, contribuindo diretamente para eficiência financeira e sustentabilidade da infraestrutura.</p>
+            <p>Focado em construir ambientes confiáveis, automatizados e preparados para crescimento sustentável.</p>
           </div>
 
           <div class="about-cards">
@@ -307,7 +309,7 @@
             <time datetime="2023-12" data-i18n="certs.fortinet.date">Dez 2023</time>
           </article>
           <article class="cert-featured">
-            <div class="cert-icon cert-icon-cloud" data-cert-icon="Azure DevOps - CICD">
+            <div class="cert-icon cert-icon-cloud" data-cert-icon="Azure DevOps - CICD" id="azure-cicd-egg">
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
               </svg>
@@ -577,9 +579,16 @@
     </section>
   </main>
 
+  <div class="scroll-top-section" id="scroll-top-section">
+    <button class="scroll-top-btn" id="scroll-top-btn" aria-label="Voltar ao topo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+      <span data-i18n="scrollTop.label">Voltar ao topo</span>
+    </button>
+  </div>
+
   <footer class="footer">
     <div class="container">
-      <p>&copy; <span id="year">2025</span> Leandro Severo. <span data-i18n="footer.rights">Todos os direitos reservados.</span></p>
+      <p>&copy; <span id="year">2025</span> Leandro Severo &middot; <a href="mailto:contato@leandrosevero.com.br" class="footer-email">contato@leandrosevero.com.br</a></p>
     </div>
   </footer>
 
@@ -640,20 +649,20 @@
               <span class="contact-form-error" id="cf-phone-error" role="alert" hidden></span>
             </div>
             <div class="contact-form-field">
-              <div class="contact-form-label-row">
-                <label class="contact-form-label" for="cf-subject">Assunto <span class="contact-form-required" aria-hidden="true">*</span></label>
+              <label class="contact-form-label" for="cf-subject">Assunto <span class="contact-form-required" aria-hidden="true">*</span></label>
+              <div class="contact-form-input-wrap">
+                <input class="contact-form-input" type="text" id="cf-subject" name="subject" required aria-required="true" aria-invalid="false" aria-describedby="cf-subject-error" placeholder="Sobre o que quer falar?" maxlength="120">
                 <span class="contact-form-counter" data-field="subject" data-max="120" aria-live="polite">0/120</span>
               </div>
-              <input class="contact-form-input" type="text" id="cf-subject" name="subject" required aria-required="true" aria-invalid="false" aria-describedby="cf-subject-error" placeholder="Sobre o que quer falar?" maxlength="120">
               <span class="contact-form-error" id="cf-subject-error" role="alert" hidden></span>
             </div>
           </div>
           <div class="contact-form-field">
-            <div class="contact-form-label-row">
-              <label class="contact-form-label" for="cf-message">Mensagem <span class="contact-form-required" aria-hidden="true">*</span></label>
+            <label class="contact-form-label" for="cf-message">Mensagem <span class="contact-form-required" aria-hidden="true">*</span></label>
+            <div class="contact-form-input-wrap">
+              <textarea class="contact-form-input contact-form-textarea" id="cf-message" name="message" required aria-required="true" aria-invalid="false" aria-describedby="cf-message-error" placeholder="Escreva sua mensagem aqui..." maxlength="1000"></textarea>
               <span class="contact-form-counter" data-field="message" data-max="1000" aria-live="polite">0/1000</span>
             </div>
-            <textarea class="contact-form-input contact-form-textarea" id="cf-message" name="message" required aria-required="true" aria-invalid="false" aria-describedby="cf-message-error" placeholder="Escreva sua mensagem aqui..." maxlength="1000"></textarea>
             <span class="contact-form-error" id="cf-message-error" role="alert" hidden></span>
           </div>
 
