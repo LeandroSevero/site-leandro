@@ -648,20 +648,20 @@
               <span class="contact-form-error" id="cf-phone-error" role="alert" hidden></span>
             </div>
             <div class="contact-form-field">
-              <div class="contact-form-label-row">
-                <label class="contact-form-label" for="cf-subject">Assunto <span class="contact-form-required" aria-hidden="true">*</span></label>
+              <label class="contact-form-label" for="cf-subject">Assunto <span class="contact-form-required" aria-hidden="true">*</span></label>
+              <div class="contact-form-input-wrap">
+                <input class="contact-form-input" type="text" id="cf-subject" name="subject" required aria-required="true" aria-invalid="false" aria-describedby="cf-subject-error" placeholder="Sobre o que quer falar?" maxlength="120">
                 <span class="contact-form-counter" data-field="subject" data-max="120" aria-live="polite">0/120</span>
               </div>
-              <input class="contact-form-input" type="text" id="cf-subject" name="subject" required aria-required="true" aria-invalid="false" aria-describedby="cf-subject-error" placeholder="Sobre o que quer falar?" maxlength="120">
               <span class="contact-form-error" id="cf-subject-error" role="alert" hidden></span>
             </div>
           </div>
           <div class="contact-form-field">
-            <div class="contact-form-label-row">
-              <label class="contact-form-label" for="cf-message">Mensagem <span class="contact-form-required" aria-hidden="true">*</span></label>
+            <label class="contact-form-label" for="cf-message">Mensagem <span class="contact-form-required" aria-hidden="true">*</span></label>
+            <div class="contact-form-input-wrap">
+              <textarea class="contact-form-input contact-form-textarea" id="cf-message" name="message" required aria-required="true" aria-invalid="false" aria-describedby="cf-message-error" placeholder="Escreva sua mensagem aqui..." maxlength="1000"></textarea>
               <span class="contact-form-counter" data-field="message" data-max="1000" aria-live="polite">0/1000</span>
             </div>
-            <textarea class="contact-form-input contact-form-textarea" id="cf-message" name="message" required aria-required="true" aria-invalid="false" aria-describedby="cf-message-error" placeholder="Escreva sua mensagem aqui..." maxlength="1000"></textarea>
             <span class="contact-form-error" id="cf-message-error" role="alert" hidden></span>
           </div>
 
