@@ -811,26 +811,25 @@ const initTimelineDot = () => {
     card.addEventListener('mouseleave', (e) => {
       const to = e.relatedTarget;
       const goingToCard = to && to.closest('.timeline-card');
-      const goingToTimeline = to && (timeline.contains(to) || to === timeline);
 
-      if (goingToCard || goingToTimeline) return;
+      if (goingToCard) return;
+
+      const rect = card.getBoundingClientRect();
+      const goingLeft = e.clientX <= rect.left;
+      const goingRight = e.clientX >= rect.right;
+      const goingUp = e.clientY < rect.top;
+      const goingDown = e.clientY > rect.bottom;
 
       const isFirst = i === 0;
       const isLast = i === items.length - 1;
 
-      if (isFirst || isLast) {
-        leaveTimer = setTimeout(() => {
-          moveTo(0);
-          leaveTimer = null;
-        }, 80);
-        return;
-      }
+      const shouldReset =
+        goingLeft ||
+        (goingRight && isLast) ||
+        (goingUp && isFirst) ||
+        (goingDown && isLast);
 
-      const rect = card.getBoundingClientRect();
-      const goingLeft = e.clientX < rect.left;
-      const goingRight = e.clientX > rect.right;
-
-      if (goingLeft || goingRight) {
+      if (shouldReset) {
         leaveTimer = setTimeout(() => {
           moveTo(0);
           leaveTimer = null;
