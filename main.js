@@ -752,10 +752,6 @@ const initTimelineDot = () => {
   const timeline = dot && dot.closest('.timeline');
   if (!dot || !timeline) return;
 
-  const lineFill = document.createElement('div');
-  lineFill.className = 'timeline-line-fill';
-  timeline.appendChild(lineFill);
-
   const items = Array.from(timeline.querySelectorAll('.timeline-item'));
   if (!items.length) return;
 
@@ -770,22 +766,6 @@ const initTimelineDot = () => {
     return itemRect.top - timelineRect.top + itemRect.height / 2 - dot.offsetHeight / 2;
   };
 
-  const GLOW_HALF = 72;
-
-  const updateLineFill = (dotCenterY) => {
-    const top = dotCenterY - GLOW_HALF;
-    const height = GLOW_HALF * 2;
-    lineFill.style.top = top + 'px';
-    lineFill.style.height = height + 'px';
-    lineFill.style.background = `linear-gradient(to bottom,
-      transparent 0%,
-      rgba(var(--color-primary-rgb), 0.25) 20%,
-      rgba(var(--color-primary-rgb), 0.6) 50%,
-      rgba(var(--color-primary-rgb), 0.25) 80%,
-      transparent 100%
-    )`;
-  };
-
   const snapToItem = (index) => {
     activeIndex = index;
     targetY = getDotY(items[index]);
@@ -796,12 +776,10 @@ const initTimelineDot = () => {
     if (Math.abs(diff) > 0.3) {
       currentY += diff * 0.22;
       dot.style.top = currentY + 'px';
-      updateLineFill(currentY + dot.offsetHeight / 2);
       rafId = requestAnimationFrame(animate);
     } else {
       currentY = targetY;
       dot.style.top = currentY + 'px';
-      updateLineFill(currentY + dot.offsetHeight / 2);
       rafId = null;
     }
   };
@@ -815,13 +793,13 @@ const initTimelineDot = () => {
     currentY = getDotY(items[0]);
     targetY = currentY;
     dot.style.top = currentY + 'px';
-    updateLineFill(currentY + dot.offsetHeight / 2);
   };
 
   items.forEach((item, i) => {
     const card = item.querySelector('.timeline-card');
     if (!card) return;
     card.addEventListener('mouseenter', () => moveTo(i));
+    card.addEventListener('mouseleave', () => moveTo(0));
   });
 
   initPosition();
@@ -829,7 +807,6 @@ const initTimelineDot = () => {
     currentY = getDotY(items[activeIndex]);
     targetY = currentY;
     dot.style.top = currentY + 'px';
-    updateLineFill(currentY + dot.offsetHeight / 2);
   });
 };
 

@@ -1109,17 +1109,15 @@ main {
   left: 7px;
   width: 3px;
   border-radius: 2px;
-  background: var(--color-border);
+  background: linear-gradient(to bottom,
+    rgba(79, 209, 197, 0.7) 0%,
+    rgba(79, 209, 197, 0.35) 40%,
+    rgba(79, 209, 197, 0.1) 100%
+  );
 }
 
-.timeline-line-fill {
-  position: absolute;
-  left: 7px;
-  width: 3px;
-  border-radius: 2px;
-  pointer-events: none;
-  z-index: 1;
-  transition: top 0.45s cubic-bezier(0.4, 0, 0.2, 1), height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+[data-theme="light"] .timeline::before {
+  background: var(--color-border);
 }
 
 .timeline-item {
@@ -1195,7 +1193,7 @@ main {
 
 .timeline-card:hover {
   border-color: var(--color-primary);
-  transform: translateY(-2px);
+  transform: translateX(4px);
 }
 
 [data-theme="dark"] .timeline-card:hover {
