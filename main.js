@@ -734,27 +734,37 @@ const initAzureEasterEgg = () => {
   const trigger = document.getElementById('azure-cicd-egg');
   if (!trigger) return;
 
-  let running = false;
+  let done = false;
 
   const lerp = (a, b, t) => a + (b - a) * t;
 
+  const spawnTrail = (x, y) => {
+    const dot = document.createElement('div');
+    dot.className = 'egg-trail';
+    dot.style.left = `${x - 3}px`;
+    dot.style.top = `${y - 3}px`;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 500);
+  };
+
   const animateGhost = (ghost, waypoints, duration, onDone) => {
     const start = performance.now();
-    let trailTimer = null;
-
-    const spawnTrail = (x, y) => {
-      const t = document.createElement('div');
-      t.className = 'egg-trail';
-      t.style.left = `${x - 3}px`;
-      t.style.top = `${y - 3}px`;
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 500);
-    };
 
     const step = (now) => {
       const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
+      const rawProgress = elapsed / duration;
 
+      if (rawProgress >= 1) {
+        ghost.style.opacity = '0';
+        ghost.style.transform = 'scale(1) rotate(360deg)';
+        setTimeout(() => {
+          ghost.remove();
+          onDone();
+        }, 200);
+        return;
+      }
+
+      const progress = Math.min(rawProgress, 1);
       const totalSegments = waypoints.length - 1;
       const segProgress = progress * totalSegments;
       const segIndex = Math.min(Math.floor(segProgress), totalSegments - 1);
@@ -773,25 +783,27 @@ const initAzureEasterEgg = () => {
       ghost.style.left = `${x - 22}px`;
       ghost.style.top = `${y - 22}px`;
       ghost.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
-      ghost.style.opacity = progress < 0.08 ? progress / 0.08
-        : progress > 0.92 ? (1 - progress) / 0.08 : '1';
+      ghost.style.opacity = progress < 0.08
+        ? String(progress / 0.08)
+        : progress > 0.85
+          ? String((1 - progress) / 0.15)
+          : '1';
 
       if (Math.random() < 0.3) spawnTrail(x, y);
 
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        onDone();
-      }
+      requestAnimationFrame(step);
     };
 
     requestAnimationFrame(step);
   };
 
-  trigger.addEventListener('click', () => {
-    if (running) return;
-    running = true;
-    trigger.classList.add('egg-active');
+  const handleClick = () => {
+    if (done) return;
+    done = true;
+
+    trigger.style.cursor = 'default';
+    trigger.style.opacity = '0.35';
+    trigger.removeEventListener('click', handleClick);
 
     const rect = trigger.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
@@ -801,16 +813,16 @@ const initAzureEasterEgg = () => {
     const vh = window.innerHeight;
 
     const waypoints = [
-      { x: originX, y: originY },
-      { x: vw * 0.75, y: vh * 0.15 },
-      { x: vw * 0.5,  y: vh * 0.08 },
-      { x: vw * 0.2,  y: vh * 0.2  },
-      { x: vw * 0.1,  y: vh * 0.55 },
-      { x: vw * 0.3,  y: vh * 0.82 },
-      { x: vw * 0.65, y: vh * 0.75 },
-      { x: vw * 0.88, y: vh * 0.45 },
-      { x: vw * 0.7,  y: vh * 0.25 },
-      { x: originX, y: originY },
+      { x: originX,    y: originY    },
+      { x: vw * 0.75,  y: vh * 0.15 },
+      { x: vw * 0.5,   y: vh * 0.08 },
+      { x: vw * 0.2,   y: vh * 0.2  },
+      { x: vw * 0.1,   y: vh * 0.55 },
+      { x: vw * 0.3,   y: vh * 0.82 },
+      { x: vw * 0.65,  y: vh * 0.75 },
+      { x: vw * 0.88,  y: vh * 0.45 },
+      { x: vw * 0.7,   y: vh * 0.25 },
+      { x: originX,    y: originY    },
     ];
 
     const ghost = document.createElement('div');
@@ -818,14 +830,16 @@ const initAzureEasterEgg = () => {
     ghost.innerHTML = trigger.innerHTML;
     ghost.style.left = `${originX - 22}px`;
     ghost.style.top = `${originY - 22}px`;
+    ghost.style.opacity = '0';
     document.body.appendChild(ghost);
 
     animateGhost(ghost, waypoints, 2200, () => {
-      ghost.remove();
-      trigger.classList.remove('egg-active');
-      running = false;
+      trigger.style.opacity = '1';
+      trigger.style.cursor = '';
     });
-  });
+  };
+
+  trigger.addEventListener('click', handleClick);
 };
 
 const init = () => {
