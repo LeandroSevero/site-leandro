@@ -13,10 +13,17 @@ const updateLogo = (theme) => {
   logo.src = theme === 'dark' ? '/logo.svg' : '/logoparaofundobranco.svg';
 };
 
+const updateHeroImage = (theme) => {
+  const heroImg = document.querySelector('.hero-image .image-wrapper img');
+  if (!heroImg) return;
+  heroImg.src = theme === 'dark' ? '/leandro.svg' : '/leandrofundobranco.svg';
+};
+
 const setTheme = (theme) => {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
   updateLogo(theme);
+  updateHeroImage(theme);
 };
 
 const toggleTheme = () => {
