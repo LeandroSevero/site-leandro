@@ -69,7 +69,7 @@ const TOPICS = {
       message: 'O Leandro está aberto a novas oportunidades e colaborações. Escolha como prefere entrar em contato:',
       options: [
         { label: '💼 LinkedIn', next: 'contact', type: 'link', url: 'https://www.linkedin.com/in/leandrosevero' },
-        { label: '📧 E-mail', next: 'contact', type: 'link', url: 'mailto:leandroolise@gmail.com' },
+        { label: '📧 E-mail', next: 'contact', type: 'open-contact-modal' },
         { label: '📷 Instagram', next: 'contact', type: 'link', url: 'https://www.instagram.com/leeandro.sv/' },
         { label: '← Início', next: 'start', type: 'back' },
       ],
@@ -148,7 +148,7 @@ const TOPICS = {
       message: "Leandro is open to new opportunities and collaborations. How would you like to get in touch?",
       options: [
         { label: '💼 LinkedIn', next: 'contact', type: 'link', url: 'https://www.linkedin.com/in/leandrosevero' },
-        { label: '📧 Email', next: 'contact', type: 'link', url: 'mailto:leandroolise@gmail.com' },
+        { label: '📧 Email', next: 'contact', type: 'open-contact-modal' },
         { label: '📷 Instagram', next: 'contact', type: 'link', url: 'https://www.instagram.com/leeandro.sv/' },
         { label: '← Back', next: 'start', type: 'back' },
       ],
@@ -248,6 +248,17 @@ const renderOptions = (options) => {
 };
 
 const handleOption = (opt) => {
+  if (opt.type === 'open-contact-modal') {
+    addUserBubble(opt.label);
+    optionsEl.innerHTML = '';
+    setTimeout(() => {
+      closeChat();
+      const trigger = document.querySelector('[data-open-contact-modal]');
+      if (trigger) trigger.click();
+    }, 300);
+    return;
+  }
+
   if (opt.type === 'link') {
     addUserBubble(opt.label);
     optionsEl.innerHTML = '';
