@@ -730,6 +730,104 @@ const initScrollTop = () => {
   });
 };
 
+const initAzureEasterEgg = () => {
+  const trigger = document.getElementById('azure-cicd-egg');
+  if (!trigger) return;
+
+  let running = false;
+
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  const animateGhost = (ghost, waypoints, duration, onDone) => {
+    const start = performance.now();
+    let trailTimer = null;
+
+    const spawnTrail = (x, y) => {
+      const t = document.createElement('div');
+      t.className = 'egg-trail';
+      t.style.left = `${x - 3}px`;
+      t.style.top = `${y - 3}px`;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 500);
+    };
+
+    const step = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const totalSegments = waypoints.length - 1;
+      const segProgress = progress * totalSegments;
+      const segIndex = Math.min(Math.floor(segProgress), totalSegments - 1);
+      const segT = segProgress - segIndex;
+
+      const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      const et = ease(segT);
+
+      const p0 = waypoints[segIndex];
+      const p1 = waypoints[segIndex + 1];
+      const x = lerp(p0.x, p1.x, et);
+      const y = lerp(p0.y, p1.y, et);
+      const scale = 1 + Math.sin(progress * Math.PI) * 0.3;
+      const rotation = progress * 360;
+
+      ghost.style.left = `${x - 22}px`;
+      ghost.style.top = `${y - 22}px`;
+      ghost.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+      ghost.style.opacity = progress < 0.08 ? progress / 0.08
+        : progress > 0.92 ? (1 - progress) / 0.08 : '1';
+
+      if (Math.random() < 0.3) spawnTrail(x, y);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        onDone();
+      }
+    };
+
+    requestAnimationFrame(step);
+  };
+
+  trigger.addEventListener('click', () => {
+    if (running) return;
+    running = true;
+    trigger.classList.add('egg-active');
+
+    const rect = trigger.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const waypoints = [
+      { x: originX, y: originY },
+      { x: vw * 0.75, y: vh * 0.15 },
+      { x: vw * 0.5,  y: vh * 0.08 },
+      { x: vw * 0.2,  y: vh * 0.2  },
+      { x: vw * 0.1,  y: vh * 0.55 },
+      { x: vw * 0.3,  y: vh * 0.82 },
+      { x: vw * 0.65, y: vh * 0.75 },
+      { x: vw * 0.88, y: vh * 0.45 },
+      { x: vw * 0.7,  y: vh * 0.25 },
+      { x: originX, y: originY },
+    ];
+
+    const ghost = document.createElement('div');
+    ghost.className = 'egg-ghost';
+    ghost.innerHTML = trigger.innerHTML;
+    ghost.style.left = `${originX - 22}px`;
+    ghost.style.top = `${originY - 22}px`;
+    document.body.appendChild(ghost);
+
+    animateGhost(ghost, waypoints, 2200, () => {
+      ghost.remove();
+      trigger.classList.remove('egg-active');
+      running = false;
+    });
+  });
+};
+
 const init = () => {
   initTheme();
   initLang();
@@ -751,6 +849,7 @@ const init = () => {
   initTimelineDot();
   initContactModal();
   initScrollTop();
+  initAzureEasterEgg();
   handleDeepLink();
 };
 

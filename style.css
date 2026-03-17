@@ -2650,3 +2650,51 @@ main {
   border-color: var(--color-fg-muted);
   transform: translateY(-1px);
 }
+
+#azure-cicd-egg {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#azure-cicd-egg:hover {
+  transform: scale(1.12);
+  box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
+}
+
+#azure-cicd-egg.egg-active {
+  opacity: 0.4;
+}
+
+.egg-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  background-color: rgba(var(--color-primary-rgb), 0.18);
+  color: var(--color-primary);
+  box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.35);
+  will-change: transform, opacity;
+}
+
+.egg-trail {
+  position: fixed;
+  z-index: 9998;
+  pointer-events: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  opacity: 0.6;
+  will-change: transform, opacity;
+  animation: egg-trail-fade 0.5s ease forwards;
+}
+
+@keyframes egg-trail-fade {
+  to { opacity: 0; transform: scale(0); }
+}
