@@ -825,7 +825,7 @@ const initTimelineDot = () => {
 
       const shouldReset =
         goingLeft ||
-        (goingRight && isLast) ||
+        goingRight ||
         (goingUp && isFirst) ||
         (goingDown && isLast);
 
