@@ -524,10 +524,12 @@ main {
 
 .section-number {
   display: block;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--color-primary);
+  letter-spacing: 0.04em;
 }
 
 .section-header h2 {
@@ -1160,6 +1162,20 @@ main {
   pointer-events: none;
 }
 
+[data-theme="dark"] .timeline-dot-floating {
+  box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.2), 0 0 12px rgba(79, 209, 197, 0.5);
+  animation: dot-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.2), 0 0 10px rgba(79, 209, 197, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(79, 209, 197, 0.12), 0 0 20px rgba(79, 209, 197, 0.7);
+  }
+}
+
 .timeline-card {
   flex: 1;
   padding: var(--space-5);
@@ -1395,6 +1411,16 @@ main {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--color-fg-muted);
+}
+
+.footer-email {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+
+.footer-email:hover {
+  opacity: 0.75;
 }
 
 @media (min-width: 768px) {
@@ -1761,7 +1787,13 @@ main {
 
 .scroll-top-btn:hover {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-primary-fg, #04060f);
+  border-color: var(--color-primary);
+}
+
+[data-theme="dark"] .scroll-top-btn:hover {
+  background-color: rgba(79, 209, 197, 0.15);
+  color: var(--color-primary);
   border-color: var(--color-primary);
 }
 
