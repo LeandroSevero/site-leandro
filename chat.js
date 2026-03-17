@@ -252,9 +252,19 @@ const handleOption = (opt) => {
     addUserBubble(opt.label);
     optionsEl.innerHTML = '';
     setTimeout(() => {
-      closeChat();
       const trigger = document.querySelector('[data-open-contact-modal]');
       if (trigger) trigger.click();
+      const onModalClose = () => {
+        document.removeEventListener('contact-modal-closed', onModalClose);
+        openChat();
+        showTyping();
+        setTimeout(() => {
+          removeTyping();
+          addBotBubble(getTopics().redirect);
+          renderOptions(getTopics().contact.options);
+        }, 800);
+      };
+      document.addEventListener('contact-modal-closed', onModalClose);
     }, 300);
     return;
   }

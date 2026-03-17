@@ -4,7 +4,7 @@ import { initContactModal } from './contact-modal.js';
 const getThemePreference = () => {
   const stored = localStorage.getItem('theme');
   if (stored) return stored;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark';
 };
 
 const updateLogo = (theme) => {
@@ -717,12 +717,6 @@ const initCertsCarousel = () => {
 const initScrollTop = () => {
   const btn = document.getElementById('scroll-top-btn');
   if (!btn) return;
-
-  btn.removeAttribute('hidden');
-
-  window.addEventListener('scroll', () => {
-    btn.classList.toggle('visible', window.pageYOffset > 400);
-  }, { passive: true });
 
   btn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

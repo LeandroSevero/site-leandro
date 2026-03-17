@@ -455,10 +455,23 @@ main {
   color: var(--color-fg-muted);
   transition: color var(--transition);
   animation: bounce 2s infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
 }
 
 .scroll-down:hover {
   color: var(--color-fg);
+}
+
+.scroll-down-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
 }
 
 @keyframes bounce {
@@ -1612,32 +1625,26 @@ main {
   color: var(--color-fg-muted);
 }
 
-.scroll-top-btn {
-  position: fixed;
-  bottom: 5.5rem;
-  right: 1.5rem;
-  z-index: 900;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
+.scroll-top-section {
   display: flex;
-  align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.2s, color 0.2s;
-  pointer-events: none;
+  padding: 2rem 0 1.5rem;
 }
 
-.scroll-top-btn.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+.scroll-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 2rem;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-fg-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .scroll-top-btn:hover {
