@@ -801,7 +801,6 @@ const initAzureEasterEgg = () => {
     if (done) return;
     done = true;
 
-    trigger.style.cursor = 'default';
     trigger.style.opacity = '0.35';
     trigger.removeEventListener('click', handleClick);
 
@@ -834,8 +833,8 @@ const initAzureEasterEgg = () => {
     document.body.appendChild(ghost);
 
     animateGhost(ghost, waypoints, 2200, () => {
-      trigger.style.opacity = '1';
-      trigger.style.cursor = '';
+      trigger.style.opacity = '';
+      trigger.classList.add('egg-done');
     });
   };
 

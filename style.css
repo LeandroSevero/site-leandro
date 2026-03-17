@@ -2651,19 +2651,15 @@ main {
   transform: translateY(-1px);
 }
 
-#azure-cicd-egg {
+#azure-cicd-egg:not(.egg-done) {
   cursor: pointer;
   user-select: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-#azure-cicd-egg:hover {
+#azure-cicd-egg:not(.egg-done):hover {
   transform: scale(1.12);
   box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
-}
-
-#azure-cicd-egg.egg-active {
-  opacity: 0.4;
 }
 
 .egg-ghost {
