@@ -759,6 +759,7 @@ const initTimelineDot = () => {
   let targetY = 0;
   let currentY = 0;
   let rafId = null;
+  let leaveTimer = null;
 
   const getDotY = (item) => {
     const timelineRect = timeline.getBoundingClientRect();
@@ -798,8 +799,44 @@ const initTimelineDot = () => {
   items.forEach((item, i) => {
     const card = item.querySelector('.timeline-card');
     if (!card) return;
-    card.addEventListener('mouseenter', () => moveTo(i));
-    card.addEventListener('mouseleave', () => moveTo(0));
+
+    card.addEventListener('mouseenter', () => {
+      if (leaveTimer) {
+        clearTimeout(leaveTimer);
+        leaveTimer = null;
+      }
+      moveTo(i);
+    });
+
+    card.addEventListener('mouseleave', (e) => {
+      const to = e.relatedTarget;
+      const goingToCard = to && to.closest('.timeline-card');
+      const goingToTimeline = to && (timeline.contains(to) || to === timeline);
+
+      if (goingToCard || goingToTimeline) return;
+
+      const isFirst = i === 0;
+      const isLast = i === items.length - 1;
+
+      if (isFirst || isLast) {
+        leaveTimer = setTimeout(() => {
+          moveTo(0);
+          leaveTimer = null;
+        }, 80);
+        return;
+      }
+
+      const rect = card.getBoundingClientRect();
+      const goingLeft = e.clientX < rect.left;
+      const goingRight = e.clientX > rect.right;
+
+      if (goingLeft || goingRight) {
+        leaveTimer = setTimeout(() => {
+          moveTo(0);
+          leaveTimer = null;
+        }, 80);
+      }
+    });
   });
 
   initPosition();

@@ -1106,9 +1106,9 @@ main {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 7px;
-  width: 3px;
-  border-radius: 2px;
+  left: 8px;
+  width: 1.5px;
+  border-radius: 1px;
   background: linear-gradient(to bottom,
     #4fd1c5 0%,
     rgba(79, 209, 197, 0.6) 25%,
