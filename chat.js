@@ -291,7 +291,7 @@ const showSoundToast = () => {
   setTimeout(() => {
     toast.classList.add('toast-hiding');
     setTimeout(() => toast.setAttribute('hidden', ''), 380);
-  }, 3200);
+  }, 7500);
 };
 
 const toggleSound = () => {
