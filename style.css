@@ -1377,8 +1377,32 @@ main {
 }
 
 @media (max-width: 767px) {
+  .hero {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+    justify-content: flex-start;
+  }
+
+  .hero-content {
+    margin-top: var(--space-4);
+  }
+
   .scroll-down {
-    bottom: var(--space-8);
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: var(--space-8);
+    animation: bounce-mobile 2s infinite;
+  }
+}
+
+@keyframes bounce-mobile {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 
