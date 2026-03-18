@@ -167,9 +167,57 @@ const optionsEl = document.getElementById('chat-options');
 const badge = document.getElementById('chat-fab-badge');
 const headerName = floatPanel ? floatPanel.querySelector('.chat-header-name') : null;
 const headerStatus = floatPanel ? floatPanel.querySelector('.chat-header-status') : null;
+const suggestionBubble = document.getElementById('chat-suggestion-bubble');
 
 let chatInitialized = false;
 let isOpen = false;
+let suggestionShown = false;
+let idleTimer = null;
+let suggestionDismissTimer = null;
+
+const SUGGESTION_MESSAGES = {
+  'pt-BR': 'Quer saber mais sobre o Leandro? Posso te contar sobre a experiência, habilidades e certificações dele!',
+  en: 'Want to know more about Leandro? I can tell you about his experience, skills and certifications!',
+};
+
+const showSuggestionBubble = () => {
+  if (suggestionShown || isOpen || !fab || fab.hasAttribute('hidden')) return;
+  suggestionShown = true;
+  const lang = getLang();
+  const msg = SUGGESTION_MESSAGES[lang] || SUGGESTION_MESSAGES['pt-BR'];
+  suggestionBubble.textContent = msg;
+  suggestionBubble.removeAttribute('hidden');
+  suggestionBubble.classList.add('chat-suggestion-visible');
+  if (badge) badge.style.animation = 'none';
+  if (suggestionDismissTimer) clearTimeout(suggestionDismissTimer);
+  suggestionDismissTimer = setTimeout(hideSuggestionBubble, 8000);
+};
+
+const hideSuggestionBubble = () => {
+  if (!suggestionBubble) return;
+  suggestionBubble.classList.remove('chat-suggestion-visible');
+  setTimeout(() => suggestionBubble.setAttribute('hidden', ''), 350);
+};
+
+const resetIdleTimer = () => {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (!isOpen && !suggestionShown) showSuggestionBubble();
+  }, 30000);
+};
+
+const setFabIcon = (open) => {
+  const icon = fab.querySelector('.chat-fab-icon');
+  const arrow = fab.querySelector('.chat-fab-arrow');
+  if (!icon || !arrow) return;
+  if (open) {
+    icon.style.display = 'none';
+    arrow.style.display = '';
+  } else {
+    icon.style.display = '';
+    arrow.style.display = 'none';
+  }
+};
 
 const getLang = () => localStorage.getItem('lang') || 'pt-BR';
 const getTopics = () => TOPICS[getLang()] || TOPICS['pt-BR'];
@@ -312,7 +360,9 @@ const startChat = () => {
 
 const openChat = () => {
   isOpen = true;
+  hideSuggestionBubble();
   floatPanel.removeAttribute('hidden');
+  setFabIcon(true);
   if (badge) badge.remove();
   if (!chatInitialized) {
     updateHeaderLabels();
@@ -323,10 +373,12 @@ const openChat = () => {
 const closeChat = () => {
   isOpen = false;
   floatPanel.setAttribute('hidden', '');
+  setFabIcon(false);
 };
 
 const showFab = () => {
   fab.removeAttribute('hidden');
+  resetIdleTimer();
 };
 
 const initChatWidget = () => {
@@ -338,6 +390,13 @@ const initChatWidget = () => {
     isOpen ? closeChat() : openChat();
   });
 
+  if (suggestionBubble) {
+    suggestionBubble.addEventListener('click', () => {
+      hideSuggestionBubble();
+      openChat();
+    });
+  }
+
   if (closeBtn) {
     closeBtn.addEventListener('click', closeChat);
   }
@@ -346,6 +405,19 @@ const initChatWidget = () => {
     .forEach(btn => btn && btn.addEventListener('click', () => {
       setTimeout(resetChat, 50);
     }));
+
+  document.addEventListener('mousemove', resetIdleTimer, { passive: true });
+  document.addEventListener('keydown', resetIdleTimer, { passive: true });
+  document.addEventListener('touchstart', resetIdleTimer, { passive: true });
+
+  let scrollTriggered = false;
+  window.addEventListener('scroll', () => {
+    if (!scrollTriggered && window.scrollY > 300 && !isOpen && !suggestionShown) {
+      scrollTriggered = true;
+      setTimeout(showSuggestionBubble, 1500);
+    }
+    resetIdleTimer();
+  }, { passive: true });
 
   const observer = new IntersectionObserver(
     (entries) => {
