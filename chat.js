@@ -217,7 +217,7 @@ let isOpen = false;
 let suggestionShown = false;
 let idleTimer = null;
 let suggestionDismissTimer = null;
-let soundEnabled = localStorage.getItem('chat-sound') !== 'off';
+let soundEnabled = true;
 
 const updateSoundIcon = () => {
   if (!soundIconOn || !soundIconOff) return;
