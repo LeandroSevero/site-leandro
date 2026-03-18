@@ -19,11 +19,19 @@ const updateHeroImage = (theme) => {
   heroImg.src = theme === 'dark' ? '/leandro.svg' : '/leandrofundobranco.svg';
 };
 
+const updateChatImages = (theme) => {
+  const src = theme === 'dark' ? '/atendimentoescuro.svg' : '/atendimento.svg';
+  document.querySelectorAll('.chat-fab img, .chat-header-avatar img, .chat-bubble-avatar img').forEach(img => {
+    img.src = src;
+  });
+};
+
 const setTheme = (theme) => {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
   updateLogo(theme);
   updateHeroImage(theme);
+  updateChatImages(theme);
 };
 
 const toggleTheme = () => {
@@ -48,11 +56,14 @@ const applyTranslations = (locale) => {
 
   document.documentElement.lang = locale === 'en' ? 'en' : 'pt-BR';
 
-  const flagEl = document.getElementById('lang-flag');
-  const flagMobileEl = document.getElementById('lang-flag-mobile');
-  const flag = locale === 'pt-BR' ? '🇧🇷' : '🇺🇸';
-  if (flagEl) flagEl.textContent = flag;
-  if (flagMobileEl) flagMobileEl.textContent = flag;
+  const isBR = locale === 'pt-BR';
+  [document.getElementById('lang-flag'), document.getElementById('lang-flag-mobile')].forEach(el => {
+    if (!el) return;
+    const br = el.querySelector('.flag-br');
+    const us = el.querySelector('.flag-us');
+    if (br) br.style.display = isBR ? '' : 'none';
+    if (us) us.style.display = isBR ? 'none' : '';
+  });
 };
 
 const toggleLang = () => {
