@@ -2141,6 +2141,18 @@ main {
   color: var(--color-fg);
 }
 
+@keyframes sound-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(176, 216, 245, 0); }
+  40%  { transform: scale(1.22); box-shadow: 0 0 0 5px rgba(176, 216, 245, 0.35); }
+  80%  { transform: scale(0.97); box-shadow: 0 0 0 2px rgba(176, 216, 245, 0.1); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(176, 216, 245, 0); }
+}
+
+.sound-animate {
+  animation: sound-pulse 0.6s ease-in-out 2;
+  border-radius: 50%;
+}
+
 .chat-close-btn {
   display: flex;
   align-items: center;

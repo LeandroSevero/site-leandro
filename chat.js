@@ -273,6 +273,16 @@ const speak = async (text) => {
   speechSynthesis.speak(utter);
 };
 
+let soundHintShown = false;
+
+const animateSoundIcon = () => {
+  if (!soundBtn) return;
+  soundBtn.classList.remove('sound-animate');
+  void soundBtn.offsetWidth;
+  soundBtn.classList.add('sound-animate');
+  setTimeout(() => soundBtn.classList.remove('sound-animate'), 1300);
+};
+
 const toggleSound = () => {
   soundEnabled = !soundEnabled;
   localStorage.setItem('chat-sound', soundEnabled ? 'on' : 'off');
@@ -474,6 +484,15 @@ const openChat = () => {
   if (!chatInitialized) {
     updateHeaderLabels();
     startChat();
+  }
+  if (!soundHintShown) {
+    soundHintShown = true;
+    setTimeout(() => {
+      if (soundEnabled) {
+        animateSoundIcon();
+        addBotBubble('🔊 O áudio está ativado. Você pode desligar se quiser 😉');
+      }
+    }, 1200);
   }
 };
 
