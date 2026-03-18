@@ -3,76 +3,129 @@ const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 let turnstileWidgetId = null;
 let turnstileToken = null;
 
+const getLang = () => localStorage.getItem('lang') || 'pt-BR';
+
+const MODAL_STRINGS = {
+  'pt-BR': {
+    validation: {
+      name: {
+        required: 'Nome completo é obrigatório.',
+        minLength: 'Nome deve ter pelo menos 3 caracteres.',
+        maxLength: 'Nome deve ter no máximo 120 caracteres.',
+        pattern: 'Nome deve conter apenas letras, espaços, acentos, hífen e apóstrofo.',
+      },
+      email: {
+        required: 'E-mail é obrigatório.',
+        maxLength: 'E-mail deve ter no máximo 254 caracteres.',
+        pattern: 'Informe um e-mail válido.',
+      },
+      phone: {
+        maxLength: 'Telefone inválido.',
+        pattern: 'Informe um telefone válido: (99) 99999-9999.',
+      },
+      subject: {
+        required: 'Assunto é obrigatório.',
+        minLength: 'Assunto deve ter pelo menos 3 caracteres.',
+        maxLength: 'Assunto deve ter no máximo 120 caracteres.',
+      },
+      message: {
+        required: 'Mensagem é obrigatória.',
+        minLength: 'Mensagem deve ter pelo menos 10 caracteres.',
+        maxLength: 'Mensagem deve ter no máximo 1000 caracteres.',
+      },
+    },
+    turnstileError: 'Confirme que você não é um robô antes de enviar.',
+    loading: 'Enviando sua mensagem...',
+    submitLabel: 'Enviar mensagem',
+    successTitle: 'Mensagem enviada com sucesso.',
+    successDefault: 'Em breve entrarei em contato. Obrigado pelo seu interesse!',
+    successNote: 'O formulário permite no máximo <strong>2 envios por dia</strong>.',
+    successResend: 'Enviar novamente',
+    rateLimitTitle: 'Limite diário atingido.',
+    rateLimitText: 'Você já utilizou o limite de <strong>2 mensagens</strong> hoje.',
+    rateLimitNote: 'Tente novamente amanhã.',
+    rateLimitBack: 'Voltar',
+    errorTitle: 'Não foi possível enviar sua mensagem.',
+    errorDefault: 'Ocorreu um erro inesperado. Tente novamente em instantes.',
+    errorRetry: 'Tentar novamente',
+    fetchError: 'Não foi possível enviar sua mensagem no momento. Verifique sua conexão e tente novamente.',
+    fetchErrorDefault: 'Não foi possível enviar sua mensagem no momento.',
+  },
+  en: {
+    validation: {
+      name: {
+        required: 'Full name is required.',
+        minLength: 'Name must be at least 3 characters.',
+        maxLength: 'Name must be at most 120 characters.',
+        pattern: 'Name must contain only letters, spaces, accents, hyphens and apostrophes.',
+      },
+      email: {
+        required: 'Email is required.',
+        maxLength: 'Email must be at most 254 characters.',
+        pattern: 'Please enter a valid email address.',
+      },
+      phone: {
+        maxLength: 'Invalid phone number.',
+        pattern: 'Please enter a valid phone: (99) 99999-9999.',
+      },
+      subject: {
+        required: 'Subject is required.',
+        minLength: 'Subject must be at least 3 characters.',
+        maxLength: 'Subject must be at most 120 characters.',
+      },
+      message: {
+        required: 'Message is required.',
+        minLength: 'Message must be at least 10 characters.',
+        maxLength: 'Message must be at most 1000 characters.',
+      },
+    },
+    turnstileError: 'Please confirm you are not a robot before sending.',
+    loading: 'Sending your message...',
+    submitLabel: 'Send message',
+    successTitle: 'Message sent successfully.',
+    successDefault: 'I will get back to you soon. Thank you for your interest!',
+    successNote: 'The form allows a maximum of <strong>2 submissions per day</strong>.',
+    successResend: 'Send another',
+    rateLimitTitle: 'Daily limit reached.',
+    rateLimitText: 'You have already used the limit of <strong>2 messages</strong> today.',
+    rateLimitNote: 'Please try again tomorrow.',
+    rateLimitBack: 'Go back',
+    errorTitle: 'Unable to send your message.',
+    errorDefault: 'An unexpected error occurred. Please try again in a moment.',
+    errorRetry: 'Try again',
+    fetchError: 'Unable to send your message right now. Please check your connection and try again.',
+    fetchErrorDefault: 'Unable to send your message right now.',
+  },
+};
+
+const getStrings = () => MODAL_STRINGS[getLang()] || MODAL_STRINGS['pt-BR'];
+
 const RULES = {
-  name: {
-    required: true,
-    minLength: 3,
-    maxLength: 120,
-    pattern: /^[a-zA-ZÀ-ÖØ-öø-ÿ\s'\-]+$/,
-    messages: {
-      required: 'Nome completo é obrigatório.',
-      minLength: 'Nome deve ter pelo menos 3 caracteres.',
-      maxLength: 'Nome deve ter no máximo 120 caracteres.',
-      pattern: 'Nome deve conter apenas letras, espaços, acentos, hífen e apóstrofo.',
-    },
-  },
-  email: {
-    required: true,
-    maxLength: 254,
-    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    messages: {
-      required: 'E-mail é obrigatório.',
-      maxLength: 'E-mail deve ter no máximo 254 caracteres.',
-      pattern: 'Informe um e-mail válido.',
-    },
-  },
-  phone: {
-    required: false,
-    maxLength: 15,
-    messages: {
-      maxLength: 'Telefone inválido.',
-      pattern: 'Informe um telefone válido: (99) 99999-9999.',
-    },
-  },
-  subject: {
-    required: true,
-    minLength: 3,
-    maxLength: 120,
-    messages: {
-      required: 'Assunto é obrigatório.',
-      minLength: 'Assunto deve ter pelo menos 3 caracteres.',
-      maxLength: 'Assunto deve ter no máximo 120 caracteres.',
-    },
-  },
-  message: {
-    required: true,
-    minLength: 10,
-    maxLength: 1000,
-    messages: {
-      required: 'Mensagem é obrigatória.',
-      minLength: 'Mensagem deve ter pelo menos 10 caracteres.',
-      maxLength: 'Mensagem deve ter no máximo 1000 caracteres.',
-    },
-  },
+  name:    { required: true,  minLength: 3,  maxLength: 120, pattern: /^[a-zA-ZÀ-ÖØ-öø-ÿ\s'\-]+$/ },
+  email:   { required: true,  maxLength: 254, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+  phone:   { required: false, maxLength: 15 },
+  subject: { required: true,  minLength: 3,  maxLength: 120 },
+  message: { required: true,  minLength: 10, maxLength: 1000 },
 };
 
 const validateField = (fieldName, rawValue) => {
   const value = rawValue.trim();
   const rule = RULES[fieldName];
   if (!rule) return null;
+  const msgs = getStrings().validation[fieldName];
 
-  if (rule.required && !value) return rule.messages.required;
+  if (rule.required && !value) return msgs.required;
   if (!rule.required && !value) return null;
 
-  if (rule.minLength && value.length < rule.minLength) return rule.messages.minLength;
-  if (rule.maxLength && value.length > rule.maxLength) return rule.messages.maxLength;
+  if (rule.minLength && value.length < rule.minLength) return msgs.minLength;
+  if (rule.maxLength && value.length > rule.maxLength) return msgs.maxLength;
 
   if (fieldName === 'phone' && value) {
     const digits = value.replace(/\D/g, '');
-    if (digits.length < 10 || digits.length > 11) return rule.messages.pattern;
+    if (digits.length < 10 || digits.length > 11) return msgs.pattern;
   }
 
-  if (rule.pattern && !rule.pattern.test(value)) return rule.messages.pattern;
+  if (rule.pattern && !rule.pattern.test(value)) return msgs.pattern;
 
   return null;
 };
@@ -189,40 +242,30 @@ const hideFormBodyAndShow = (form, panelHtml) => {
   form.appendChild(panel);
 };
 
+const SEND_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+const RETRY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg>`;
+
 const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
+  const s = getStrings();
+
   if (state === FORM_STATE.LOADING) {
     submitBtn.disabled = true;
     submitBtn.setAttribute('aria-busy', 'true');
-    submitBtn.innerHTML = `
-      <span class="contact-form-spinner" aria-hidden="true"></span>
-      <span>Enviando sua mensagem...</span>
-    `;
+    submitBtn.innerHTML = `<span class="contact-form-spinner" aria-hidden="true"></span><span>${s.loading}</span>`;
     return;
   }
 
   if (state === FORM_STATE.IDLE) {
     submitBtn.disabled = false;
     submitBtn.removeAttribute('aria-busy');
-    submitBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="22" y1="2" x2="11" y2="13"></line>
-        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-      </svg>
-      <span>Enviar mensagem</span>
-    `;
+    submitBtn.innerHTML = `${SEND_SVG}<span>${s.submitLabel}</span>`;
     showFormBody(form);
     return;
   }
 
   submitBtn.disabled = false;
   submitBtn.removeAttribute('aria-busy');
-  submitBtn.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <line x1="22" y1="2" x2="11" y2="13"></line>
-      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-    </svg>
-    <span>Enviar mensagem</span>
-  `;
+  submitBtn.innerHTML = `${SEND_SVG}<span>${s.submitLabel}</span>`;
 
   if (state === FORM_STATE.SUCCESS) {
     hideFormBodyAndShow(form, `
@@ -233,15 +276,11 @@ const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         </div>
-        <h3 class="contact-form-result-title">Mensagem enviada com sucesso.</h3>
-        <p class="contact-form-result-text">${message || 'Em breve entrarei em contato. Obrigado pelo seu interesse!'}</p>
-        <p class="contact-form-result-note">O formulário permite no máximo <strong>2 envios por dia</strong>.</p>
+        <h3 class="contact-form-result-title">${s.successTitle}</h3>
+        <p class="contact-form-result-text">${message || s.successDefault}</p>
+        <p class="contact-form-result-note">${s.successNote}</p>
         <button type="button" class="contact-form-result-btn contact-form-result-btn--primary" data-action="reset">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="1 4 1 10 7 10"></polyline>
-            <path d="M3.51 15a9 9 0 1 0 .49-3.51"></path>
-          </svg>
-          Enviar novamente
+          ${RETRY_SVG}${s.successResend}
         </button>
       </div>
     `);
@@ -254,11 +293,11 @@ const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
         </div>
-        <h3 class="contact-form-result-title">Limite diário atingido.</h3>
-        <p class="contact-form-result-text">Você já utilizou o limite de <strong>2 mensagens</strong> hoje.</p>
-        <p class="contact-form-result-text" style="margin-top: -0.5rem;">Tente novamente amanhã.</p>
+        <h3 class="contact-form-result-title">${s.rateLimitTitle}</h3>
+        <p class="contact-form-result-text">${s.rateLimitText}</p>
+        <p class="contact-form-result-text" style="margin-top: -0.5rem;">${s.rateLimitNote}</p>
         <button type="button" class="contact-form-result-btn contact-form-result-btn--secondary" data-action="back">
-          Voltar
+          ${s.rateLimitBack}
         </button>
       </div>
     `);
@@ -272,14 +311,10 @@ const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
         </div>
-        <h3 class="contact-form-result-title">Não foi possível enviar sua mensagem.</h3>
-        <p class="contact-form-result-text">${message || 'Ocorreu um erro inesperado. Tente novamente em instantes.'}</p>
+        <h3 class="contact-form-result-title">${s.errorTitle}</h3>
+        <p class="contact-form-result-text">${message || s.errorDefault}</p>
         <button type="button" class="contact-form-result-btn contact-form-result-btn--primary" data-action="retry">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="1 4 1 10 7 10"></polyline>
-            <path d="M3.51 15a9 9 0 1 0 .49-3.51"></path>
-          </svg>
-          Tentar novamente
+          ${RETRY_SVG}${s.errorRetry}
         </button>
       </div>
     `);
@@ -289,6 +324,7 @@ const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
 const handleSubmit = async (form, submitBtn) => {
   const fields = ['name', 'email', 'phone', 'subject', 'message'];
   let hasError = false;
+  const s = getStrings();
 
   fields.forEach((fieldName) => {
     const input = form.querySelector(`#cf-${fieldName}`);
@@ -306,7 +342,7 @@ const handleSubmit = async (form, submitBtn) => {
     const el = document.createElement('div');
     el.className = 'contact-form-feedback contact-form-feedback--error';
     el.setAttribute('role', 'alert');
-    el.textContent = 'Confirme que você não é um robô antes de enviar.';
+    el.textContent = s.turnstileError;
     const submitBtnEl = form.querySelector('#contact-form-submit');
     submitBtnEl && submitBtnEl.parentNode.insertBefore(el, submitBtnEl);
     return;
@@ -345,20 +381,20 @@ const handleSubmit = async (form, submitBtn) => {
       }
 
       const errorState = classifyError(res, data);
-      const errorMessage = data.message || 'Não foi possível enviar sua mensagem no momento.';
+      const errorMessage = data.message || s.fetchErrorDefault;
       setFormState(form, submitBtn, errorState, { message: errorMessage });
       resetTurnstile();
       return;
     }
 
     setFormState(form, submitBtn, FORM_STATE.SUCCESS, {
-      message: data.message || 'Em breve entrarei em contato. Obrigado pelo seu interesse!',
+      message: data.message || s.successDefault,
     });
 
     resetTurnstile();
   } catch (err) {
     setFormState(form, submitBtn, FORM_STATE.ERROR, {
-      message: 'Não foi possível enviar sua mensagem no momento. Verifique sua conexão e tente novamente.',
+      message: s.fetchError,
     });
     resetTurnstile();
   }
