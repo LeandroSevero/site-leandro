@@ -19,11 +19,19 @@ const updateHeroImage = (theme) => {
   heroImg.src = theme === 'dark' ? '/leandro.svg' : '/leandrofundobranco.svg';
 };
 
+const updateChatImages = (theme) => {
+  const src = theme === 'dark' ? '/atendimentoescuro.svg' : '/atendimento.svg';
+  document.querySelectorAll('.chat-fab img, .chat-header-avatar img, .chat-bubble-avatar img').forEach(img => {
+    img.src = src;
+  });
+};
+
 const setTheme = (theme) => {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
   updateLogo(theme);
   updateHeroImage(theme);
+  updateChatImages(theme);
 };
 
 const toggleTheme = () => {
