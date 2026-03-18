@@ -43,6 +43,21 @@ const getLangPreference = () => {
   return localStorage.getItem('lang') || 'pt-BR';
 };
 
+let currentSkillKey = 'azure-devops';
+
+const getSkillDesc = (key, locale) => {
+  const dict = dictionaries[locale || getLangPreference()];
+  return dict ? (dict[`skill.${key}.desc`] || SKILL_DATA[key]?.desc || '') : (SKILL_DATA[key]?.desc || '');
+};
+
+const updateSkillDescs = (locale) => {
+  if (!currentSkillKey) return;
+  const textEl = document.getElementById('skills-desc-text');
+  if (textEl) textEl.textContent = getSkillDesc(currentSkillKey, locale);
+  const carouselTextEl = document.getElementById('skills-carousel-desc-text');
+  if (carouselTextEl) carouselTextEl.textContent = getSkillDesc(currentSkillKey, locale);
+};
+
 const applyTranslations = (locale) => {
   const dict = dictionaries[locale];
   if (!dict) return;
@@ -51,6 +66,37 @@ const applyTranslations = (locale) => {
     const key = el.getAttribute('data-i18n');
     if (dict[key] !== undefined) {
       el.textContent = dict[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (dict[key] !== undefined) {
+      el.innerHTML = dict[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (dict[key] !== undefined) {
+      el.placeholder = dict[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-label]').forEach(el => {
+    const key = el.getAttribute('data-i18n-label');
+    if (dict[key] !== undefined) {
+      const required = el.querySelector('.contact-form-required');
+      Array.from(el.childNodes).forEach(n => { if (n.nodeType === Node.TEXT_NODE) n.remove(); });
+      const textNode = document.createTextNode(dict[key] + (required ? ' ' : ''));
+      el.insertBefore(textNode, el.firstChild);
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const key = el.getAttribute('data-i18n-aria');
+    if (dict[key] !== undefined) {
+      el.setAttribute('aria-label', dict[key]);
     }
   });
 
@@ -64,6 +110,8 @@ const applyTranslations = (locale) => {
     if (br) br.style.display = isBR ? '' : 'none';
     if (us) us.style.display = isBR ? 'none' : '';
   });
+
+  updateSkillDescs(locale);
 };
 
 const toggleLang = () => {
@@ -384,6 +432,8 @@ const setDescPanel = (key) => {
   const data = SKILL_DATA[key];
   if (!data) return;
 
+  currentSkillKey = key;
+
   const nameEl = document.getElementById('skills-desc-name');
   const textEl = document.getElementById('skills-desc-text');
   const content = document.getElementById('skills-desc-content');
@@ -398,7 +448,7 @@ const setDescPanel = (key) => {
   if (textEl) {
     textEl.style.opacity = '0';
     requestAnimationFrame(() => {
-      textEl.textContent = data.desc;
+      textEl.textContent = getSkillDesc(key);
       textEl.style.transition = 'opacity 260ms ease';
       textEl.style.opacity = '1';
     });
@@ -526,7 +576,7 @@ const initSkillsCarousel = () => {
     if (descTextEl) {
       descTextEl.style.opacity = '0';
       setTimeout(() => {
-        descTextEl.textContent = data.desc;
+        descTextEl.textContent = getSkillDesc(key);
         descTextEl.style.transition = 'opacity 300ms ease';
         descTextEl.style.opacity = '1';
       }, 120);
@@ -566,6 +616,7 @@ const initSkillsCarousel = () => {
       if (i === current) d.style.setProperty('--skill-dot-color', data.color);
     });
 
+    currentSkillKey = key;
     updateDesc(key);
 
     if (manual) {
