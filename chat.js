@@ -12,7 +12,7 @@ const TOPICS = {
       ],
     },
     about: {
-      message: 'Claro! Leandro Severo é um profissional de DevOps que atua em Curitiba, PR. Atua como Supervisor de DevOps na Employer Tudo do RH, liderando times de engenharia e definindo a estratégia de infraestrutura, automação e alta disponibilidade da empresa.',
+      message: 'Claro! O Leandro Severo é um profissional de DevOps que atua em Curitiba, PR. Atualmente, ele é Supervisor de DevOps na Employer Tudo do RH, onde lidera times de engenharia e define estratégias de infraestrutura, automação e alta disponibilidade.',
       options: [
         { label: 'Ver resumo rápido do perfil', next: 'full_summary' },
         { label: 'Trajetória profissional', next: 'experience' },
