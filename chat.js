@@ -511,6 +511,11 @@ const closeChat = () => {
   isOpen = false;
   floatPanel.setAttribute('hidden', '');
   setFabIcon(false);
+  const toast = document.getElementById('chat-sound-toast');
+  if (toast) {
+    toast.classList.remove('toast-hiding');
+    toast.setAttribute('hidden', '');
+  }
 };
 
 const showFab = () => {
