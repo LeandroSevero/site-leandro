@@ -1803,8 +1803,15 @@ main {
 .flag-icon {
   font-size: 1.25rem;
   line-height: 1;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   transition: transform 0.2s ease;
+}
+
+.flag-svg {
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .lang-toggle:hover .flag-icon {

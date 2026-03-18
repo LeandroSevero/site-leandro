@@ -56,11 +56,14 @@ const applyTranslations = (locale) => {
 
   document.documentElement.lang = locale === 'en' ? 'en' : 'pt-BR';
 
-  const flagEl = document.getElementById('lang-flag');
-  const flagMobileEl = document.getElementById('lang-flag-mobile');
-  const flag = locale === 'pt-BR' ? '🇧🇷' : '🇺🇸';
-  if (flagEl) flagEl.textContent = flag;
-  if (flagMobileEl) flagMobileEl.textContent = flag;
+  const isBR = locale === 'pt-BR';
+  [document.getElementById('lang-flag'), document.getElementById('lang-flag-mobile')].forEach(el => {
+    if (!el) return;
+    const br = el.querySelector('.flag-br');
+    const us = el.querySelector('.flag-us');
+    if (br) br.style.display = isBR ? '' : 'none';
+    if (us) us.style.display = isBR ? 'none' : '';
+  });
 };
 
 const toggleLang = () => {
