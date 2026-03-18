@@ -274,6 +274,7 @@ const speak = async (text) => {
 };
 
 let soundHintShown = false;
+let soundHintTimer = null;
 
 const animateSoundIcon = () => {
   if (!soundBtn) return;
@@ -498,8 +499,9 @@ const openChat = () => {
   }
   if (!soundHintShown) {
     soundHintShown = true;
-    setTimeout(() => {
-      if (soundEnabled) {
+    soundHintTimer = setTimeout(() => {
+      soundHintTimer = null;
+      if (soundEnabled && isOpen) {
         animateSoundIcon();
         showSoundToast();
       }
@@ -511,6 +513,10 @@ const closeChat = () => {
   isOpen = false;
   floatPanel.setAttribute('hidden', '');
   setFabIcon(false);
+  if (soundHintTimer) {
+    clearTimeout(soundHintTimer);
+    soundHintTimer = null;
+  }
   const toast = document.getElementById('chat-sound-toast');
   if (toast) {
     toast.classList.remove('toast-hiding');
