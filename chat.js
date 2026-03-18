@@ -217,7 +217,7 @@ let isOpen = false;
 let suggestionShown = false;
 let idleTimer = null;
 let suggestionDismissTimer = null;
-let soundEnabled = localStorage.getItem('chat-sound') !== 'off';
+let soundEnabled = true;
 
 const updateSoundIcon = () => {
   if (!soundIconOn || !soundIconOff) return;
@@ -225,15 +225,74 @@ const updateSoundIcon = () => {
   soundIconOff.style.display = soundEnabled ? 'none' : '';
 };
 
-const speak = (text) => {
+let voicesLoaded = false;
+
+const loadVoices = () => new Promise((resolve) => {
+  const voices = speechSynthesis.getVoices();
+  if (voices.length > 0) { voicesLoaded = true; resolve(voices); return; }
+  speechSynthesis.onvoiceschanged = () => {
+    voicesLoaded = true;
+    resolve(speechSynthesis.getVoices());
+  };
+});
+
+const pickVoice = (voices, lang) => {
+  if (lang === 'pt-BR') {
+    return (
+      voices.find(v => v.name === 'Google português do Brasil') ||
+      voices.find(v => v.name.includes('Microsoft Maria')) ||
+      voices.find(v => v.lang === 'pt-BR') ||
+      voices.find(v => v.lang.startsWith('pt')) ||
+      null
+    );
+  }
+  return (
+    voices.find(v => v.name.toLowerCase().includes('google') && (v.lang === 'en-US' || v.lang === 'en-GB')) ||
+    voices.find(v => v.lang === 'en-US') ||
+    voices.find(v => v.lang.startsWith('en')) ||
+    null
+  );
+};
+
+const speak = async (text) => {
   if (!soundEnabled || !window.speechSynthesis) return;
   speechSynthesis.cancel();
-  const clean = text.replace(/<br\s*\/?>/gi, ' ').replace(/[☁️🐳🔧🖥️📊🗄️🔐⚙️💾📨🎓📚🛡️🔒🌐🏅👋🚀🤝]/gu, '');
+  const clean = text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!clean) return;
+  const voices = await loadVoices();
+  const lang = getLang() === 'en' ? 'en-US' : 'pt-BR';
   const utter = new SpeechSynthesisUtterance(clean);
-  utter.lang = getLang() === 'en' ? 'en-US' : 'pt-BR';
-  utter.rate = 1;
+  utter.lang = lang;
+  utter.voice = pickVoice(voices, lang);
+  utter.rate = lang === 'pt-BR' ? 0.95 : 1;
   utter.pitch = 1;
   speechSynthesis.speak(utter);
+};
+
+let soundHintShown = false;
+let soundHintTimer = null;
+
+const animateSoundIcon = () => {
+  if (!soundBtn) return;
+  soundBtn.classList.remove('sound-animate');
+  void soundBtn.offsetWidth;
+  soundBtn.classList.add('sound-animate');
+  setTimeout(() => soundBtn.classList.remove('sound-animate'), 1300);
+};
+
+const showSoundToast = () => {
+  const toast = document.getElementById('chat-sound-toast');
+  if (!toast) return;
+  toast.removeAttribute('hidden');
+  toast.classList.remove('toast-hiding');
+  setTimeout(() => {
+    toast.classList.add('toast-hiding');
+    setTimeout(() => toast.setAttribute('hidden', ''), 380);
+  }, 7500);
 };
 
 const toggleSound = () => {
@@ -438,12 +497,31 @@ const openChat = () => {
     updateHeaderLabels();
     startChat();
   }
+  if (!soundHintShown) {
+    soundHintShown = true;
+    soundHintTimer = setTimeout(() => {
+      soundHintTimer = null;
+      if (soundEnabled && isOpen) {
+        animateSoundIcon();
+        showSoundToast();
+      }
+    }, 1200);
+  }
 };
 
 const closeChat = () => {
   isOpen = false;
   floatPanel.setAttribute('hidden', '');
   setFabIcon(false);
+  if (soundHintTimer) {
+    clearTimeout(soundHintTimer);
+    soundHintTimer = null;
+  }
+  const toast = document.getElementById('chat-sound-toast');
+  if (toast) {
+    toast.classList.remove('toast-hiding');
+    toast.setAttribute('hidden', '');
+  }
 };
 
 const showFab = () => {

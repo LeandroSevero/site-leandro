@@ -2141,6 +2141,66 @@ main {
   color: var(--color-fg);
 }
 
+@keyframes sound-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(176, 216, 245, 0); }
+  40%  { transform: scale(1.22); box-shadow: 0 0 0 5px rgba(176, 216, 245, 0.35); }
+  80%  { transform: scale(0.97); box-shadow: 0 0 0 2px rgba(176, 216, 245, 0.1); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(176, 216, 245, 0); }
+}
+
+.sound-animate {
+  animation: sound-pulse 0.6s ease-in-out 2;
+  border-radius: 50%;
+}
+
+@keyframes chat-toast-in {
+  from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+  to   { opacity: 1; max-height: 3rem; padding-top: 0.45rem; padding-bottom: 0.45rem; }
+}
+
+@keyframes chat-toast-out {
+  from { opacity: 1; max-height: 3rem; padding-top: 0.45rem; padding-bottom: 0.45rem; }
+  to   { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+}
+
+.chat-sound-toast[hidden] {
+  display: none;
+}
+
+.chat-sound-toast {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.55);
+  color: #cbd5e1;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.45rem 1rem;
+  white-space: nowrap;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  overflow: hidden;
+  animation: chat-toast-in 0.35s ease forwards;
+}
+
+.chat-sound-toast.toast-hiding {
+  animation: chat-toast-out 0.35s ease forwards;
+}
+
+[data-theme="light"] .chat-sound-toast {
+  background: rgba(241, 245, 249, 0.75);
+  color: #475569;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.chat-sound-toast-icon {
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
 .chat-close-btn {
   display: flex;
   align-items: center;
