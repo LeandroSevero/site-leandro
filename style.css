@@ -2121,6 +2121,26 @@ main {
   display: inline-block;
 }
 
+.chat-sound-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-fg-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.chat-sound-btn:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-fg);
+}
+
 .chat-close-btn {
   display: flex;
   align-items: center;
