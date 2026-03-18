@@ -225,13 +225,50 @@ const updateSoundIcon = () => {
   soundIconOff.style.display = soundEnabled ? 'none' : '';
 };
 
-const speak = (text) => {
+let voicesLoaded = false;
+
+const loadVoices = () => new Promise((resolve) => {
+  const voices = speechSynthesis.getVoices();
+  if (voices.length > 0) { voicesLoaded = true; resolve(voices); return; }
+  speechSynthesis.onvoiceschanged = () => {
+    voicesLoaded = true;
+    resolve(speechSynthesis.getVoices());
+  };
+});
+
+const pickVoice = (voices, lang) => {
+  if (lang === 'pt-BR') {
+    return (
+      voices.find(v => v.name === 'Google português do Brasil') ||
+      voices.find(v => v.name.includes('Microsoft Maria')) ||
+      voices.find(v => v.lang === 'pt-BR') ||
+      voices.find(v => v.lang.startsWith('pt')) ||
+      null
+    );
+  }
+  return (
+    voices.find(v => v.name.toLowerCase().includes('google') && (v.lang === 'en-US' || v.lang === 'en-GB')) ||
+    voices.find(v => v.lang === 'en-US') ||
+    voices.find(v => v.lang.startsWith('en')) ||
+    null
+  );
+};
+
+const speak = async (text) => {
   if (!soundEnabled || !window.speechSynthesis) return;
   speechSynthesis.cancel();
-  const clean = text.replace(/<br\s*\/?>/gi, ' ').replace(/[☁️🐳🔧🖥️📊🗄️🔐⚙️💾📨🎓📚🛡️🔒🌐🏅👋🚀🤝]/gu, '');
+  const clean = text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!clean) return;
+  const voices = await loadVoices();
+  const lang = getLang() === 'en' ? 'en-US' : 'pt-BR';
   const utter = new SpeechSynthesisUtterance(clean);
-  utter.lang = getLang() === 'en' ? 'en-US' : 'pt-BR';
-  utter.rate = 1;
+  utter.lang = lang;
+  utter.voice = pickVoice(voices, lang);
+  utter.rate = lang === 'pt-BR' ? 0.95 : 1;
   utter.pitch = 1;
   speechSynthesis.speak(utter);
 };
