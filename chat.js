@@ -202,6 +202,9 @@ const TOPICS = {
 const fab = document.getElementById('chat-fab');
 const floatPanel = document.getElementById('chat-float');
 const closeBtn = document.getElementById('chat-close-btn');
+const soundBtn = document.getElementById('chat-sound-btn');
+const soundIconOn = document.getElementById('chat-sound-icon-on');
+const soundIconOff = document.getElementById('chat-sound-icon-off');
 const messagesEl = document.getElementById('chat-messages');
 const optionsEl = document.getElementById('chat-options');
 const badge = document.getElementById('chat-fab-badge');
@@ -214,6 +217,31 @@ let isOpen = false;
 let suggestionShown = false;
 let idleTimer = null;
 let suggestionDismissTimer = null;
+let soundEnabled = localStorage.getItem('chat-sound') !== 'off';
+
+const updateSoundIcon = () => {
+  if (!soundIconOn || !soundIconOff) return;
+  soundIconOn.style.display = soundEnabled ? '' : 'none';
+  soundIconOff.style.display = soundEnabled ? 'none' : '';
+};
+
+const speak = (text) => {
+  if (!soundEnabled || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const clean = text.replace(/<br\s*\/?>/gi, ' ').replace(/[☁️🐳🔧🖥️📊🗄️🔐⚙️💾📨🎓📚🛡️🔒🌐🏅👋🚀🤝]/gu, '');
+  const utter = new SpeechSynthesisUtterance(clean);
+  utter.lang = getLang() === 'en' ? 'en-US' : 'pt-BR';
+  utter.rate = 1;
+  utter.pitch = 1;
+  speechSynthesis.speak(utter);
+};
+
+const toggleSound = () => {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('chat-sound', soundEnabled ? 'on' : 'off');
+  if (!soundEnabled) speechSynthesis.cancel();
+  updateSoundIcon();
+};
 
 const SUGGESTION_MESSAGES = {
   'pt-BR': 'Quer saber mais sobre o Leandro? Posso te contar sobre a experiência, habilidades e certificações dele!',
@@ -278,6 +306,7 @@ const addBotBubble = (text) => {
   `;
   messagesEl.appendChild(bubble);
   messagesEl.scrollTop = messagesEl.scrollHeight;
+  speak(text);
 };
 
 const addUserBubble = (text) => {
@@ -424,6 +453,9 @@ const showFab = () => {
 
 const initChatWidget = () => {
   if (!fab || !floatPanel) return;
+
+  updateSoundIcon();
+  if (soundBtn) soundBtn.addEventListener('click', toggleSound);
 
   updateHeaderLabels();
 
