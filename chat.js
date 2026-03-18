@@ -283,6 +283,17 @@ const animateSoundIcon = () => {
   setTimeout(() => soundBtn.classList.remove('sound-animate'), 1300);
 };
 
+const showSoundToast = () => {
+  const toast = document.getElementById('chat-sound-toast');
+  if (!toast) return;
+  toast.removeAttribute('hidden');
+  toast.classList.remove('toast-hiding');
+  setTimeout(() => {
+    toast.classList.add('toast-hiding');
+    setTimeout(() => toast.setAttribute('hidden', ''), 380);
+  }, 3200);
+};
+
 const toggleSound = () => {
   soundEnabled = !soundEnabled;
   localStorage.setItem('chat-sound', soundEnabled ? 'on' : 'off');
@@ -490,7 +501,7 @@ const openChat = () => {
     setTimeout(() => {
       if (soundEnabled) {
         animateSoundIcon();
-        addBotBubble('🔊 O áudio está ativado. Você pode desligar se quiser 😉');
+        showSoundToast();
       }
     }, 1200);
   }
