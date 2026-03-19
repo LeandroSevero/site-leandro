@@ -130,13 +130,17 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 │   └── lib/
 │       └── mongodb.js           # Conexão e utilitários MongoDB (rate limiting, TTL)
 │
+├── src/
+│   └── assets/
+│       ├── images.js            # Módulo central de importação de imagens (cache busting)
+│       ├── logo.svg             # Logo (versão fundo escuro)
+│       ├── logoparaofundobranco.svg # Logo (versão fundo claro)
+│       ├── leandro.svg          # Foto do hero (tema escuro)
+│       ├── leandrofundobranco.svg   # Foto do hero (tema claro)
+│       ├── atendimento.svg      # Avatar do chat (tema claro)
+│       └── atendimentoescuro.svg    # Avatar do chat (tema escuro)
+│
 └── public/
-    ├── logo.svg                 # Logo (versão fundo escuro)
-    ├── logoparaofundobranco.svg # Logo (versão fundo claro)
-    ├── leandro.svg              # Foto do hero (tema escuro)
-    ├── leandrofundobranco.svg   # Foto do hero (tema claro)
-    ├── atendimento.svg          # Avatar do chat (tema claro)
-    ├── atendimentoescuro.svg    # Avatar do chat (tema escuro)
     ├── robots.txt
     ├── sitemap.xml
     ├── _redirects               # Redirects para Netlify (compatibilidade)
@@ -219,6 +223,8 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 - **Build size total:** ~78KB JS + ~49KB CSS (gzip: ~23KB + ~9KB)
 - **Zero dependências de framework front-end**
+- Imagens críticas importadas via ES Modules — Vite gera hash automático no nome do arquivo (ex: `leandro-Bli4fEol.svg`), eliminando problemas de cache após deploy
+- Ícones dinâmicos de `/public/icons/` com versionamento via query string (`?v=1`)
 - Imagens com `loading="eager"` (hero) e `loading="lazy"` (demais)
 - CSS com variáveis nativas — sem preprocessador
 - Animações com `requestAnimationFrame` e `IntersectionObserver`
