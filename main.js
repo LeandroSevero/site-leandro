@@ -17,8 +17,9 @@ const getThemePreference = () => {
 
 const updateLogo = (theme) => {
   const logo = document.getElementById('logo-img');
-  if (!logo) return;
-  logo.src = theme === 'dark' ? logoDark : logoLight;
+  if (logo) logo.src = theme === 'dark' ? logoDark : logoLight;
+  const favicon = document.getElementById('favicon');
+  if (favicon) favicon.href = theme === 'dark' ? logoDark : logoLight;
 };
 
 const updateHeroImage = (theme) => {
