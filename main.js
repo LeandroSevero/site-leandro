@@ -1,5 +1,13 @@
 import { dictionaries } from './i18n.js';
 import { initContactModal } from './contact-modal.js';
+import {
+  logoDark,
+  logoLight,
+  leandroDark,
+  leandroLight,
+  chatAvatarLight,
+  chatAvatarDark,
+} from './src/assets/images.js';
 
 const getThemePreference = () => {
   const stored = localStorage.getItem('theme');
@@ -10,17 +18,17 @@ const getThemePreference = () => {
 const updateLogo = (theme) => {
   const logo = document.getElementById('logo-img');
   if (!logo) return;
-  logo.src = theme === 'dark' ? '/logo.svg' : '/logoparaofundobranco.svg';
+  logo.src = theme === 'dark' ? logoDark : logoLight;
 };
 
 const updateHeroImage = (theme) => {
   const heroImg = document.querySelector('.hero-image .image-wrapper img');
   if (!heroImg) return;
-  heroImg.src = theme === 'dark' ? '/leandro.svg' : '/leandrofundobranco.svg';
+  heroImg.src = theme === 'dark' ? leandroDark : leandroLight;
 };
 
 const updateChatImages = (theme) => {
-  const src = theme === 'dark' ? '/atendimentoescuro.svg' : '/atendimento.svg';
+  const src = theme === 'dark' ? chatAvatarDark : chatAvatarLight;
   document.querySelectorAll('.chat-fab img, .chat-header-avatar img, .chat-bubble-avatar img').forEach(img => {
     img.src = src;
   });
@@ -387,7 +395,7 @@ const initSkillIcons = () => {
       if (index >= extensions.length) return;
       const ext = extensions[index];
       const img = new Image();
-      img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}`;
+      img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}?v=1`;
       img.onload = () => {
         iconEl.innerHTML = '';
         const size = iconEl.classList.contains('skill-detail-icon-wrap') ? 30 : 22;
@@ -411,7 +419,7 @@ const initCertIcons = () => {
       if (index >= extensions.length) return;
       const ext = extensions[index];
       const img = new Image();
-      img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}`;
+      img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}?v=1`;
       img.onload = () => {
         iconEl.innerHTML = '';
         const size = iconEl.classList.contains('cert-icon-small') ? 16 : 22;
@@ -523,7 +531,7 @@ const initSkillsCarousel = () => {
       const exts = ['png', 'svg', 'webp', 'jpg', 'jpeg'];
       if (i >= exts.length) return;
       const img = new Image();
-      img.src = `/icons/${encodeURIComponent(data.iconName)}/icon.${exts[i]}`;
+      img.src = `/icons/${encodeURIComponent(data.iconName)}/icon.${exts[i]}?v=1`;
       img.onload = () => {
         iconEl.innerHTML = '';
         img.width = 32; img.height = 32; img.alt = data.iconName;
@@ -558,7 +566,7 @@ const initSkillsCarousel = () => {
         const exts = ['png', 'svg', 'webp', 'jpg', 'jpeg'];
         if (i >= exts.length) return;
         const img = new Image();
-        img.src = `/icons/${encodeURIComponent(data.iconName)}/icon.${exts[i]}`;
+        img.src = `/icons/${encodeURIComponent(data.iconName)}/icon.${exts[i]}?v=1`;
         img.onload = () => {
           descIconEl.innerHTML = '';
           img.width = 22; img.height = 22; img.alt = data.iconName;
@@ -723,7 +731,7 @@ const initCertsCarousel = () => {
         if (index >= extensions.length) return;
         const ext = extensions[index];
         const img = new Image();
-        img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}`;
+        img.src = `/icons/${encodeURIComponent(name)}/icon.${ext}?v=1`;
         img.onload = () => {
           iconEl.innerHTML = '';
           const size = iconEl.classList.contains('cert-icon-small') ? 16 : 22;
