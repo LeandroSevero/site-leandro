@@ -1,3 +1,5 @@
+import { chatAvatarLight, chatAvatarDark } from './src/assets/images.js';
+
 const TOPICS = {
   'pt-BR': {
     start: {
@@ -351,7 +353,7 @@ const getTopics = () => TOPICS[getLang()] || TOPICS['pt-BR'];
 
 const getChatAvatarSrc = () => {
   const theme = document.documentElement.getAttribute('data-theme');
-  return theme === 'dark' ? '/atendimentoescuro.svg' : '/atendimento.svg';
+  return theme === 'dark' ? chatAvatarDark : chatAvatarLight;
 };
 
 const addBotBubble = (text) => {
