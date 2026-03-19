@@ -144,7 +144,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
     ├── robots.txt
     ├── sitemap.xml
     ├── _redirects               # Redirects para Netlify (compatibilidade)
-    └── icons/                   # Ícones SVG das tecnologias
+    └── icons/                   # Ícones SVG das tecnologias (carregados dinamicamente, sem import)
         ├── Azure DevOps/
         ├── Azure/
         ├── AWS/
@@ -223,8 +223,10 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 - **Build size total:** ~78KB JS + ~49KB CSS (gzip: ~23KB + ~9KB)
 - **Zero dependências de framework front-end**
-- Imagens críticas importadas via ES Modules — Vite gera hash automático no nome do arquivo (ex: `leandro-Bli4fEol.svg`), eliminando problemas de cache após deploy
-- Ícones dinâmicos de `/public/icons/` com versionamento via query string (`?v=1`)
+- Todas as imagens do site (logo, hero, avatar do chat) centralizadas em `src/assets/` e importadas via ES Modules — Vite gera hash automático no nome do arquivo (ex: `leandro-Bli4fEol.svg`), eliminando cache stale após deploy
+- Favicon também injetado via JS com o mesmo hash, sem referência estática em HTML
+- Ícones de tecnologias em `/public/icons/` carregados dinamicamente por string (sem import), com versionamento via query string (`?v=1`)
+- Zero arquivos de imagem duplicados no projeto
 - Imagens com `loading="eager"` (hero) e `loading="lazy"` (demais)
 - CSS com variáveis nativas — sem preprocessador
 - Animações com `requestAnimationFrame` e `IntersectionObserver`
