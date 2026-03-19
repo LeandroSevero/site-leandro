@@ -217,7 +217,7 @@ let isOpen = false;
 let suggestionShown = false;
 let idleTimer = null;
 let suggestionDismissTimer = null;
-let soundEnabled = true;
+let soundEnabled = false;
 
 const updateSoundIcon = () => {
   if (!soundIconOn || !soundIconOff) return;
@@ -501,7 +501,7 @@ const openChat = () => {
     soundHintShown = true;
     soundHintTimer = setTimeout(() => {
       soundHintTimer = null;
-      if (soundEnabled && isOpen) {
+      if (!soundEnabled && isOpen) {
         animateSoundIcon();
         showSoundToast();
       }
