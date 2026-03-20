@@ -2875,6 +2875,17 @@ main {
   box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
 }
 
+#azure-cicd-egg.egg-blocked {
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: auto;
+}
+
+#azure-cicd-egg.egg-blocked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .egg-ghost {
   position: fixed;
   z-index: 9999;

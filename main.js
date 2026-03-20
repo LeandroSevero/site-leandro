@@ -864,7 +864,7 @@ const initAzureEasterEgg = () => {
   };
 
   const handleClick = () => {
-    if (done) return;
+    if (done || trigger.classList.contains('egg-blocked')) return;
     done = true;
 
     trigger.style.opacity = '0.4';
@@ -927,6 +927,22 @@ const initAzureEasterEgg = () => {
   };
 
   trigger.addEventListener('click', handleClick);
+
+  const updateDisabledState = () => {
+    const header = document.querySelector('header') || document.querySelector('nav');
+    if (!header) return;
+    const headerBottom = header.getBoundingClientRect().bottom;
+    const triggerTop = trigger.getBoundingClientRect().top;
+    const proximity = 80;
+    if (triggerTop - headerBottom < proximity) {
+      trigger.classList.add('egg-blocked');
+    } else {
+      trigger.classList.remove('egg-blocked');
+    }
+  };
+
+  window.addEventListener('scroll', updateDisabledState, { passive: true });
+  updateDisabledState();
 };
 
 const init = () => {
