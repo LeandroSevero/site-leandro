@@ -2930,20 +2930,32 @@ main {
   transform: translateY(-1px);
 }
 
+@keyframes egg-pulse {
+  0%, 60%, 100% {
+    box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0);
+  }
+  30% {
+    box-shadow: 0 0 8px 4px rgba(var(--color-primary-rgb), 0.18);
+  }
+}
+
 #azure-cicd-egg {
   cursor: pointer;
   user-select: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: egg-pulse 2s ease-in-out infinite;
 }
 
 #azure-cicd-egg:hover {
   transform: scale(1.12);
   box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
+  animation-play-state: paused;
 }
 
 #azure-cicd-egg.egg-blocked {
   cursor: default;
   pointer-events: none;
+  animation: none;
 }
 
 #azure-cicd-egg.egg-blocked:hover {
