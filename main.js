@@ -915,6 +915,8 @@ const initAzureEasterEgg = () => {
         burstBubble(tx, ty);
         trigger.style.opacity = '';
         trigger.classList.add('egg-done');
+        done = false;
+        trigger.addEventListener('click', handleClick);
         return;
       }
 
