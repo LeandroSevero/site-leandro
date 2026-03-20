@@ -807,15 +807,21 @@ const initAzureEasterEgg = () => {
 
   let done = false;
 
-  const spawnTrail = (x, y, progress) => {
+  const rocketSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+    <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+  </svg>`;
+
+  const spawnTrail = (x, y) => {
     const dot = document.createElement('div');
     dot.className = 'egg-trail';
-    const size = 4 + Math.random() * 5;
+    const size = 3 + Math.random() * 5;
     dot.style.left = `${x - size / 2}px`;
     dot.style.top = `${y - size / 2}px`;
     dot.style.width = `${size}px`;
     dot.style.height = `${size}px`;
-    dot.style.opacity = String(0.4 + progress * 0.4);
     document.body.appendChild(dot);
     setTimeout(() => dot.remove(), 600);
   };
@@ -823,115 +829,86 @@ const initAzureEasterEgg = () => {
   const cubicBezier = (p0, p1, p2, p3, t) => {
     const mt = 1 - t;
     return {
-      x: mt * mt * mt * p0.x + 3 * mt * mt * t * p1.x + 3 * mt * t * t * p2.x + t * t * t * p3.x,
-      y: mt * mt * mt * p0.y + 3 * mt * mt * t * p1.y + 3 * mt * t * t * p2.y + t * t * t * p3.y,
+      x: mt*mt*mt*p0.x + 3*mt*mt*t*p1.x + 3*mt*t*t*p2.x + t*t*t*p3.x,
+      y: mt*mt*mt*p0.y + 3*mt*mt*t*p1.y + 3*mt*t*t*p2.y + t*t*t*p3.y,
     };
   };
 
-  const buildInfinityPath = (cx, cy, rx, ry) => {
-    const segments = [];
-    const tension = 0.55;
-
-    segments.push({
-      p0: { x: cx,       y: cy },
-      p1: { x: cx + rx * tension, y: cy - ry },
-      p2: { x: cx + rx,  y: cy - ry * tension },
-      p3: { x: cx + rx,  y: cy },
-    });
-    segments.push({
-      p0: { x: cx + rx,  y: cy },
-      p1: { x: cx + rx,  y: cy + ry * tension },
-      p2: { x: cx + rx * tension, y: cy + ry },
-      p3: { x: cx,       y: cy },
-    });
-    segments.push({
-      p0: { x: cx,       y: cy },
-      p1: { x: cx - rx * tension, y: cy + ry },
-      p2: { x: cx - rx,  y: cy + ry * tension },
-      p3: { x: cx - rx,  y: cy },
-    });
-    segments.push({
-      p0: { x: cx - rx,  y: cy },
-      p1: { x: cx - rx,  y: cy - ry * tension },
-      p2: { x: cx - rx * tension, y: cy - ry },
-      p3: { x: cx,       y: cy },
-    });
-
-    return segments;
+  const buildInfinitySegments = (cx, cy, rx, ry) => {
+    const k = 0.5522847;
+    return [
+      { p0: {x:cx,      y:cy},       p1: {x:cx+rx*k,  y:cy-ry},      p2: {x:cx+rx,    y:cy-ry*k},    p3: {x:cx+rx,   y:cy} },
+      { p0: {x:cx+rx,   y:cy},       p1: {x:cx+rx,    y:cy+ry*k},    p2: {x:cx+rx*k,  y:cy+ry},      p3: {x:cx,      y:cy} },
+      { p0: {x:cx,      y:cy},       p1: {x:cx-rx*k,  y:cy+ry},      p2: {x:cx-rx,    y:cy+ry*k},    p3: {x:cx-rx,   y:cy} },
+      { p0: {x:cx-rx,   y:cy},       p1: {x:cx-rx,    y:cy-ry*k},    p2: {x:cx-rx*k,  y:cy-ry},      p3: {x:cx,      y:cy} },
+    ];
   };
 
-  const animateGhost = (ghost, originX, originY, cx, cy, rx, ry, duration, onDone) => {
-    const segments = buildInfinityPath(cx, cy, rx, ry);
-    const totalSegments = segments.length;
-    const start = performance.now();
+  const samplePath = (segments, t) => {
+    const n = segments.length;
+    const scaled = t * n;
+    const idx = Math.min(Math.floor(scaled), n - 1);
+    return cubicBezier(segments[idx].p0, segments[idx].p1, segments[idx].p2, segments[idx].p3, scaled - idx);
+  };
 
+  const animateGhost = (ghost, originX, originY, cx, cy, rx, ry, onDone) => {
+    const segments = buildInfinitySegments(cx, cy, rx, ry);
+    const totalDuration = 4800;
+    const launchDuration = 400;
+    const returnDuration = 500;
+    const loopDuration = totalDuration - launchDuration - returnDuration;
+
+    const startTime = performance.now();
     let prevX = originX;
     let prevY = originY;
+    let smoothAngle = -45;
 
     const step = (now) => {
-      const elapsed = now - start;
-      const rawProgress = elapsed / duration;
+      const elapsed = now - startTime;
 
-      if (rawProgress >= 1) {
+      if (elapsed >= totalDuration) {
         ghost.style.opacity = '0';
-        ghost.style.transform = 'scale(0.5) rotate(720deg)';
-        setTimeout(() => {
-          ghost.remove();
-          onDone();
-        }, 300);
+        setTimeout(() => { ghost.remove(); onDone(); }, 200);
         return;
       }
 
-      const progress = Math.min(rawProgress, 1);
+      let pos, opacity;
 
-      const approachEnd = 0.92;
-      let pos;
-
-      if (progress < 0.08) {
-        const t = progress / 0.08;
-        const ease = t * t * (3 - 2 * t);
-        pos = {
-          x: originX + (cx - originX) * ease,
-          y: originY + (cy - originY) * ease,
-        };
-      } else if (progress < approachEnd) {
-        const loopT = (progress - 0.08) / (approachEnd - 0.08);
-        const segProgress = loopT * totalSegments;
-        const segIndex = Math.min(Math.floor(segProgress), totalSegments - 1);
-        const segT = segProgress - segIndex;
-        const easeT = segT < 0.5 ? 2 * segT * segT : -1 + (4 - 2 * segT) * segT;
-        const seg = segments[segIndex];
-        pos = cubicBezier(seg.p0, seg.p1, seg.p2, seg.p3, easeT);
+      if (elapsed < launchDuration) {
+        const t = elapsed / launchDuration;
+        const e = t * t * (3 - 2 * t);
+        pos = { x: originX + (cx - originX) * e, y: originY + (cy - originY) * e };
+        opacity = t;
+      } else if (elapsed < launchDuration + loopDuration) {
+        const t = (elapsed - launchDuration) / loopDuration;
+        pos = samplePath(segments, t);
+        opacity = 1;
       } else {
-        const t = (progress - approachEnd) / (1 - approachEnd);
-        const ease = t * t * (3 - 2 * t);
-        pos = {
-          x: cx + (originX - cx) * ease,
-          y: cy + (originY - cy) * ease,
-        };
+        const t = (elapsed - launchDuration - loopDuration) / returnDuration;
+        const e = t * t * (3 - 2 * t);
+        const loopEnd = samplePath(segments, 1);
+        pos = { x: loopEnd.x + (originX - loopEnd.x) * e, y: loopEnd.y + (originY - loopEnd.y) * e };
+        opacity = 1 - e;
       }
 
       const dx = pos.x - prevX;
       const dy = pos.y - prevY;
-      const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+      if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+        const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+        let diff = targetAngle - smoothAngle;
+        while (diff > 180) diff -= 360;
+        while (diff < -180) diff += 360;
+        smoothAngle += diff * 0.18;
+      }
 
-      const scale = progress < 0.08
-        ? 0.4 + (progress / 0.08) * 0.8
-        : progress > approachEnd
-          ? 1 + (1 - (progress - approachEnd) / (1 - approachEnd)) * 0.2
-          : 1 + Math.sin(progress * Math.PI * 2) * 0.12;
+      ghost.style.left = `${pos.x - 14}px`;
+      ghost.style.top = `${pos.y - 14}px`;
+      ghost.style.transform = `rotate(${smoothAngle}deg)`;
+      ghost.style.opacity = String(Math.max(0, Math.min(1, opacity)));
 
-      ghost.style.left = `${pos.x - 22}px`;
-      ghost.style.top = `${pos.y - 22}px`;
-      ghost.style.transform = `scale(${scale}) rotate(${angle}deg)`;
-      ghost.style.opacity = progress < 0.08
-        ? String(progress / 0.08)
-        : progress > approachEnd
-          ? String((1 - progress) / (1 - approachEnd))
-          : '1';
-
-      const trailChance = progress > 0.08 && progress < approachEnd ? 0.45 : 0.15;
-      if (Math.random() < trailChance) spawnTrail(pos.x, pos.y, progress);
+      if (elapsed > launchDuration && elapsed < launchDuration + loopDuration && Math.random() < 0.5) {
+        spawnTrail(pos.x, pos.y);
+      }
 
       prevX = pos.x;
       prevY = pos.y;
@@ -946,30 +923,39 @@ const initAzureEasterEgg = () => {
     if (done) return;
     done = true;
 
-    trigger.style.opacity = '0.35';
+    trigger.style.opacity = '0.4';
     trigger.removeEventListener('click', handleClick);
+
+    const certsSection = document.getElementById('certificados');
+    const expSection = document.getElementById('experiencia');
 
     const rect = trigger.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
 
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const scrollY = window.scrollY;
+    const certsTop = certsSection ? certsSection.getBoundingClientRect().top + scrollY : scrollY;
+    const expBottom = expSection ? expSection.getBoundingClientRect().bottom + scrollY : scrollY + window.innerHeight;
 
+    const areaTop = certsSection ? certsSection.getBoundingClientRect().top : 0;
+    const areaBottom = expSection ? expSection.getBoundingClientRect().bottom : window.innerHeight;
+    const areaHeight = areaBottom - areaTop;
+
+    const vw = window.innerWidth;
     const cx = vw * 0.5;
-    const cy = vh * 0.42;
-    const rx = Math.min(vw * 0.32, 280);
-    const ry = Math.min(vh * 0.22, 160);
+    const cy = areaTop + areaHeight * 0.5;
+    const rx = Math.min(vw * 0.38, 340);
+    const ry = Math.min(areaHeight * 0.3, 140);
 
     const ghost = document.createElement('div');
     ghost.className = 'egg-ghost';
-    ghost.innerHTML = trigger.innerHTML;
-    ghost.style.left = `${originX - 22}px`;
-    ghost.style.top = `${originY - 22}px`;
+    ghost.innerHTML = rocketSVG;
+    ghost.style.left = `${originX - 14}px`;
+    ghost.style.top = `${originY - 14}px`;
     ghost.style.opacity = '0';
     document.body.appendChild(ghost);
 
-    animateGhost(ghost, originX, originY, cx, cy, rx, ry, 4200, () => {
+    animateGhost(ghost, originX, originY, cx, cy, rx, ry, () => {
       trigger.style.opacity = '';
       trigger.classList.add('egg-done');
     });

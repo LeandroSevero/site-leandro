@@ -2882,12 +2882,10 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: var(--radius-md);
-  background-color: rgba(var(--color-primary-rgb), 0.18);
+  width: 28px;
+  height: 28px;
   color: var(--color-primary);
-  box-shadow: 0 0 24px rgba(var(--color-primary-rgb), 0.5), 0 0 8px rgba(var(--color-primary-rgb), 0.8);
+  filter: drop-shadow(0 0 5px rgba(var(--color-primary-rgb), 0.9));
   will-change: transform, opacity, left, top;
   transform-origin: center center;
 }
