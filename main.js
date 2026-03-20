@@ -840,8 +840,10 @@ const initAzureEasterEgg = () => {
     for (let i = 0; i < count; i++) {
       const shard = document.createElement('div');
       shard.className = 'egg-shard';
-      const angle = (i / count) * Math.PI * 2;
-      const dist  = 40 + Math.random() * 60;
+      const spread = (Math.PI / 3);
+      const baseAngle = -Math.PI / 2;
+      const angle = baseAngle - spread / 2 + (i / (count - 1)) * spread;
+      const dist  = 60 + Math.random() * 80;
       shard.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
       shard.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
       const size = 4 + Math.random() * 6;
