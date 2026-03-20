@@ -890,7 +890,10 @@ const initAzureEasterEgg = () => {
     ghost.style.opacity = '1';
     document.body.appendChild(ghost);
 
-    const RISE_MS = Math.max(400, (oy - ty) * 0.9);
+    const vertDist = oy - ty;
+    const horizDist = vertDist;
+    const tx = ox + horizDist;
+    const RISE_MS = Math.max(400, vertDist * 0.9);
     const t0 = performance.now();
 
     const step = (now) => {
@@ -898,17 +901,18 @@ const initAzureEasterEgg = () => {
       const p  = Math.min(el / RISE_MS, 1);
       const e  = p * p * (3 - 2 * p);
 
+      const cx = ox + (tx - ox) * e;
       const cy = oy + (ty - oy) * e;
 
-      ghost.style.left = `${ox - half}px`;
+      ghost.style.left = `${cx - half}px`;
       ghost.style.top  = `${cy - half}px`;
 
-      if (Math.random() < 0.55) spawnTrail(ox, cy);
+      if (Math.random() < 0.55) spawnTrail(cx, cy);
 
       if (p >= 1) {
         ghost.style.opacity = '0';
         ghost.remove();
-        burstBubble(ox, ty);
+        burstBubble(tx, ty);
         trigger.style.opacity = '';
         trigger.classList.add('egg-done');
         return;
