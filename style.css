@@ -2382,6 +2382,71 @@ main {
   border-color: var(--color-fg-muted);
 }
 
+.cv-download-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-10);
+  padding-bottom: var(--space-4);
+}
+
+.cv-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-8);
+  background-color: var(--color-primary);
+  color: var(--color-primary-fg);
+  border: 2px solid var(--color-primary);
+  border-radius: 3rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 18px rgba(var(--color-primary-rgb), 0.28);
+}
+
+.cv-download-btn:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(var(--color-primary-rgb), 0.38);
+}
+
+.cv-download-btn:active {
+  transform: translateY(0);
+}
+
+.cv-download-btn svg {
+  flex-shrink: 0;
+}
+
+.chat-cv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: rgba(var(--color-primary-rgb), 0.12);
+  color: var(--color-primary);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.3);
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+  width: fit-content;
+}
+
+.chat-cv-link:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.22);
+  transform: translateY(-1px);
+}
+
+.chat-bubble-text .chat-cv-link {
+  display: flex;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(32px);
@@ -2864,15 +2929,25 @@ main {
   transform: translateY(-1px);
 }
 
-#azure-cicd-egg:not(.egg-done) {
+#azure-cicd-egg {
   cursor: pointer;
   user-select: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-#azure-cicd-egg:not(.egg-done):hover {
+#azure-cicd-egg:hover {
   transform: scale(1.12);
   box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
+}
+
+#azure-cicd-egg.egg-blocked {
+  cursor: default;
+  pointer-events: none;
+}
+
+#azure-cicd-egg.egg-blocked:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .egg-ghost {
@@ -2882,28 +2957,57 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: var(--radius-md);
-  background-color: rgba(var(--color-primary-rgb), 0.18);
+  width: 28px;
+  height: 28px;
   color: var(--color-primary);
-  box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.35);
-  will-change: transform, opacity;
+  filter: drop-shadow(0 0 5px rgba(var(--color-primary-rgb), 0.9));
+  will-change: transform, opacity, left, top;
+  transform-origin: center center;
 }
 
 .egg-trail {
   position: fixed;
   z-index: 9998;
   pointer-events: none;
-  width: 6px;
-  height: 6px;
   border-radius: 50%;
-  background-color: var(--color-primary);
-  opacity: 0.6;
+  background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.9) 0%, rgba(var(--color-primary-rgb), 0) 100%);
   will-change: transform, opacity;
-  animation: egg-trail-fade 0.5s ease forwards;
+  animation: egg-trail-fade 0.6s ease-out forwards;
 }
 
 @keyframes egg-trail-fade {
-  to { opacity: 0; transform: scale(0); }
+  0%   { transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.1); }
+}
+
+.egg-shard {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(var(--color-primary-rgb), 0.9);
+  animation: egg-shard-burst 0.65s cubic-bezier(0.2, 0, 0.8, 1) forwards;
+}
+
+@keyframes egg-shard-burst {
+  0%   { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.egg-ring {
+  position: fixed;
+  z-index: 9998;
+  pointer-events: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(var(--color-primary-rgb), 0.8);
+  animation: egg-ring-expand 0.55s ease-out forwards;
+}
+
+@keyframes egg-ring-expand {
+  0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(14); opacity: 0; }
 }

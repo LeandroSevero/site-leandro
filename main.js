@@ -806,110 +806,143 @@ const initAzureEasterEgg = () => {
   if (!trigger) return;
 
   let done = false;
-
-  const lerp = (a, b, t) => a + (b - a) * t;
+  let animId = null;
 
   const spawnTrail = (x, y) => {
     const dot = document.createElement('div');
     dot.className = 'egg-trail';
-    dot.style.left = `${x - 3}px`;
-    dot.style.top = `${y - 3}px`;
+    const size = 3 + Math.random() * 6;
+    dot.style.left = `${x - size / 2}px`;
+    dot.style.top = `${y - size / 2}px`;
+    dot.style.width = `${size}px`;
+    dot.style.height = `${size}px`;
     document.body.appendChild(dot);
-    setTimeout(() => dot.remove(), 500);
+    setTimeout(() => dot.remove(), 700);
   };
 
-  const animateGhost = (ghost, waypoints, duration, onDone) => {
-    const start = performance.now();
-
-    const step = (now) => {
-      const elapsed = now - start;
-      const rawProgress = elapsed / duration;
-
-      if (rawProgress >= 1) {
-        ghost.style.opacity = '0';
-        ghost.style.transform = 'scale(1) rotate(360deg)';
-        setTimeout(() => {
-          ghost.remove();
-          onDone();
-        }, 200);
-        return;
-      }
-
-      const progress = Math.min(rawProgress, 1);
-      const totalSegments = waypoints.length - 1;
-      const segProgress = progress * totalSegments;
-      const segIndex = Math.min(Math.floor(segProgress), totalSegments - 1);
-      const segT = segProgress - segIndex;
-
-      const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      const et = ease(segT);
-
-      const p0 = waypoints[segIndex];
-      const p1 = waypoints[segIndex + 1];
-      const x = lerp(p0.x, p1.x, et);
-      const y = lerp(p0.y, p1.y, et);
-      const scale = 1 + Math.sin(progress * Math.PI) * 0.3;
-      const rotation = progress * 360;
-
-      ghost.style.left = `${x - 22}px`;
-      ghost.style.top = `${y - 22}px`;
-      ghost.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
-      ghost.style.opacity = progress < 0.08
-        ? String(progress / 0.08)
-        : progress > 0.85
-          ? String((1 - progress) / 0.15)
-          : '1';
-
-      if (Math.random() < 0.3) spawnTrail(x, y);
-
-      requestAnimationFrame(step);
+  const cubicBezier = (p0, p1, p2, p3, t) => {
+    const m = 1 - t;
+    return {
+      x: m*m*m*p0.x + 3*m*m*t*p1.x + 3*m*t*t*p2.x + t*t*t*p3.x,
+      y: m*m*m*p0.y + 3*m*m*t*p1.y + 3*m*t*t*p2.y + t*t*t*p3.y,
     };
+  };
 
-    requestAnimationFrame(step);
+  const lerpAngle = (a, b, t) => {
+    let d = b - a;
+    while (d > 180) d -= 360;
+    while (d < -180) d += 360;
+    return a + d * t;
+  };
+
+  const burstBubble = (bx, by) => {
+    const count = 18;
+    for (let i = 0; i < count; i++) {
+      const shard = document.createElement('div');
+      shard.className = 'egg-shard';
+      const spread = (Math.PI / 3);
+      const baseAngle = -Math.PI / 4;
+      const angle = baseAngle - spread / 2 + (i / (count - 1)) * spread;
+      const dist  = 60 + Math.random() * 80;
+      shard.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+      shard.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+      const size = 4 + Math.random() * 6;
+      shard.style.width  = `${size}px`;
+      shard.style.height = `${size}px`;
+      shard.style.left   = `${bx}px`;
+      shard.style.top    = `${by}px`;
+      document.body.appendChild(shard);
+      setTimeout(() => shard.remove(), 700);
+    }
+
+    const ring = document.createElement('div');
+    ring.className = 'egg-ring';
+    ring.style.left = `${bx}px`;
+    ring.style.top  = `${by}px`;
+    document.body.appendChild(ring);
+    setTimeout(() => ring.remove(), 600);
   };
 
   const handleClick = () => {
     if (done) return;
     done = true;
 
-    trigger.style.opacity = '0.35';
+    trigger.style.opacity = '0.4';
     trigger.removeEventListener('click', handleClick);
 
-    const rect = trigger.getBoundingClientRect();
-    const originX = rect.left + rect.width / 2;
-    const originY = rect.top + rect.height / 2;
+    const iconImg = trigger.querySelector('img.cert-custom-icon');
+    const iconEl  = iconImg || trigger.querySelector('svg');
+    const iconRect = iconEl ? iconEl.getBoundingClientRect() : trigger.getBoundingClientRect();
+    const ox = iconRect.left + iconRect.width  / 2;
+    const oy = iconRect.top  + iconRect.height / 2;
+    const iconSize = Math.max(iconRect.width, iconRect.height, 22);
+    const half = iconSize / 2;
 
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    const waypoints = [
-      { x: originX,    y: originY    },
-      { x: vw * 0.75,  y: vh * 0.15 },
-      { x: vw * 0.5,   y: vh * 0.08 },
-      { x: vw * 0.2,   y: vh * 0.2  },
-      { x: vw * 0.1,   y: vh * 0.55 },
-      { x: vw * 0.3,   y: vh * 0.82 },
-      { x: vw * 0.65,  y: vh * 0.75 },
-      { x: vw * 0.88,  y: vh * 0.45 },
-      { x: vw * 0.7,   y: vh * 0.25 },
-      { x: originX,    y: originY    },
-    ];
+    const header = document.querySelector('header') || document.querySelector('nav');
+    const headerBottom = header ? header.getBoundingClientRect().bottom : 60;
+    const ty = headerBottom + half;
 
     const ghost = document.createElement('div');
     ghost.className = 'egg-ghost';
-    ghost.innerHTML = trigger.innerHTML;
-    ghost.style.left = `${originX - 22}px`;
-    ghost.style.top = `${originY - 22}px`;
-    ghost.style.opacity = '0';
+    ghost.appendChild(iconEl.cloneNode(true));
+    ghost.style.left    = `${ox - half}px`;
+    ghost.style.top     = `${oy - half}px`;
+    ghost.style.opacity = '1';
     document.body.appendChild(ghost);
 
-    animateGhost(ghost, waypoints, 2200, () => {
-      trigger.style.opacity = '';
-      trigger.classList.add('egg-done');
-    });
+    const vertDist = oy - ty;
+    const horizDist = vertDist;
+    const tx = ox + horizDist;
+    const RISE_MS = Math.max(400, vertDist * 0.9);
+    const t0 = performance.now();
+
+    const step = (now) => {
+      const el = now - t0;
+      const p  = Math.min(el / RISE_MS, 1);
+      const e  = p * p * (3 - 2 * p);
+
+      const cx = ox + (tx - ox) * e;
+      const cy = oy + (ty - oy) * e;
+
+      ghost.style.left = `${cx - half}px`;
+      ghost.style.top  = `${cy - half}px`;
+
+      if (Math.random() < 0.55) spawnTrail(cx, cy);
+
+      if (p >= 1) {
+        ghost.style.opacity = '0';
+        ghost.remove();
+        burstBubble(tx, ty);
+        trigger.style.opacity = '';
+        trigger.classList.add('egg-done');
+        done = false;
+        trigger.addEventListener('click', handleClick);
+        return;
+      }
+
+      animId = requestAnimationFrame(step);
+    };
+
+    animId = requestAnimationFrame(step);
   };
 
   trigger.addEventListener('click', handleClick);
+
+  const updateDisabledState = () => {
+    const header = document.querySelector('header') || document.querySelector('nav');
+    if (!header) return;
+    const headerBottom = header.getBoundingClientRect().bottom;
+    const triggerTop = trigger.getBoundingClientRect().top;
+    const proximity = 15;
+    if (triggerTop - headerBottom < proximity) {
+      trigger.classList.add('egg-blocked');
+    } else {
+      trigger.classList.remove('egg-blocked');
+    }
+  };
+
+  window.addEventListener('scroll', updateDisabledState, { passive: true });
+  updateDisabledState();
 };
 
 const init = () => {

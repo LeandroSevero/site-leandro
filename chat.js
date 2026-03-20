@@ -220,6 +220,7 @@ let suggestionShown = false;
 let idleTimer = null;
 let suggestionDismissTimer = null;
 let soundEnabled = false;
+const cvShownForTopics = new Set();
 
 const updateSoundIcon = () => {
   if (!soundIconOn || !soundIconOff) return;
@@ -370,6 +371,32 @@ const addBotBubble = (text) => {
   speak(text);
 };
 
+const CV_DOWNLOAD_MESSAGES = {
+  'pt-BR': { text: 'Aqui está o currículo do Leandro em PDF:', label: 'Baixar currículo (PDF)' },
+  en: { text: "Here's Leandro's resume in PDF:", label: 'Download resume (PDF)' },
+};
+
+const addCvDownloadBubble = () => {
+  const lang = getLang();
+  const msgs = CV_DOWNLOAD_MESSAGES[lang] || CV_DOWNLOAD_MESSAGES['pt-BR'];
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble';
+  bubble.innerHTML = `
+    <div class="chat-bubble-avatar">
+      <img src="${getChatAvatarSrc()}" alt="Bot">
+    </div>
+    <div class="chat-bubble-text">
+      ${msgs.text}
+      <a href="/Curriculo-Leandro.pdf" download="Curriculo-Leandro.pdf" class="chat-cv-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        ${msgs.label}
+      </a>
+    </div>
+  `;
+  messagesEl.appendChild(bubble);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+};
+
 const addUserBubble = (text) => {
   const bubble = document.createElement('div');
   bubble.className = 'chat-bubble user-bubble';
@@ -452,6 +479,8 @@ const handleOption = (opt) => {
   addUserBubble(opt.label);
   optionsEl.innerHTML = '';
 
+  const CV_TOPICS = new Set(['about', 'full_summary', 'experience', 'skills', 'education']);
+
   showTyping();
   setTimeout(() => {
     removeTyping();
@@ -459,7 +488,15 @@ const handleOption = (opt) => {
     const topic = topics[opt.next] || topics.fallback;
     if (topic) {
       addBotBubble(topic.message);
-      renderOptions(topic.options);
+      if (CV_TOPICS.has(opt.next) && cvShownForTopics.size === 0) {
+        cvShownForTopics.add(opt.next);
+        setTimeout(() => {
+          addCvDownloadBubble();
+          renderOptions(topic.options);
+        }, 600);
+      } else {
+        renderOptions(topic.options);
+      }
     }
   }, 800);
 };
