@@ -2943,7 +2943,7 @@ main {
   cursor: pointer;
   user-select: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  animation: egg-pulse 2s ease-in-out infinite;
+  animation: egg-pulse 5s ease-in-out infinite;
 }
 
 #azure-cicd-egg:hover {
