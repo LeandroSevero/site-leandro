@@ -876,9 +876,11 @@ const initAzureEasterEgg = () => {
     const iconSize = Math.max(iconRect.width, iconRect.height, 22);
     const half = iconSize / 2;
 
-    const header = document.querySelector('header') || document.querySelector('nav');
-    const headerBottom = header ? header.getBoundingClientRect().bottom : 60;
-    const ty = headerBottom + half;
+    const skillsSection = document.getElementById('skills');
+    const targetEl = skillsSection ? (skillsSection.querySelector('h2') || skillsSection) : null;
+    const targetRect = targetEl ? targetEl.getBoundingClientRect() : { top: 80, left: window.innerWidth / 2, width: 0 };
+    const tx = targetRect.left + targetRect.width / 2;
+    const ty = targetRect.top;
 
     const ghost = document.createElement('div');
     ghost.className = 'egg-ghost';
@@ -888,7 +890,8 @@ const initAzureEasterEgg = () => {
     ghost.style.opacity = '1';
     document.body.appendChild(ghost);
 
-    const RISE_MS = Math.max(400, (oy - ty) * 0.9);
+    const RISE_MS = Math.max(700, (oy - ty) * 1.0);
+    const waveAmp = 60 + Math.random() * 40;
     const t0 = performance.now();
 
     const step = (now) => {
@@ -897,16 +900,18 @@ const initAzureEasterEgg = () => {
       const e  = p * p * (3 - 2 * p);
 
       const cy = oy + (ty - oy) * e;
+      const wave = Math.sin(p * Math.PI * 3) * waveAmp * (1 - p);
+      const cx = ox + (tx - ox) * e + wave;
 
-      ghost.style.left = `${ox - half}px`;
+      ghost.style.left = `${cx - half}px`;
       ghost.style.top  = `${cy - half}px`;
 
-      if (Math.random() < 0.55) spawnTrail(ox, cy);
+      if (Math.random() < 0.55) spawnTrail(cx, cy);
 
       if (p >= 1) {
         ghost.style.opacity = '0';
         ghost.remove();
-        burstBubble(ox, ty);
+        burstBubble(cx, cy);
         trigger.style.opacity = '';
         trigger.classList.add('egg-done');
         return;
