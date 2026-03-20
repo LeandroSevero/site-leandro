@@ -807,19 +807,66 @@ const initAzureEasterEgg = () => {
 
   let done = false;
 
-  const lerp = (a, b, t) => a + (b - a) * t;
-
-  const spawnTrail = (x, y) => {
+  const spawnTrail = (x, y, progress) => {
     const dot = document.createElement('div');
     dot.className = 'egg-trail';
-    dot.style.left = `${x - 3}px`;
-    dot.style.top = `${y - 3}px`;
+    const size = 4 + Math.random() * 5;
+    dot.style.left = `${x - size / 2}px`;
+    dot.style.top = `${y - size / 2}px`;
+    dot.style.width = `${size}px`;
+    dot.style.height = `${size}px`;
+    dot.style.opacity = String(0.4 + progress * 0.4);
     document.body.appendChild(dot);
-    setTimeout(() => dot.remove(), 500);
+    setTimeout(() => dot.remove(), 600);
   };
 
-  const animateGhost = (ghost, waypoints, duration, onDone) => {
+  const cubicBezier = (p0, p1, p2, p3, t) => {
+    const mt = 1 - t;
+    return {
+      x: mt * mt * mt * p0.x + 3 * mt * mt * t * p1.x + 3 * mt * t * t * p2.x + t * t * t * p3.x,
+      y: mt * mt * mt * p0.y + 3 * mt * mt * t * p1.y + 3 * mt * t * t * p2.y + t * t * t * p3.y,
+    };
+  };
+
+  const buildInfinityPath = (cx, cy, rx, ry) => {
+    const segments = [];
+    const tension = 0.55;
+
+    segments.push({
+      p0: { x: cx,       y: cy },
+      p1: { x: cx + rx * tension, y: cy - ry },
+      p2: { x: cx + rx,  y: cy - ry * tension },
+      p3: { x: cx + rx,  y: cy },
+    });
+    segments.push({
+      p0: { x: cx + rx,  y: cy },
+      p1: { x: cx + rx,  y: cy + ry * tension },
+      p2: { x: cx + rx * tension, y: cy + ry },
+      p3: { x: cx,       y: cy },
+    });
+    segments.push({
+      p0: { x: cx,       y: cy },
+      p1: { x: cx - rx * tension, y: cy + ry },
+      p2: { x: cx - rx,  y: cy + ry * tension },
+      p3: { x: cx - rx,  y: cy },
+    });
+    segments.push({
+      p0: { x: cx - rx,  y: cy },
+      p1: { x: cx - rx,  y: cy - ry * tension },
+      p2: { x: cx - rx * tension, y: cy - ry },
+      p3: { x: cx,       y: cy },
+    });
+
+    return segments;
+  };
+
+  const animateGhost = (ghost, originX, originY, cx, cy, rx, ry, duration, onDone) => {
+    const segments = buildInfinityPath(cx, cy, rx, ry);
+    const totalSegments = segments.length;
     const start = performance.now();
+
+    let prevX = originX;
+    let prevY = originY;
 
     const step = (now) => {
       const elapsed = now - start;
@@ -827,40 +874,67 @@ const initAzureEasterEgg = () => {
 
       if (rawProgress >= 1) {
         ghost.style.opacity = '0';
-        ghost.style.transform = 'scale(1) rotate(360deg)';
+        ghost.style.transform = 'scale(0.5) rotate(720deg)';
         setTimeout(() => {
           ghost.remove();
           onDone();
-        }, 200);
+        }, 300);
         return;
       }
 
       const progress = Math.min(rawProgress, 1);
-      const totalSegments = waypoints.length - 1;
-      const segProgress = progress * totalSegments;
-      const segIndex = Math.min(Math.floor(segProgress), totalSegments - 1);
-      const segT = segProgress - segIndex;
 
-      const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      const et = ease(segT);
+      const approachEnd = 0.92;
+      let pos;
 
-      const p0 = waypoints[segIndex];
-      const p1 = waypoints[segIndex + 1];
-      const x = lerp(p0.x, p1.x, et);
-      const y = lerp(p0.y, p1.y, et);
-      const scale = 1 + Math.sin(progress * Math.PI) * 0.3;
-      const rotation = progress * 360;
+      if (progress < 0.08) {
+        const t = progress / 0.08;
+        const ease = t * t * (3 - 2 * t);
+        pos = {
+          x: originX + (cx - originX) * ease,
+          y: originY + (cy - originY) * ease,
+        };
+      } else if (progress < approachEnd) {
+        const loopT = (progress - 0.08) / (approachEnd - 0.08);
+        const segProgress = loopT * totalSegments;
+        const segIndex = Math.min(Math.floor(segProgress), totalSegments - 1);
+        const segT = segProgress - segIndex;
+        const easeT = segT < 0.5 ? 2 * segT * segT : -1 + (4 - 2 * segT) * segT;
+        const seg = segments[segIndex];
+        pos = cubicBezier(seg.p0, seg.p1, seg.p2, seg.p3, easeT);
+      } else {
+        const t = (progress - approachEnd) / (1 - approachEnd);
+        const ease = t * t * (3 - 2 * t);
+        pos = {
+          x: cx + (originX - cx) * ease,
+          y: cy + (originY - cy) * ease,
+        };
+      }
 
-      ghost.style.left = `${x - 22}px`;
-      ghost.style.top = `${y - 22}px`;
-      ghost.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+      const dx = pos.x - prevX;
+      const dy = pos.y - prevY;
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+
+      const scale = progress < 0.08
+        ? 0.4 + (progress / 0.08) * 0.8
+        : progress > approachEnd
+          ? 1 + (1 - (progress - approachEnd) / (1 - approachEnd)) * 0.2
+          : 1 + Math.sin(progress * Math.PI * 2) * 0.12;
+
+      ghost.style.left = `${pos.x - 22}px`;
+      ghost.style.top = `${pos.y - 22}px`;
+      ghost.style.transform = `scale(${scale}) rotate(${angle}deg)`;
       ghost.style.opacity = progress < 0.08
         ? String(progress / 0.08)
-        : progress > 0.85
-          ? String((1 - progress) / 0.15)
+        : progress > approachEnd
+          ? String((1 - progress) / (1 - approachEnd))
           : '1';
 
-      if (Math.random() < 0.3) spawnTrail(x, y);
+      const trailChance = progress > 0.08 && progress < approachEnd ? 0.45 : 0.15;
+      if (Math.random() < trailChance) spawnTrail(pos.x, pos.y, progress);
+
+      prevX = pos.x;
+      prevY = pos.y;
 
       requestAnimationFrame(step);
     };
@@ -882,18 +956,10 @@ const initAzureEasterEgg = () => {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    const waypoints = [
-      { x: originX,    y: originY    },
-      { x: vw * 0.75,  y: vh * 0.15 },
-      { x: vw * 0.5,   y: vh * 0.08 },
-      { x: vw * 0.2,   y: vh * 0.2  },
-      { x: vw * 0.1,   y: vh * 0.55 },
-      { x: vw * 0.3,   y: vh * 0.82 },
-      { x: vw * 0.65,  y: vh * 0.75 },
-      { x: vw * 0.88,  y: vh * 0.45 },
-      { x: vw * 0.7,   y: vh * 0.25 },
-      { x: originX,    y: originY    },
-    ];
+    const cx = vw * 0.5;
+    const cy = vh * 0.42;
+    const rx = Math.min(vw * 0.32, 280);
+    const ry = Math.min(vh * 0.22, 160);
 
     const ghost = document.createElement('div');
     ghost.className = 'egg-ghost';
@@ -903,7 +969,7 @@ const initAzureEasterEgg = () => {
     ghost.style.opacity = '0';
     document.body.appendChild(ghost);
 
-    animateGhost(ghost, waypoints, 2200, () => {
+    animateGhost(ghost, originX, originY, cx, cy, rx, ry, 4200, () => {
       trigger.style.opacity = '';
       trigger.classList.add('egg-done');
     });
