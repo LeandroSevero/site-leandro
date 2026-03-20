@@ -2904,3 +2904,35 @@ main {
   0%   { transform: scale(1); }
   100% { opacity: 0; transform: scale(0.1); }
 }
+
+.egg-shard {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(var(--color-primary-rgb), 0.9);
+  animation: egg-shard-burst 0.65s cubic-bezier(0.2, 0, 0.8, 1) forwards;
+}
+
+@keyframes egg-shard-burst {
+  0%   { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.egg-ring {
+  position: fixed;
+  z-index: 9998;
+  pointer-events: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(var(--color-primary-rgb), 0.8);
+  animation: egg-ring-expand 0.55s ease-out forwards;
+}
+
+@keyframes egg-ring-expand {
+  0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(14); opacity: 0; }
+}
