@@ -2864,13 +2864,13 @@ main {
   transform: translateY(-1px);
 }
 
-#azure-cicd-egg:not(.egg-done) {
+#azure-cicd-egg {
   cursor: pointer;
   user-select: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-#azure-cicd-egg:not(.egg-done):hover {
+#azure-cicd-egg:hover {
   transform: scale(1.12);
   box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
 }
