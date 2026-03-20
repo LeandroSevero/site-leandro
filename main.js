@@ -864,7 +864,7 @@ const initAzureEasterEgg = () => {
   };
 
   const handleClick = () => {
-    if (done || trigger.classList.contains('egg-blocked')) return;
+    if (done) return;
     done = true;
 
     trigger.style.opacity = '0.4';
@@ -933,7 +933,7 @@ const initAzureEasterEgg = () => {
     if (!header) return;
     const headerBottom = header.getBoundingClientRect().bottom;
     const triggerTop = trigger.getBoundingClientRect().top;
-    const proximity = 5;
+    const proximity = 15;
     if (triggerTop - headerBottom < proximity) {
       trigger.classList.add('egg-blocked');
     } else {
