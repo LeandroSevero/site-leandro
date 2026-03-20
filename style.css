@@ -2877,11 +2877,12 @@ main {
 
 #azure-cicd-egg.egg-blocked {
   cursor: default;
+  pointer-events: none;
 }
 
 #azure-cicd-egg.egg-blocked:hover {
-  transform: scale(1.12);
-  box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
+  transform: none;
+  box-shadow: none;
 }
 
 .egg-ghost {
