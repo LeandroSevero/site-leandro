@@ -845,16 +845,19 @@ const initAzureEasterEgg = () => {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    const rect = trigger.getBoundingClientRect();
-    const ox = rect.left + rect.width / 2;
-    const oy = rect.top  + rect.height / 2;
+    const iconImg = trigger.querySelector('img.cert-custom-icon');
+    const iconEl  = iconImg || trigger.querySelector('svg');
+    const iconRect = iconEl ? iconEl.getBoundingClientRect() : trigger.getBoundingClientRect();
+    const ox = iconRect.left + iconRect.width  / 2;
+    const oy = iconRect.top  + iconRect.height / 2;
+    const iconSize = Math.max(iconRect.width, iconRect.height, 22);
+    const half = iconSize / 2;
 
-    const iconSVG = trigger.querySelector('svg');
     const ghost = document.createElement('div');
     ghost.className = 'egg-ghost';
-    if (iconSVG) ghost.appendChild(iconSVG.cloneNode(true));
-    ghost.style.left    = `${ox - 14}px`;
-    ghost.style.top     = `${oy - 14}px`;
+    ghost.appendChild(iconEl.cloneNode(true));
+    ghost.style.left    = `${ox - half}px`;
+    ghost.style.top     = `${oy - half}px`;
     ghost.style.opacity = '0';
     document.body.appendChild(ghost);
 
@@ -929,8 +932,8 @@ const initAzureEasterEgg = () => {
         smoothAngle = lerpAngle(smoothAngle, target, 0.13);
       }
 
-      ghost.style.left      = `${pos.x - 14}px`;
-      ghost.style.top       = `${pos.y - 14}px`;
+      ghost.style.left      = `${pos.x - half}px`;
+      ghost.style.top       = `${pos.y - half}px`;
       ghost.style.transform = `rotate(${smoothAngle}deg)`;
       ghost.style.opacity   = String(Math.max(0, Math.min(1, opacity)));
 
