@@ -479,7 +479,7 @@ const handleOption = (opt) => {
   addUserBubble(opt.label);
   optionsEl.innerHTML = '';
 
-  const CV_TOPICS = new Set(['about', 'full_summary']);
+  const CV_TOPICS = new Set(['about', 'full_summary', 'experience', 'skills', 'education']);
 
   showTyping();
   setTimeout(() => {
@@ -488,7 +488,7 @@ const handleOption = (opt) => {
     const topic = topics[opt.next] || topics.fallback;
     if (topic) {
       addBotBubble(topic.message);
-      if (CV_TOPICS.has(opt.next) && !cvShownForTopics.has(opt.next)) {
+      if (CV_TOPICS.has(opt.next) && cvShownForTopics.size === 0) {
         cvShownForTopics.add(opt.next);
         setTimeout(() => {
           addCvDownloadBubble();
