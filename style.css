@@ -2876,14 +2876,12 @@ main {
 }
 
 #azure-cicd-egg.egg-blocked {
-  cursor: not-allowed;
-  opacity: 0.5;
-  pointer-events: auto;
+  cursor: default;
 }
 
 #azure-cicd-egg.egg-blocked:hover {
-  transform: none;
-  box-shadow: none;
+  transform: scale(1.12);
+  box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.25);
 }
 
 .egg-ghost {

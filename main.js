@@ -933,7 +933,7 @@ const initAzureEasterEgg = () => {
     if (!header) return;
     const headerBottom = header.getBoundingClientRect().bottom;
     const triggerTop = trigger.getBoundingClientRect().top;
-    const proximity = 80;
+    const proximity = 5;
     if (triggerTop - headerBottom < proximity) {
       trigger.classList.add('egg-blocked');
     } else {
