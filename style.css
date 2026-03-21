@@ -2711,6 +2711,10 @@ main {
   cursor: not-allowed;
 }
 
+.contact-form-submit--lottie:disabled {
+  opacity: 1;
+}
+
 .contact-form-submit--lottie {
   padding: 0;
   overflow: hidden;
