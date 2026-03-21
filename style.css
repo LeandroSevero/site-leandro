@@ -2711,6 +2711,30 @@ main {
   cursor: not-allowed;
 }
 
+.contact-form-submit--lottie:disabled {
+  opacity: 1;
+}
+
+.contact-form-submit--lottie {
+  padding: 0;
+  overflow: hidden;
+  opacity: 1;
+  transition: background-color var(--transition), transform var(--transition);
+}
+
+.contact-form-submit-lottie {
+  width: 100%;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-form-submit-lottie svg {
+  width: auto;
+  height: 100%;
+}
+
 .contact-form-feedback {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);

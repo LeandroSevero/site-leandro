@@ -245,17 +245,67 @@ const hideFormBodyAndShow = (form, panelHtml) => {
 const SEND_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
 const RETRY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg>`;
 
-const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
+let _lottieInstance = null;
+let _lottieCompleteResolve = null;
+
+const startButtonLottie = (btn) => {
+  return new Promise((resolve) => {
+    if (!window.lottie) { resolve(); return; }
+    btn.innerHTML = '';
+    btn.classList.add('contact-form-submit--lottie');
+    const container = document.createElement('div');
+    container.className = 'contact-form-submit-lottie';
+    btn.appendChild(container);
+
+    const isLight = document.documentElement.getAttribute('data-theme') !== 'dark';
+    const animPromise = isLight
+      ? import('/src/assets/Email_icon_animation_light.json')
+      : import('/src/assets/Email_icon_animation.json');
+    animPromise.then((mod) => {
+      const animData = mod.default || mod;
+      _lottieCompleteResolve = resolve;
+      _lottieInstance = window.lottie.loadAnimation({
+        container,
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        animationData: animData,
+      });
+      _lottieInstance.addEventListener('complete', () => {
+        if (_lottieCompleteResolve) {
+          _lottieCompleteResolve();
+          _lottieCompleteResolve = null;
+        }
+      });
+    }).catch(() => resolve());
+  });
+};
+
+const stopButtonLottie = (btn) => {
+  if (_lottieCompleteResolve) {
+    _lottieCompleteResolve();
+    _lottieCompleteResolve = null;
+  }
+  if (_lottieInstance) {
+    _lottieInstance.destroy();
+    _lottieInstance = null;
+  }
+  btn.classList.remove('contact-form-submit--lottie');
+};
+
+const setFormState = (form, submitBtn, state, { message = '', onLottieComplete = null } = {}) => {
   const s = getStrings();
 
   if (state === FORM_STATE.LOADING) {
     submitBtn.disabled = true;
     submitBtn.setAttribute('aria-busy', 'true');
-    submitBtn.innerHTML = `<span class="contact-form-spinner" aria-hidden="true"></span><span>${s.loading}</span>`;
+    const p = startButtonLottie(submitBtn);
+    if (onLottieComplete) p.then(onLottieComplete);
     return;
   }
 
   if (state === FORM_STATE.IDLE) {
+    stopButtonLottie(submitBtn);
     submitBtn.disabled = false;
     submitBtn.removeAttribute('aria-busy');
     submitBtn.innerHTML = `${SEND_SVG}<span>${s.submitLabel}</span>`;
@@ -263,6 +313,7 @@ const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
     return;
   }
 
+  stopButtonLottie(submitBtn);
   submitBtn.disabled = false;
   submitBtn.removeAttribute('aria-busy');
   submitBtn.innerHTML = `${SEND_SVG}<span>${s.submitLabel}</span>`;
@@ -357,7 +408,18 @@ const handleSubmit = async (form, submitBtn) => {
   const subject = form.querySelector('#cf-subject').value.trim();
   const message = form.querySelector('#cf-message').value.trim();
 
-  setFormState(form, submitBtn, FORM_STATE.LOADING);
+  const pending = { fn: null, lottieComplete: false };
+
+  const tryApply = () => {
+    if (pending.lottieComplete && pending.fn) pending.fn();
+  };
+
+  setFormState(form, submitBtn, FORM_STATE.LOADING, {
+    onLottieComplete: () => {
+      pending.lottieComplete = true;
+      tryApply();
+    },
+  });
 
   try {
     const res = await fetch('/api/contact', {
@@ -370,33 +432,45 @@ const handleSubmit = async (form, submitBtn) => {
 
     if (!res.ok || !data.success) {
       if (data.errors) {
-        showFormBody(form);
-        Object.entries(data.errors).forEach(([fieldName, msg]) => {
-          const input = form.querySelector(`#cf-${fieldName}`);
-          if (input) setFieldError(input, msg);
-        });
-        setFormState(form, submitBtn, FORM_STATE.IDLE);
-        resetTurnstile();
+        pending.fn = () => {
+          stopButtonLottie(submitBtn);
+          submitBtn.disabled = false;
+          submitBtn.removeAttribute('aria-busy');
+          submitBtn.innerHTML = `${SEND_SVG}<span>${s.submitLabel}</span>`;
+          showFormBody(form);
+          Object.entries(data.errors).forEach(([fieldName, msg]) => {
+            const input = form.querySelector(`#cf-${fieldName}`);
+            if (input) setFieldError(input, msg);
+          });
+          resetTurnstile();
+        };
+        tryApply();
         return;
       }
 
       const errorState = classifyError(res, data);
       const errorMessage = data.message || s.fetchErrorDefault;
-      setFormState(form, submitBtn, errorState, { message: errorMessage });
-      resetTurnstile();
+      pending.fn = () => {
+        setFormState(form, submitBtn, errorState, { message: errorMessage });
+        resetTurnstile();
+      };
+      tryApply();
       return;
     }
 
-    setFormState(form, submitBtn, FORM_STATE.SUCCESS, {
-      message: data.message || s.successDefault,
-    });
-
-    resetTurnstile();
+    const successMessage = data.message || s.successDefault;
+    pending.fn = () => {
+      setFormState(form, submitBtn, FORM_STATE.SUCCESS, { message: successMessage });
+      resetTurnstile();
+    };
+    tryApply();
   } catch (err) {
-    setFormState(form, submitBtn, FORM_STATE.ERROR, {
-      message: s.fetchError,
-    });
-    resetTurnstile();
+    const fetchErrMsg = s.fetchError;
+    pending.fn = () => {
+      setFormState(form, submitBtn, FORM_STATE.ERROR, { message: fetchErrMsg });
+      resetTurnstile();
+    };
+    tryApply();
   }
 };
 
