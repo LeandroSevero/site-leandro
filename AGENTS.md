@@ -1,5 +1,11 @@
 # Regras do Agente de IA
 
+## Idioma de resposta
+
+Sempre responder ao usuário em **portugues brasileiro (pt-BR)**, independentemente do idioma utilizado na pergunta ou instrucao.
+
+
+
 ## Atualização obrigatória do README_SITE.md
 
 Sempre que houver qualquer alteração no projeto, o arquivo README_SITE.md deve ser atualizado obrigatoriamente antes da conclusão da tarefa.
