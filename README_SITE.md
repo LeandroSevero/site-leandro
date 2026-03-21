@@ -60,7 +60,8 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Menu mobile com hambúrguer, fechamento ao clicar fora ou em link
 
 ### Animações e Interações
-- Scroll reveal com `IntersectionObserver` (fade, slide, scale)
+- Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll
+- Saída suave com movimento inverso coerente por tipo: `translateY` inverte direção, `translateX` inverte eixo, `scale` retrai levemente
 - Animação de typewriter no badge do hero
 - Timeline animada com ponto flutuante que acompanha o scroll
 - Easter egg: clique no certificado Azure DevOps ativa animação de fantasma com rastro de partículas
