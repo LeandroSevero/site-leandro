@@ -257,7 +257,11 @@ const startButtonLottie = (btn) => {
     container.className = 'contact-form-submit-lottie';
     btn.appendChild(container);
 
-    import('/src/assets/Email_icon_animation.json').then((mod) => {
+    const isLight = document.documentElement.getAttribute('data-theme') !== 'dark';
+    const animPromise = isLight
+      ? import('/src/assets/Email_icon_animation_light.json')
+      : import('/src/assets/Email_icon_animation.json');
+    animPromise.then((mod) => {
       const animData = mod.default || mod;
       _lottieCompleteResolve = resolve;
       _lottieInstance = window.lottie.loadAnimation({
