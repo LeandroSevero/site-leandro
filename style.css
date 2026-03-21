@@ -2459,6 +2459,11 @@ main {
   transform: translateY(0);
 }
 
+.reveal.reveal-exit {
+  opacity: 0;
+  transform: translateY(-24px);
+}
+
 .reveal-left {
   opacity: 0;
   transform: translateX(-32px);
@@ -2468,6 +2473,11 @@ main {
 .reveal-left.visible {
   opacity: 1;
   transform: translateX(0);
+}
+
+.reveal-left.reveal-exit {
+  opacity: 0;
+  transform: translateX(24px);
 }
 
 .reveal-right {
@@ -2481,6 +2491,11 @@ main {
   transform: translateX(0);
 }
 
+.reveal-right.reveal-exit {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
 .reveal-scale {
   opacity: 0;
   transform: scale(0.92);
@@ -2490,6 +2505,11 @@ main {
 .reveal-scale.visible {
   opacity: 1;
   transform: scale(1);
+}
+
+.reveal-scale.reveal-exit {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
 .contact-modal-overlay {
