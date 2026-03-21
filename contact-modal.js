@@ -245,17 +245,48 @@ const hideFormBodyAndShow = (form, panelHtml) => {
 const SEND_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
 const RETRY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg>`;
 
+let _lottieInstance = null;
+
+const startButtonLottie = (btn) => {
+  if (!window.lottie) return;
+  btn.innerHTML = '';
+  btn.classList.add('contact-form-submit--lottie');
+  const container = document.createElement('div');
+  container.className = 'contact-form-submit-lottie';
+  btn.appendChild(container);
+
+  import('/src/assets/Email_icon_animation.json').then((mod) => {
+    const animData = mod.default || mod;
+    _lottieInstance = window.lottie.loadAnimation({
+      container,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: animData,
+    });
+  });
+};
+
+const stopButtonLottie = (btn) => {
+  if (_lottieInstance) {
+    _lottieInstance.destroy();
+    _lottieInstance = null;
+  }
+  btn.classList.remove('contact-form-submit--lottie');
+};
+
 const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
   const s = getStrings();
 
   if (state === FORM_STATE.LOADING) {
     submitBtn.disabled = true;
     submitBtn.setAttribute('aria-busy', 'true');
-    submitBtn.innerHTML = `<span class="contact-form-spinner" aria-hidden="true"></span><span>${s.loading}</span>`;
+    startButtonLottie(submitBtn);
     return;
   }
 
   if (state === FORM_STATE.IDLE) {
+    stopButtonLottie(submitBtn);
     submitBtn.disabled = false;
     submitBtn.removeAttribute('aria-busy');
     submitBtn.innerHTML = `${SEND_SVG}<span>${s.submitLabel}</span>`;
@@ -263,6 +294,7 @@ const setFormState = (form, submitBtn, state, { message = '' } = {}) => {
     return;
   }
 
+  stopButtonLottie(submitBtn);
   submitBtn.disabled = false;
   submitBtn.removeAttribute('aria-busy');
   submitBtn.innerHTML = `${SEND_SVG}<span>${s.submitLabel}</span>`;
