@@ -210,13 +210,52 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ## Paleta de Cores
 
-| Token | Modo Claro | Modo Escuro |
+Todas as cores são definidas via CSS custom properties em `:root` (modo claro) e `[data-theme="dark"]` (modo escuro).
+
+### Cores Base
+
+| Token CSS | Modo Claro | Modo Escuro | Uso |
+|---|---|---|---|
+| `--color-bg` | `#f0f4f8` | `#04060f` | Fundo principal |
+| `--color-bg-secondary` | `#e4ecf4` | `rgba(255,255,255,0.07)` | Fundo de inputs, badges, seções alternadas |
+| `--color-fg` | `#1a2636` | `#f0f4ff` | Texto principal |
+| `--color-fg-muted` | `#4a6080` | `rgba(240,244,255,0.5)` | Texto secundário e legendas |
+| `--color-border` | `#c0d0e0` | `rgba(255,255,255,0.09)` | Bordas padrão |
+| `--color-border2` | — | `rgba(255,255,255,0.15)` | Bordas com maior destaque (dark only) |
+
+### Cores Primárias e Accent
+
+| Token CSS | Modo Claro | Modo Escuro | Uso |
+|---|---|---|---|
+| `--color-primary` | `#1a5fa8` | `#4fd1c5` | Cor principal: botões, links, destaques |
+| `--color-primary-hover` | `#154e8c` | `#81e6d9` | Estado hover do primário |
+| `--color-primary-fg` | `#ffffff` | `#04060f` | Texto sobre fundo primário |
+| `--color-accent` | `#1a5fa8` | `#81e6d9` | Destaques e elementos de ênfase |
+| `--color-violet` | — | `#7c6af7` | Uso pontual em elementos visuais (dark only) |
+
+### Cores de Superfície (Dark mode)
+
+| Token CSS | Valor | Uso |
 |---|---|---|
-| Background | `#ffffff` | `#0f172a` |
-| Foreground | `#0f172a` | `#f1f5f9` |
-| Primary | `#3b82f6` | `#3b82f6` |
-| Border | `#e2e8f0` | `#334155` |
-| Accent (dark) | — | `#4fd1c5` |
+| `--color-card` | `rgba(255,255,255,0.04)` | Fundo de cards com vidro |
+| `--color-glass` | `rgba(255,255,255,0.04)` | Glassmorphism nível 1 |
+| `--color-glass2` | `rgba(255,255,255,0.07)` | Glassmorphism nível 2 |
+| `--color-glass3` | `rgba(255,255,255,0.11)` | Glassmorphism nível 3 |
+
+### Header
+
+| Token CSS | Modo Claro | Modo Escuro |
+|---|---|---|
+| `--color-header-bg` | `rgba(240,244,248,0.88)` | `rgba(4,6,15,0.75)` |
+| `--color-header-shadow` | `rgba(26,95,168,0.08)` | `rgba(0,0,0,0.6)` |
+
+### Cores Utilitárias Fixas
+
+| Cor | Valor | Uso |
+|---|---|---|
+| Sucesso | `#22c55e` | Badge de status online |
+| Dark toggle bg | `#2a2a35` | Fundo do botão de tema (dark) |
+| Light toggle bg | `#daeeff` | Fundo do botão de tema (light) |
 
 ---
 
