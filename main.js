@@ -1,6 +1,5 @@
 import { dictionaries } from './i18n.js';
 import { initContactModal } from './contact-modal.js';
-import { initLinkPreview } from './link-preview.js';
 import {
   logoDark,
   logoLight,
@@ -971,7 +970,6 @@ const init = () => {
   initContactModal();
   initScrollTop();
   initAzureEasterEgg();
-  initLinkPreview();
   handleDeepLink();
 };
 
