@@ -1,4 +1,4 @@
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+import { TURNSTILE_SITE_KEY, loadTurnstileScript, getTurnstileTheme } from './turnstile.js';
 
 let turnstileWidgetId = null;
 let turnstileToken = null;
@@ -172,24 +172,12 @@ const updateCounter = (input, counterEl, max) => {
   counterEl.classList.toggle('contact-form-counter--over', len > max);
 };
 
-const loadTurnstileScript = () => {
-  return new Promise((resolve) => {
-    if (window.turnstile) { resolve(); return; }
-    const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = resolve;
-    document.head.appendChild(script);
-  });
-};
-
 const renderTurnstile = (container) => {
   if (!window.turnstile || !TURNSTILE_SITE_KEY) return;
   turnstileToken = null;
   turnstileWidgetId = window.turnstile.render(container, {
     sitekey: TURNSTILE_SITE_KEY,
-    theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+    theme: getTurnstileTheme(),
     callback: (token) => { turnstileToken = token; },
     'expired-callback': () => { turnstileToken = null; },
     'error-callback': () => { turnstileToken = null; },
@@ -561,7 +549,7 @@ export const initContactModal = () => {
   const openModal = async () => {
     overlay.removeAttribute('hidden');
     document.body.style.overflow = 'hidden';
-    await loadTurnstileScript();
+    await loadTurnstileScript().catch(() => {});
     if (turnstileContainer && !turnstileContainer.hasChildNodes()) {
       renderTurnstile(turnstileContainer);
     }

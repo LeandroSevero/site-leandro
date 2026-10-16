@@ -28,7 +28,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | **Node.js (API serverless)** | Endpoint `/api/contact` |
 | **Resend** | Envio de e-mails transacionais |
 | **MongoDB** | Persistência de submissions e rate limiting |
-| **Cloudflare Turnstile** | CAPTCHA anti-spam |
+| **Cloudflare Turnstile** | CAPTCHA anti-spam (verificação de primeira visita e formulário de contato) |
 | **Vercel** | Deploy e hosting |
 
 ---
@@ -105,6 +105,18 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Textos completamente bilíngues (pt-BR / en)
 - Reset automático ao trocar de idioma
 
+### Verificação de Primeira Visita (Cloudflare Turnstile)
+- Tela de verificação exibida na primeira visita, antes do conteúdo do site
+- Widget Turnstile em modo **Managed**: visitantes legítimos são validados automaticamente, sem clique; tráfego suspeito recebe o desafio interativo
+- Token validado no servidor (`POST /api/verify-visit`), que grava o cookie `ls_verified` por **30 dias**; nas visitas seguintes a tela não aparece
+- Script inline no `<head>` lê o cookie antes da renderização, evitando que o conteúdo pisque antes da verificação
+- Conteúdo da página fica `inert` (fora do foco e do leitor de tela) enquanto a verificação está pendente
+- Crawlers e geradores de prévia de link (Google, LinkedIn, WhatsApp etc.) não passam pela tela, preservando SEO e Open Graph
+- Fail-open: se o Turnstile ou a API estiverem indisponíveis, ou se houver erro de configuração do widget (códigos `110xxx`/`400xxx`, ex.: hostname não cadastrado), o site é liberado para não bloquear visitantes reais
+- Estados localizados (pt-BR / en): verificando, desafio, erro com botão "Tentar novamente"
+- Tema do widget acompanha o tema claro/escuro do site
+- Proteção na camada do navegador: o HTML continua acessível a requisições diretas. Para bloqueio no servidor, seria necessário um Vercel Routing Middleware validando o cookie
+
 ### Mapa de Localização
 - Card de localização com popup de mapa integrado (Google Maps iframe)
 - Carregamento lazy do iframe
@@ -120,6 +132,8 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── i18n.js                      # Dicionário de traduções (pt-BR + en, 150+ chaves)
 ├── chat.js                      # Assistente virtual: fluxos, TTS, FAB, sugestões
 ├── contact-modal.js             # Modal de contato: validação, estados, Turnstile
+├── visit-gate.js                # Verificação de primeira visita (Turnstile + cookie)
+├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
 ├── style.css                    # Estilos globais com CSS custom properties (~1700 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
 ├── vercel.json                  # Configuração de deploy (rewrites SPA)
@@ -128,8 +142,10 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 │
 ├── api/
 │   ├── contact.js               # Endpoint POST /api/contact (validação, Resend, MongoDB)
+│   ├── verify-visit.js          # Endpoint POST /api/verify-visit (Turnstile da primeira visita)
 │   └── lib/
-│       └── mongodb.js           # Conexão e utilitários MongoDB (rate limiting, TTL)
+│       ├── mongodb.js           # Conexão e utilitários MongoDB (rate limiting, TTL)
+│       └── turnstile.js         # Validação server-side do token Turnstile (siteverify)
 │
 ├── src/
 │   └── assets/
@@ -173,6 +189,23 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 04 | **Certificados** | 3 em destaque + carrossel com 8 certificações adicionais |
 | 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
 | 06 | **Contato** | E-mail, LinkedIn, Instagram, localização com mapa e formulário modal |
+
+---
+
+## API de Verificação de Visita
+
+**Endpoint:** `POST /api/verify-visit` — corpo: `{ "token": "<token Turnstile>" }`
+
+1. Valida o formato do token (string, até 2048 caracteres)
+2. Verifica o token no `siteverify` da Cloudflare com `TURNSTILE_SECRET_KEY` e o IP do visitante
+3. Em caso de sucesso, grava o cookie `ls_verified=1` (`Max-Age` de 30 dias, `Secure`, `SameSite=Lax`)
+
+| Status | Significado | Comportamento no front-end |
+|---|---|---|
+| `200` | Verificado | Libera o site |
+| `400` | Token ausente ou inválido | Exibe erro e botão "Tentar novamente" |
+| `405` | Método não permitido | — |
+| `500` | Falha ao contatar a Cloudflare | Libera o site (fail-open) |
 
 ---
 
@@ -308,14 +341,29 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 
 Todas as rotas são redirecionadas para `index.html` para suporte ao roteamento SPA com History API.
 
+### Ambientes
+
+| Branch | Ambiente | URL |
+|---|---|---|
+| `develop` | Testes (homologação) | [testing.leandrosevero.com.br](https://testing.leandrosevero.com.br) |
+| `main` | Produção | [leandrosevero.com.br](https://leandrosevero.com.br) |
+
+**Fluxo de publicação:** alterações são feitas e enviadas para `develop` (deploy automático no ambiente de testes). Após validação, abre-se um Pull Request de `develop` para `main`; o merge dispara o deploy de produção.
+
+A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a data da última verificação do fluxo de deploy e pode ser conferida no código-fonte de cada ambiente.
+
 ---
 
 ## Variáveis de Ambiente
 
 | Variável | Uso |
 |---|---|
-| `VITE_TURNSTILE_SITE_KEY` | Chave pública do Cloudflare Turnstile (front-end) |
-| `TURNSTILE_SECRET_KEY` | Chave secreta do Turnstile (API) |
+| `VITE_TURNSTILE_SITE_KEY` | Chave do site do Cloudflare Turnstile (front-end; usada na verificação de primeira visita e no formulário). Embutida no build: alterações exigem novo deploy |
+| `TURNSTILE_SECRET_KEY` | Chave secreta do Turnstile (API: `/api/verify-visit` e `/api/contact`) |
+
+Os hostnames `leandrosevero.com.br`, `www.leandrosevero.com.br` e `testing.leandrosevero.com.br` precisam estar cadastrados no widget do Turnstile no painel da Cloudflare.
+
+Para desenvolvimento local, use as chaves de teste da Cloudflare em `.env.local` (não versionado): `1x00000000000000000000AA` (sempre passa) ou `3x00000000000000000000FF` (força o desafio interativo).
 | `RESEND_API_KEY` | Chave da API Resend para envio de e-mails |
 | `MONGODB_URI` | String de conexão MongoDB |
 | `CONTACT_TO_EMAIL` | E-mail de destino dos formulários |

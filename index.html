@@ -7,6 +7,7 @@
   <meta name="description" content="Profissional de DevOps com experiência em AWS, Azure, Kubernetes, Docker, Linux e Cybersecurity. Supervisor de DevOps em Curitiba - PR.">
   <meta name="author" content="Leandro Severo">
   <meta name="robots" content="index, follow">
+  <meta name="deploy-check" content="2026-10-16">
   <meta property="og:title" content="Leandro Severo | Supervisor de DevOps & Infraestrutura Cloud">
   <meta property="og:description" content="Profissional de DevOps com experiência em AWS, Azure, Kubernetes, Docker, Linux e Cybersecurity.">
   <meta property="og:locale" content="pt_BR">
@@ -15,9 +16,24 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#04080f">
   <link rel="icon" type="image/svg+xml" id="favicon">
   <link rel="stylesheet" href="/style.css">
+  <script>try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark'); } catch {}
+    if (!document.cookie.split('; ').includes('ls_verified=1')) document.documentElement.classList.add('gate-pending');</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
 </head>
 <body>
+  <div class="visit-gate" id="visit-gate" role="dialog" aria-modal="true" aria-labelledby="visit-gate-title" aria-describedby="visit-gate-text" hidden>
+    <div class="visit-gate-card">
+      <div class="visit-gate-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <h2 class="visit-gate-title" id="visit-gate-title" data-i18n="gate.title">Verificando sua conexão</h2>
+      <p class="visit-gate-text" id="visit-gate-text" data-i18n="gate.text">Só um instante. Esta verificação de segurança acontece apenas na primeira visita.</p>
+      <div class="visit-gate-widget" id="visit-gate-widget"></div>
+      <p class="visit-gate-status" id="visit-gate-status" role="status" aria-live="polite"></p>
+      <button type="button" class="visit-gate-retry" id="visit-gate-retry" data-i18n="gate.retry" hidden>Tentar novamente</button>
+    </div>
+  </div>
+
   <header id="header">
     <nav class="nav-container">
       <a href="#" class="logo" aria-label="Leandro Severo DevOps">
