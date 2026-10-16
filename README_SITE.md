@@ -308,6 +308,17 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 
 Todas as rotas são redirecionadas para `index.html` para suporte ao roteamento SPA com History API.
 
+### Ambientes
+
+| Branch | Ambiente | URL |
+|---|---|---|
+| `develop` | Testes (homologação) | [testing.leandrosevero.com.br](https://testing.leandrosevero.com.br) |
+| `main` | Produção | [leandrosevero.com.br](https://leandrosevero.com.br) |
+
+**Fluxo de publicação:** alterações são feitas e enviadas para `develop` (deploy automático no ambiente de testes). Após validação, abre-se um Pull Request de `develop` para `main`; o merge dispara o deploy de produção.
+
+A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a data da última verificação do fluxo de deploy e pode ser conferida no código-fonte de cada ambiente.
+
 ---
 
 ## Variáveis de Ambiente
