@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { createHash } from 'crypto';
 import { getDb, ensureIndexes } from './lib/mongodb.js';
+import { verifyTurnstile, getRemoteIp } from './lib/turnstile.js';
 
 const NAME_PATTERN = /^[a-zA-ZÀ-ÖØ-öø-ÿ\s'\-]+$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -79,25 +80,6 @@ const validateFields = ({ name, email, phone, subject, message }) => {
   else if (hasSuspiciousContent(m)) errors.message = 'Use apenas texto válido.';
 
   return Object.keys(errors).length > 0 ? errors : null;
-};
-
-const verifyTurnstile = async (token, remoteip) => {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return { success: false };
-
-  const formData = new URLSearchParams();
-  formData.append('secret', secret);
-  formData.append('response', token);
-  if (remoteip) formData.append('remoteip', remoteip);
-
-  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formData.toString(),
-  });
-
-  const data = await res.json();
-  return { success: !!data.success };
 };
 
 const getToday = () => new Date().toISOString().slice(0, 10);
@@ -261,7 +243,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, message: 'Verifique os campos e tente novamente.', errors: fieldErrors });
   }
 
-  const remoteip = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '').split(',')[0].trim();
+  const remoteip = getRemoteIp(req);
 
   try {
     const turnstile = await verifyTurnstile(turnstileToken, remoteip);

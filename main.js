@@ -1,5 +1,6 @@
 import { dictionaries } from './i18n.js';
 import { initContactModal } from './contact-modal.js';
+import { initVisitGate } from './visit-gate.js';
 import {
   logoDark,
   logoLight,
@@ -951,6 +952,7 @@ const initAzureEasterEgg = () => {
 const init = () => {
   initTheme();
   initLang();
+  initVisitGate();
   initTypewriter();
   initThemeToggle();
   initLangToggle();
