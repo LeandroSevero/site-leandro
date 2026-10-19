@@ -235,6 +235,18 @@ const RETRY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16
 
 let _lottieInstance = null;
 let _lottieCompleteResolve = null;
+let _lottieScriptRequested = false;
+
+// Carregada sob demanda ao abrir o modal: a animação só é usada no botão de envio.
+const loadLottieScript = () => {
+  if (window.lottie || _lottieScriptRequested) return;
+  _lottieScriptRequested = true;
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js';
+  script.async = true;
+  script.onerror = () => { _lottieScriptRequested = false; };
+  document.head.appendChild(script);
+};
 
 const startButtonLottie = (btn) => {
   return new Promise((resolve) => {
@@ -549,6 +561,7 @@ export const initContactModal = () => {
   const openModal = async () => {
     overlay.removeAttribute('hidden');
     document.body.style.overflow = 'hidden';
+    loadLottieScript();
     await loadTurnstileScript().catch(() => {});
     if (turnstileContainer && !turnstileContainer.hasChildNodes()) {
       renderTurnstile(turnstileContainer);

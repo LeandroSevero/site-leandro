@@ -38,7 +38,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ### Tema Claro / Escuro
 - Alternância entre modo claro e escuro com um clique
 - Preferência persistida no `localStorage`
-- Troca automática de logo e imagem do hero conforme o tema
+- Troca automática de logo e avatar do chat conforme o tema (a foto do hero é a mesma nos dois temas)
 
 ### Internacionalização (i18n)
 - Suporte completo a **Português (pt-BR)** e **Inglês (en)**
@@ -149,13 +149,12 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 │
 ├── src/
 │   └── assets/
-│       ├── images.js            # Módulo central de importação de imagens (cache busting)
+│       ├── images.js            # Importação central de logo e avatares do chat (cache busting)
 │       ├── logo.svg             # Logo (versão fundo escuro)
 │       ├── logoparaofundobranco.svg # Logo (versão fundo claro)
-│       ├── leandro.svg          # Foto do hero (tema escuro)
-│       ├── leandrofundobranco.svg   # Foto do hero (tema claro)
-│       ├── atendimento.svg      # Avatar do chat (tema claro)
-│       └── atendimentoescuro.svg    # Avatar do chat (tema escuro)
+│       ├── leandro.webp         # Foto do hero (600×600, mesma para os dois temas)
+│       ├── atendimento.webp     # Avatar do chat (tema claro, 128×128)
+│       └── atendimentoescuro.webp   # Avatar do chat (tema escuro, 128×128)
 │
 └── public/
     ├── robots.txt
@@ -294,9 +293,12 @@ Todas as cores são definidas via CSS custom properties em `:root` (modo claro) 
 
 ## Performance
 
-- **Build size total:** ~78KB JS + ~49KB CSS (gzip: ~23KB + ~9KB)
+- **Build size total:** ~89KB JS + ~54KB CSS (gzip: ~30KB + ~9KB)
 - **Zero dependências de framework front-end**
-- Todas as imagens do site (logo, hero, avatar do chat) centralizadas em `src/assets/` e importadas via ES Modules — Vite gera hash automático no nome do arquivo (ex: `leandro-Bli4fEol.svg`), eliminando cache stale após deploy
+- Foto do hero e avatares do chat em **WebP** com transparência, no dobro do maior tamanho exibido (retina): hero 600×600 (~17KB, antes 577KB em SVG com PNG embutido) e avatares 128×128 (~3–5KB, antes até 356KB)
+- Foto do hero referenciada direto no HTML com `fetchpriority="high"`, para começar a baixar antes do JavaScript (melhor LCP)
+- Biblioteca **Lottie** (~298KB) carregada sob demanda ao abrir o modal de contato, e não mais em toda visita
+- Todas as imagens do site (logo, hero, avatar do chat) centralizadas em `src/assets/` — Vite gera hash automático no nome do arquivo (ex: `leandro-C8rK_Nfc.webp`), eliminando cache stale após deploy
 - Favicon também injetado via JS com o mesmo hash, sem referência estática em HTML
 - Ícones de tecnologias em `/public/icons/` carregados dinamicamente por string (sem import), com versionamento via query string (`?v=1`)
 - Zero arquivos de imagem duplicados no projeto
