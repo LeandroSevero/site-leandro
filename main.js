@@ -4,8 +4,6 @@ import { initVisitGate } from './visit-gate.js';
 import {
   logoDark,
   logoLight,
-  leandroDark,
-  leandroLight,
   chatAvatarLight,
   chatAvatarDark,
 } from './src/assets/images.js';
@@ -23,12 +21,6 @@ const updateLogo = (theme) => {
   if (favicon) favicon.href = theme === 'dark' ? logoDark : logoLight;
 };
 
-const updateHeroImage = (theme) => {
-  const heroImg = document.querySelector('.hero-image .image-wrapper img');
-  if (!heroImg) return;
-  heroImg.src = theme === 'dark' ? leandroDark : leandroLight;
-};
-
 const updateChatImages = (theme) => {
   const src = theme === 'dark' ? chatAvatarDark : chatAvatarLight;
   document.querySelectorAll('.chat-fab img, .chat-header-avatar img, .chat-bubble-avatar img').forEach(img => {
@@ -40,7 +32,6 @@ const setTheme = (theme) => {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
   updateLogo(theme);
-  updateHeroImage(theme);
   updateChatImages(theme);
 };
 
