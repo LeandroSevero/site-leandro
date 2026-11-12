@@ -6,6 +6,20 @@ Sempre responder ao usuário em **portugues brasileiro (pt-BR)**, independenteme
 
 
 
+## Ambientes e branches (regra obrigatória)
+
+| Branch | Publica automaticamente em | Ambiente |
+|---|---|---|
+| `develop` | https://testing.leandrosevero.com.br | Homologação |
+| `main` | https://leandrosevero.com.br | **PRODUÇÃO** |
+
+* Todo trabalho é feito na `develop` (ou em branches que voltam para a `develop`).
+* **Nunca** fazer push, merge ou rebase na `main` sem pedido explícito do usuário contendo a palavra **"produção"**.
+* Pull Requests `develop → main` podem ser abertos quando o usuário pedir, mas **nunca** mesclados sem a autorização acima.
+* Antes de pedir a promoção para produção, confirmar o deploy em https://testing.leandrosevero.com.br.
+
+
+
 ## Atualização obrigatória do README_SITE.md
 
 Sempre que houver qualquer alteração no projeto, o arquivo README_SITE.md deve ser atualizado obrigatoriamente antes da conclusão da tarefa.

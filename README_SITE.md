@@ -39,6 +39,8 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Alternância entre modo claro e escuro com um clique
 - Preferência persistida no `localStorage`
 - Troca automática de logo e avatar do chat conforme o tema (a foto do hero é a mesma nos dois temas)
+- Efeito **Liquid Glass** (somente CSS) nos dois temas: superfícies translúcidas com `backdrop-filter: blur() saturate()`, brilho especular no topo (`inset box-shadow`) e reflexo em gradiente. Aplicado em header, menu mobile, rodapé, botões (LinkedIn, Instagram, Contato, idioma, menu, tema). Os botões "Explorar portfólio" e "Voltar ao topo" ficam sem vidro e têm o mesmo visual: seta + rótulo em caixa alta, cor suave e animação de quique, cards (Sobre, Tecnologias, Certificações, Experiência, Contato), modal de contato e chat flutuante
+- No tema claro, o fundo ganhou manchas suaves em gradiente radial para o vidro ter o que refratar
 
 ### Internacionalização (i18n)
 - Suporte completo a **Português (pt-BR)** e **Inglês (en)**
@@ -62,14 +64,15 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ### Animações e Interações
 - Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll
 - Saída suave com movimento inverso coerente por tipo: `translateY` inverte direção, `translateX` inverte eixo, `scale` retrai levemente
+- Ao sair pela borda inferior, o elemento volta ao estado inicial (deslocado para baixo) em vez de usar a animação de saída, que o subiria de volta para a tela e criaria um loop entra/sai (elemento "tremendo" quando parado na borda)
 - Animação de typewriter no badge do hero
 - Timeline animada com ponto flutuante que acompanha o scroll
 - Easter egg: clique no certificado Azure DevOps ativa animação de fantasma com rastro de partículas
 
 ### Seção de Skills
-- **Desktop:** grid de cards clicáveis com painel lateral de descrição localizada
+- **Desktop:** grid de cards com painel lateral de descrição localizada; o card é selecionado ao passar o mouse ou pelo teclado (Tab + Enter/Espaço, com `role="button"` e `aria-pressed`)
 - **Mobile:** carrossel com navegação por botões, dots indicadores e auto-play (4,5s)
-- Cores e ícones individuais por tecnologia
+- Cores e ícones individuais por tecnologia (`color` em `SKILL_DATA`); no tema claro, o nome da tecnologia usa um tom mais escuro da mesma cor (`textLight`) e, no escuro, Azure/Azure DevOps/AD, Microsoft 365 e Kubernetes usam um tom mais claro (`textDark`), para atingir 4.5:1 — ícone, borda e destaque seguem com a cor da marca
 - Descrições traduzidas para pt-BR e en
 
 ### Seção de Certificados
@@ -95,7 +98,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Textos de estado completamente traduzidos
 
 ### Assistente Virtual (Chat)
-- Widget flutuante (FAB) com badge de notificação
+- Widget flutuante (FAB) com badge de notificação; o FAB é um `<button>` (`aria-label="Abrir chat"`, `aria-expanded` atualizado ao abrir/fechar, `aria-controls="chat-float"`), acessível por teclado
 - Aparece após o usuário rolar além da seção hero
 - **12 fluxos de conversa** pré-definidos: sobre, resumo, experiência, cargo atual, tecnologias, formação, certificações, contato
 - Bubble de sugestão automática após 30s de inatividade ou ao rolar >300px
@@ -134,7 +137,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── contact-modal.js             # Modal de contato: validação, estados, Turnstile
 ├── visit-gate.js                # Verificação de primeira visita (Turnstile + cookie)
 ├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
-├── style.css                    # Estilos globais com CSS custom properties (~1700 linhas)
+├── style.css                    # Estilos globais com CSS custom properties e camada Liquid Glass (~3500 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
 ├── vercel.json                  # Configuração de deploy (rewrites SPA)
 ├── package.json                 # Dependências e scripts
@@ -152,7 +155,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 │       ├── images.js            # Importação central de logo e avatares do chat (cache busting)
 │       ├── logo.svg             # Logo (versão fundo escuro)
 │       ├── logoparaofundobranco.svg # Logo (versão fundo claro)
-│       ├── leandro.webp         # Foto do hero (600×600, mesma para os dois temas)
+│       ├── leandro.webp         # Foto do hero (640×800 vertical, com fundo, mesma para os dois temas)
 │       ├── atendimento.webp     # Avatar do chat (tema claro, 128×128)
 │       └── atendimentoescuro.webp   # Avatar do chat (tema escuro, 128×128)
 │
@@ -274,6 +277,28 @@ Todas as cores são definidas via CSS custom properties em `:root` (modo claro) 
 | `--color-glass2` | `rgba(255,255,255,0.07)` | Glassmorphism nível 2 |
 | `--color-glass3` | `rgba(255,255,255,0.11)` | Glassmorphism nível 3 |
 
+### Liquid Glass
+
+Tokens definidos no bloco "Liquid Glass" no fim do `style.css`. As regras usam o prefixo `[data-theme]` para sobrescrever os estilos anteriores sem `!important`.
+
+| Token CSS | Modo Claro | Modo Escuro | Uso |
+|---|---|---|---|
+| `--glass-blur` | `blur(16px) saturate(170%)` | `blur(18px) saturate(160%)` | `backdrop-filter` de todas as superfícies de vidro |
+| `--glass-bg` | `rgba(255,255,255,0.55)` | `rgba(255,255,255,0.055)` | Fundo de cards, botões secundários e controles |
+| `--glass-bg-hover` | `rgba(255,255,255,0.7)` | `rgba(255,255,255,0.085)` | Fundo no hover |
+| `--glass-bg-strong` | `rgba(255,255,255,0.82)` | `rgba(8,12,26,0.74)` | Modal de contato e painel do chat (mais opaco para leitura) |
+| `--glass-bg-bar` | `rgba(240,244,248,0.62)` | `rgba(4,6,15,0.55)` | Header, menu mobile e rodapé |
+| `--glass-border` | `rgba(255,255,255,0.75)` | `rgba(255,255,255,0.13)` | Borda clara do vidro |
+| `--glass-border-hover` | primária a 45% | `rgba(79,209,197,0.4)` | Borda no hover |
+| `--glass-border-control` | `rgba(26,95,168,0.18)` | `rgba(255,255,255,0.13)` | Borda de botões pequenos e campos do formulário (no claro, a borda branca sumiria sobre o fundo) |
+| `--glass-sheen` | gradiente branco 55% → 0 | gradiente branco 9% → 0 | Reflexo diagonal (`background-image`) |
+| `--glass-highlight` | `inset` branco 90% | `inset` branco 12% | Brilho especular na borda superior |
+| `--glass-shadow` / `--glass-shadow-hover` | sombra azulada suave | sombra preta + brilho teal | Profundidade em repouso / hover |
+| `--glass-solid` | `#f7fafd` | `#0b1020` | Fundo sólido usado nos fallbacks |
+| `--glass-bg-tinted` | `rgba(255,255,255,0.55)` | `rgba(4,6,15,0.45)` | Fundo dos cards de certificação em destaque (no escuro, mais denso para o texto suave passar de 4.5:1) |
+
+Os botões com cor primária (LinkedIn, baixar currículo, botão do chat) mantêm a cor sólida e recebem um gradiente de brilho com `inset box-shadow`, sem perder contraste do texto.
+
 ### Header
 
 | Token CSS | Modo Claro | Modo Escuro |
@@ -281,21 +306,23 @@ Todas as cores são definidas via CSS custom properties em `:root` (modo claro) 
 | `--color-header-bg` | `rgba(240,244,248,0.88)` | `rgba(4,6,15,0.75)` |
 | `--color-header-shadow` | `rgba(26,95,168,0.08)` | `rgba(0,0,0,0.6)` |
 
+Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` continua como fallback em navegadores sem `backdrop-filter`.
+
 ### Cores Utilitárias Fixas
 
 | Cor | Valor | Uso |
 |---|---|---|
 | Sucesso | `#22c55e` | Badge de status online |
-| Dark toggle bg | `#2a2a35` | Fundo do botão de tema (dark) |
-| Light toggle bg | `#daeeff` | Fundo do botão de tema (light) |
+| Dark toggle bg | `rgba(30,27,46,0.65)` | Fundo translúcido do botão de tema (dark) |
+| Light toggle bg | `rgba(186,220,248,0.75)` | Fundo translúcido do botão de tema (light) |
 
 ---
 
 ## Performance
 
-- **Build size total:** ~89KB JS + ~54KB CSS (gzip: ~30KB + ~9KB)
+- **Build size total:** ~88KB JS + ~61KB CSS (gzip: ~30KB + ~11KB)
 - **Zero dependências de framework front-end**
-- Foto do hero e avatares do chat em **WebP** com transparência, no dobro do maior tamanho exibido (retina): hero 600×600 (~17KB, antes 577KB em SVG com PNG embutido) e avatares 128×128 (~3–5KB, antes até 356KB)
+- Foto do hero e avatares do chat em **WebP**, no dobro do maior tamanho exibido (retina): hero 640×800 (proporção 4:5) com fundo, de corpo inteiro com a nuvem do Google Cloud ao fundo (~43KB, antes 577KB em SVG com PNG embutido; exibida em 20×25rem no desktop e 16×20rem no mobile), e avatares 128×128 com transparência (~3–5KB, antes até 356KB)
 - Foto do hero referenciada direto no HTML com `fetchpriority="high"`, para começar a baixar antes do JavaScript (melhor LCP)
 - Biblioteca **Lottie** (~298KB) carregada sob demanda ao abrir o modal de contato, e não mais em toda visita
 - Todas as imagens do site (logo, hero, avatar do chat) centralizadas em `src/assets/` — Vite gera hash automático no nome do arquivo (ex: `leandro-C8rK_Nfc.webp`), eliminando cache stale após deploy
@@ -314,8 +341,14 @@ Todas as cores são definidas via CSS custom properties em `:root` (modo claro) 
 ### Acessibilidade
 - HTML5 semântico (`header`, `main`, `section`, `article`, `footer`, `nav`)
 - `aria-label`, `aria-expanded`, `aria-hidden`, `aria-live`, `aria-required` em todos os elementos interativos
-- Navegação completa por teclado
+- Navegação completa por teclado, com foco visível (`:focus-visible`) em links, botões e campos nos dois temas: contorno de 2px na cor primária
+- Área de toque mínima de 44×44px nos botões pequenos (idioma, tema, menu e setas do carrossel) via pseudo-elemento invisível, sem alterar o tamanho visual
+- Sem rolagem horizontal no celular: `main { overflow-x: clip }` corta o deslocamento inicial da animação de entrada do card "Sobre" (`translateX(32px)`), que deixava a página 9px mais larga até o card aparecer; a animação visível não muda
+- `prefers-reduced-motion: reduce` desliga o quique do "Explorar portfólio" e do "Voltar ao topo" e remove o reflexo diagonal do vidro
+- Contraste dos textos sobre vidro medido nos dois temas (mínimo 4.5:1); no escuro, os cards de certificação em destaque e o cabeçalho/opções do chat usam fundo um pouco mais denso para atingir o mínimo
+- Ajustes de cor de texto para 4.5:1: verde do chat no tema claro `#107837` (status "Online" e botão "Quero entrar em contato"), placeholder do formulário sem a opacidade extra de 60%, rótulos "Explorar portfólio" e "Voltar ao topo" sem a opacidade de 75% e nome da tecnologia em tom ajustado da cor da marca (mais escuro no claro; mais claro no escuro para Azure, Microsoft 365 e Kubernetes)
 - Contraste de cores adequado (WCAG AA)
+- Liquid Glass com fallbacks: `prefers-reduced-transparency: reduce` e `prefers-contrast: more` trocam o vidro por fundos sólidos (o segundo também reforça as bordas), e navegadores sem `backdrop-filter` (`@supports`) usam fundos opacos
 - Textos alternativos em imagens
 - Feedback de validação com `role="alert"`
 
@@ -350,7 +383,7 @@ Todas as rotas são redirecionadas para `index.html` para suporte ao roteamento 
 | `develop` | Testes (homologação) | [testing.leandrosevero.com.br](https://testing.leandrosevero.com.br) |
 | `main` | Produção | [leandrosevero.com.br](https://leandrosevero.com.br) |
 
-**Fluxo de publicação:** alterações são feitas e enviadas para `develop` (deploy automático no ambiente de testes). Após validação, abre-se um Pull Request de `develop` para `main`; o merge dispara o deploy de produção.
+**Fluxo de publicação:** alterações são feitas e enviadas para `develop` (deploy automático no ambiente de testes). Após validação, abre-se um Pull Request de `develop` para `main`; o merge dispara o deploy de produção. Push, merge ou rebase na `main` só acontecem com autorização explícita do responsável (regra registrada no `AGENTS.md`).
 
 A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a data da última verificação do fluxo de deploy e pode ser conferida no código-fonte de cada ambiente.
 

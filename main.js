@@ -270,6 +270,8 @@ const SKILL_DATA = {
     category: 'CI/CD',
     url: 'dev.azure.com',
     color: '#0078d4',
+    textLight: '#0068b8', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
+    textDark: '#008efa', // tom mais claro só para texto no tema escuro (≥ 4.5:1)
     bgIcon: 'rgba(0, 120, 212, 0.14)',
     bg: 'rgba(0, 120, 212, 0.06)',
     iconName: 'Azure DevOps',
@@ -280,6 +282,8 @@ const SKILL_DATA = {
     category: 'Cloud',
     url: 'portal.azure.com',
     color: '#0078d4',
+    textLight: '#0068b8', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
+    textDark: '#008efa', // tom mais claro só para texto no tema escuro (≥ 4.5:1)
     bgIcon: 'rgba(0, 120, 212, 0.14)',
     bg: 'rgba(0, 120, 212, 0.06)',
     iconName: 'Azure',
@@ -290,6 +294,8 @@ const SKILL_DATA = {
     category: 'Productivity',
     url: 'admin.cloud.microsoft',
     color: '#d83b01',
+    textLight: '#bf3401', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
+    textDark: '#fe4d0c', // tom mais claro só para texto no tema escuro (≥ 4.5:1)
     bgIcon: 'rgba(216, 59, 1, 0.14)',
     bg: 'rgba(216, 59, 1, 0.06)',
     iconName: 'Microsoft 365',
@@ -300,6 +306,7 @@ const SKILL_DATA = {
     category: 'Cloud',
     url: 'console.cloud.google.com',
     color: '#4285f4',
+    textLight: '#0d5ee4', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
     bgIcon: 'rgba(66, 133, 244, 0.14)',
     bg: 'rgba(66, 133, 244, 0.06)',
     iconName: 'GCP',
@@ -310,6 +317,7 @@ const SKILL_DATA = {
     category: 'Cloud',
     url: 'console.aws.amazon.com',
     color: '#ff9900',
+    textLight: '#945900', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
     bgIcon: 'rgba(255, 153, 0, 0.14)',
     bg: 'rgba(255, 153, 0, 0.06)',
     iconName: 'AWS',
@@ -319,6 +327,8 @@ const SKILL_DATA = {
     name: 'Kubernetes',
     category: 'Containers',
     color: '#326ce5',
+    textLight: '#1e5de2', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
+    textDark: '#5d8bea', // tom mais claro só para texto no tema escuro (≥ 4.5:1)
     bgIcon: 'rgba(50, 108, 229, 0.14)',
     bg: 'rgba(50, 108, 229, 0.06)',
     iconName: 'Kubernetes',
@@ -328,6 +338,7 @@ const SKILL_DATA = {
     name: 'Linux',
     category: 'OS',
     color: '#f5a623',
+    textLight: '#8f5c07', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
     bgIcon: 'rgba(245, 166, 35, 0.14)',
     bg: 'rgba(245, 166, 35, 0.06)',
     iconName: 'Linux',
@@ -337,6 +348,7 @@ const SKILL_DATA = {
     name: 'Windows Server',
     category: 'OS',
     color: '#00a1f1',
+    textLight: '#006ca2', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
     bgIcon: 'rgba(0, 161, 241, 0.14)',
     bg: 'rgba(0, 161, 241, 0.06)',
     iconName: 'Windows Server',
@@ -346,6 +358,7 @@ const SKILL_DATA = {
     name: 'Grafana',
     category: 'Monitoring',
     color: '#f46800',
+    textLight: '#aa4800', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
     bgIcon: 'rgba(244, 104, 0, 0.14)',
     bg: 'rgba(244, 104, 0, 0.06)',
     iconName: 'Grafana',
@@ -355,6 +368,7 @@ const SKILL_DATA = {
     name: 'RabbitMQ',
     category: 'Messaging',
     color: '#ff6600',
+    textLight: '#b04600', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
     bgIcon: 'rgba(255, 102, 0, 0.14)',
     bg: 'rgba(255, 102, 0, 0.06)',
     iconName: 'RabbitMQ',
@@ -364,6 +378,7 @@ const SKILL_DATA = {
     name: 'MongoDB',
     category: 'Database',
     color: '#47a248',
+    textLight: '#337434', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
     bgIcon: 'rgba(71, 162, 72, 0.14)',
     bg: 'rgba(71, 162, 72, 0.06)',
     iconName: 'MongoDB',
@@ -373,6 +388,8 @@ const SKILL_DATA = {
     name: 'Active Directory',
     category: 'Identity',
     color: '#0078d4',
+    textLight: '#0068b8', // tom mais escuro só para texto no tema claro (≥ 4.5:1)
+    textDark: '#008efa', // tom mais claro só para texto no tema escuro (≥ 4.5:1)
     bgIcon: 'rgba(0, 120, 212, 0.14)',
     bg: 'rgba(0, 120, 212, 0.06)',
     iconName: 'Active Directory',
@@ -443,7 +460,11 @@ const setDescPanel = (key) => {
 
   if (nameEl) {
     nameEl.textContent = data.name;
-    nameEl.style.color = data.color;
+    nameEl.style.setProperty('--skill-color', data.color);
+    nameEl.style.setProperty('--skill-text-light', data.textLight);
+    if (data.textDark) nameEl.style.setProperty('--skill-text-dark', data.textDark);
+    else nameEl.style.removeProperty('--skill-text-dark');
+    nameEl.style.color = 'var(--skill-text)';
   }
 
   if (textEl) {
@@ -469,19 +490,39 @@ const initSkillsInteraction = () => {
     const data = SKILL_DATA[key];
     if (data) {
       card.style.setProperty('--skill-color', data.color);
+      card.style.setProperty('--skill-text-light', data.textLight);
+      if (data.textDark) card.style.setProperty('--skill-text-dark', data.textDark);
       card.style.setProperty('--skill-bg-icon', data.bgIcon);
       card.style.setProperty('--skill-bg', data.bg);
     }
     if (key === 'azure-devops') defaultCard = card;
-    card.addEventListener('mouseenter', () => {
-      cards.forEach(c => c.classList.remove('active'));
+
+    const activate = () => {
+      cards.forEach(c => {
+        c.classList.remove('active');
+        c.setAttribute('aria-pressed', 'false');
+      });
       card.classList.add('active');
+      card.setAttribute('aria-pressed', 'true');
       setDescPanel(key);
+    };
+
+    // Acessível por teclado: foco com Tab e Enter/Espaço fazem a mesma seleção do hover
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-pressed', 'false');
+    card.addEventListener('mouseenter', activate);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activate();
+      }
     });
   });
 
   if (defaultCard) {
     defaultCard.classList.add('active');
+    defaultCard.setAttribute('aria-pressed', 'true');
     setDescPanel('azure-devops');
   }
 };
@@ -508,6 +549,8 @@ const initSkillsCarousel = () => {
     const slide = document.createElement('div');
     slide.className = 'skills-carousel-slide';
     slide.style.setProperty('--skill-color', data.color);
+    slide.style.setProperty('--skill-text-light', data.textLight);
+    if (data.textDark) slide.style.setProperty('--skill-text-dark', data.textDark);
     slide.style.setProperty('--skill-bg-icon', data.bgIcon);
     slide.style.setProperty('--skill-bg', data.bg);
 
@@ -602,7 +645,7 @@ const initSkillsCarousel = () => {
         s.style.backgroundColor = data.bg;
         s.querySelector('.skill-icon').style.backgroundColor = data.bgIcon;
         s.querySelector('.skill-icon').style.color = data.color;
-        s.querySelector('.skill-name').style.color = data.color;
+        s.querySelector('.skill-name').style.color = 'var(--skill-text)';
       } else {
         s.style.borderColor = '';
         s.style.backgroundColor = '';
@@ -700,7 +743,11 @@ const initScrollReveal = () => {
         entry.target.classList.remove('reveal-exit');
       } else {
         entry.target.classList.remove('visible');
-        entry.target.classList.add('reveal-exit');
+        // Saindo por baixo, volta ao estado inicial (deslocado para baixo, para fora da tela).
+        // Usar reveal-exit aqui subiria o elemento de volta para a área visível e criaria
+        // um loop entra/sai que faz o elemento tremer quando fica parado na borda inferior.
+        const exitedBelow = entry.boundingClientRect.top > 0;
+        entry.target.classList.toggle('reveal-exit', !exitedBelow);
       }
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });

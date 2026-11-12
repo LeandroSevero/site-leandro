@@ -337,6 +337,7 @@ const resetIdleTimer = () => {
 };
 
 const setFabIcon = (open) => {
+  fab.setAttribute('aria-expanded', open ? 'true' : 'false');
   const icon = fab.querySelector('.chat-fab-icon');
   const arrow = fab.querySelector('.chat-fab-arrow');
   if (!icon || !arrow) return;
