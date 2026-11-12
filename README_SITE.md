@@ -394,15 +394,26 @@ A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a da
 
 | Variável | Uso |
 |---|---|
-| `VITE_TURNSTILE_SITE_KEY` | Chave do site do Cloudflare Turnstile (front-end; usada na verificação de primeira visita e no formulário). Embutida no build: alterações exigem novo deploy |
-| `TURNSTILE_SECRET_KEY` | Chave secreta do Turnstile (API: `/api/verify-visit` e `/api/contact`) |
-
-Os hostnames `leandrosevero.com.br`, `www.leandrosevero.com.br` e `testing.leandrosevero.com.br` precisam estar cadastrados no widget do Turnstile no painel da Cloudflare.
-
-Para desenvolvimento local, use as chaves de teste da Cloudflare em `.env.local` (não versionado): `1x00000000000000000000AA` (sempre passa) ou `3x00000000000000000000FF` (força o desafio interativo).
+| `VITE_TURNSTILE_SITE_KEY` | Chave do site do Cloudflare Turnstile (front-end, lida em `turnstile.js`; usada na verificação de primeira visita e no formulário). Embutida no build: alterações exigem novo deploy |
+| `TURNSTILE_SECRET_KEY` | Chave secreta do Turnstile (servidor, lida em `api/lib/turnstile.js`; usada por `/api/verify-visit` e `/api/contact`) |
 | `RESEND_API_KEY` | Chave da API Resend para envio de e-mails |
 | `MONGODB_URI` | String de conexão MongoDB |
 | `CONTACT_TO_EMAIL` | E-mail de destino dos formulários |
+| `CONTACT_FROM_EMAIL` | Remetente dos e-mails enviados pelo formulário |
+
+### Chaves do Turnstile por ambiente
+
+| Ambiente | Onde configurar | `VITE_TURNSTILE_SITE_KEY` | `TURNSTILE_SECRET_KEY` |
+|---|---|---|---|
+| Produção (`main`) | Vercel → Production | chave real | chave real |
+| Homologação (`develop`) | Vercel → Preview, branch `develop` | `1x00000000000000000000AA` (teste) | `1x0000000000000000000000000000000AA` (teste) |
+| Local | `.env.local` (copiar de `.env.example`) | `1x00000000000000000000AA` (teste) | `1x0000000000000000000000000000000AA` (teste) |
+
+As chaves de teste oficiais da Cloudflare sempre passam e funcionam em qualquer domínio; testes automatizados usam somente elas. Para forçar o desafio interativo localmente, use a site key `3x00000000000000000000FF`.
+
+Os hostnames `leandrosevero.com.br` e `www.leandrosevero.com.br` precisam estar cadastrados no widget real do Turnstile no painel da Cloudflare.
+
+**Fluxo de verificação:** o front obtém um token do widget (`turnstile.render` com a site key) e o envia para `/api/verify-visit` (primeira visita, grava o cookie `ls_verified` por 30 dias) ou `/api/contact` (formulário). O servidor valida o token em `https://challenges.cloudflare.com/turnstile/v0/siteverify` com a secret key e o IP do visitante; sem a secret configurada, a verificação falha.
 
 ---
 

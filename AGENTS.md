@@ -18,6 +18,12 @@ Sempre responder ao usuário em **portugues brasileiro (pt-BR)**, independenteme
 * Pull Requests `develop → main` podem ser abertos quando o usuário pedir, mas **nunca** mesclados sem a autorização acima.
 * Antes de pedir a promoção para produção, confirmar o deploy em https://testing.leandrosevero.com.br.
 
+### Cloudflare Turnstile
+
+* Produção (`main`) usa as chaves reais; homologação (`develop`) e local usam as chaves de TESTE oficiais da Cloudflare (ver `.env.example`).
+* Testes automatizados em testing/local usam as chaves de teste do Turnstile; nunca use as chaves reais em testes.
+* Nunca escreva valores de chaves reais em código, commits, logs ou respostas.
+
 
 
 ## Atualização obrigatória do README_SITE.md
