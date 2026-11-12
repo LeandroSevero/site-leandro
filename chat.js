@@ -24,7 +24,7 @@ const TOPICS = {
       ],
     },
     full_summary: {
-      message: 'Aqui vai um pitch rápido 🚀\n\nLeandro tem mais de 4 anos de experiência em infraestrutura e DevOps, com foco em cloud (AWS, Azure, GCP), automação de pipelines CI/CD e orquestração de containers com Kubernetes. Hoje lidera o time de DevOps da Employer Tudo do RH, combinando visão técnica com gestão de pessoas — formação em ADS e pós em Gestão de Pessoas.',
+      message: 'Aqui vai um pitch rápido 🚀\n\nLeandro tem mais de 4 anos de experiência em infraestrutura e DevOps, com foco em cloud (AWS, Azure, GCP), automação de pipelines CI/CD e orquestração de containers com Kubernetes. Hoje lidera o time de DevOps da Employer Tudo do RH, combinando visão técnica com gestão de pessoas - formação em ADS e pós em Gestão de Pessoas.',
       options: [
         { label: 'Ver trajetória completa', next: 'experience' },
         { label: 'Tecnologias em detalhes', next: 'skills' },
@@ -34,7 +34,7 @@ const TOPICS = {
       ],
     },
     experience: {
-      message: 'Aqui está a trajetória do Leandro:\n\n• Supervisor de DevOps – Employer Tudo do RH (Jul 2025 – Presente)\n• Analista DevOps – Employer (Set 2024 – Jul 2025)\n• Analista de Infraestrutura TI – Employer (Fev 2023 – Set 2024)\n• Helpdesk e Telecom – Employer (Fev 2022 – Fev 2023)\n• Telecom – Employer (Jun 2021 – Fev 2022)\n• Soldado – Exército Brasileiro (Fev 2018 – Fev 2021)',
+      message: 'Aqui está a trajetória do Leandro:\n\n• Supervisor de DevOps - Employer Tudo do RH (Jul 2025 - Presente)\n• Analista DevOps - Employer (Set 2024 - Jul 2025)\n• Analista de Infraestrutura TI - Employer (Fev 2023 - Set 2024)\n• Helpdesk e Telecom - Employer (Fev 2022 - Fev 2023)\n• Telecom - Employer (Jun 2021 - Fev 2022)\n• Soldado - Exército Brasileiro (Fev 2018 - Fev 2021)',
       options: [
         { label: 'Detalhar o cargo atual', next: 'current_role' },
         { label: 'Stacks que utiliza', next: 'skills' },
@@ -61,7 +61,7 @@ const TOPICS = {
       ],
     },
     education: {
-      message: 'A formação do Leandro une técnica e liderança:\n\n🎓 Análise e Desenvolvimento de Sistemas – UNICURITIBA\n📚 Pós-graduação em Gestão de Pessoas – PUCPR\n\nEssa combinação é o que permite entregar soluções robustas e liderar times com clareza.',
+      message: 'A formação do Leandro une técnica e liderança:\n\n🎓 Análise e Desenvolvimento de Sistemas - UNICURITIBA\n📚 Pós-graduação em Gestão de Pessoas - PUCPR\n\nEssa combinação é o que permite entregar soluções robustas e liderar times com clareza.',
       options: [
         { label: 'Ver certificações', next: 'certs' },
         { label: 'Tecnologias que domina', next: 'skills' },
@@ -70,7 +70,7 @@ const TOPICS = {
       ],
     },
     certs: {
-      message: 'Aqui estão as certificações mais relevantes:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps – CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Arquitetura de Redes\n🖥️ Active Directory – Do Zero ao Avançado\n🏅 Liderança Inovadora (STF)\n🔐 Segurança da Informação (Bradesco)',
+      message: 'Aqui estão as certificações mais relevantes:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps - CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Arquitetura de Redes\n🖥️ Active Directory - Do Zero ao Avançado\n🏅 Liderança Inovadora (STF)\n🔐 Segurança da Informação (Bradesco)',
       options: [
         { label: 'Ver formação acadêmica', next: 'education' },
         { label: 'Tecnologias que usa', next: 'skills' },
@@ -123,7 +123,7 @@ const TOPICS = {
       ],
     },
     full_summary: {
-      message: "Here's a quick pitch 🚀\n\nLeandro has 4+ years in infrastructure and DevOps, focused on cloud (AWS, Azure, GCP), CI/CD pipeline automation, and container orchestration with Kubernetes. Today he leads the DevOps team at Employer Tudo do RH, combining strong technical vision with people management skills — backed by a degree in Systems Analysis and a postgrad in People Management.",
+      message: "Here's a quick pitch 🚀\n\nLeandro has 4+ years in infrastructure and DevOps, focused on cloud (AWS, Azure, GCP), CI/CD pipeline automation, and container orchestration with Kubernetes. Today he leads the DevOps team at Employer Tudo do RH, combining strong technical vision with people management skills - backed by a degree in Systems Analysis and a postgrad in People Management.",
       options: [
         { label: 'Full career timeline', next: 'experience' },
         { label: 'Technologies in detail', next: 'skills' },
@@ -133,7 +133,7 @@ const TOPICS = {
       ],
     },
     experience: {
-      message: "Here's Leandro's career timeline:\n\n• DevOps Supervisor – Employer Tudo do RH (Jul 2025 – Present)\n• DevOps Analyst – Employer (Sep 2024 – Jul 2025)\n• IT Infrastructure Analyst – Employer (Feb 2023 – Sep 2024)\n• Helpdesk & Telecom – Employer (Feb 2022 – Feb 2023)\n• Telecom – Employer (Jun 2021 – Feb 2022)\n• Soldier – Brazilian Army (Feb 2018 – Feb 2021)",
+      message: "Here's Leandro's career timeline:\n\n• DevOps Supervisor - Employer Tudo do RH (Jul 2025 - Present)\n• DevOps Analyst - Employer (Sep 2024 - Jul 2025)\n• IT Infrastructure Analyst - Employer (Feb 2023 - Sep 2024)\n• Helpdesk & Telecom - Employer (Feb 2022 - Feb 2023)\n• Telecom - Employer (Jun 2021 - Feb 2022)\n• Soldier - Brazilian Army (Feb 2018 - Feb 2021)",
       options: [
         { label: 'Current role in detail', next: 'current_role' },
         { label: 'Tech stack he uses', next: 'skills' },
@@ -160,7 +160,7 @@ const TOPICS = {
       ],
     },
     education: {
-      message: "Leandro's background blends tech and leadership:\n\n🎓 Systems Analysis and Development – UNICURITIBA\n📚 Postgraduate in People Management – PUCPR\n\nThis mix is what allows him to deliver robust solutions while leading teams effectively.",
+      message: "Leandro's background blends tech and leadership:\n\n🎓 Systems Analysis and Development - UNICURITIBA\n📚 Postgraduate in People Management - PUCPR\n\nThis mix is what allows him to deliver robust solutions while leading teams effectively.",
       options: [
         { label: 'View certifications', next: 'certs' },
         { label: 'Tech stack', next: 'skills' },
@@ -169,7 +169,7 @@ const TOPICS = {
       ],
     },
     certs: {
-      message: "Here are his most relevant certifications:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps – CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Network Architecture\n🖥️ Active Directory – Zero to Advanced\n🏅 Innovative Leadership (STF)\n🔐 Information Security (Bradesco)",
+      message: "Here are his most relevant certifications:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps - CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Network Architecture\n🖥️ Active Directory - Zero to Advanced\n🏅 Innovative Leadership (STF)\n🔐 Information Security (Bradesco)",
       options: [
         { label: 'Academic background', next: 'education' },
         { label: 'Tech stack', next: 'skills' },

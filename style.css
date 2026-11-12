@@ -3206,6 +3206,8 @@ main {
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(26, 95, 168, 0.06);
   --glass-shadow: 0 8px 28px rgba(26, 95, 168, 0.1);
   --glass-shadow-hover: 0 14px 36px rgba(26, 95, 168, 0.16);
+  /* Sombra de hover compacta: cabe no espaço entre cards (alcance ~10px nas laterais, 16px abaixo, 4px acima) */
+  --glass-shadow-hover-tight: 0 6px 16px -6px rgba(26, 95, 168, 0.24);
   --glass-solid: #f7fafd;
   /* Fundo dos cards de certificação em destaque (no escuro, mais denso para o texto suave passar de 4.5:1) */
   --glass-bg-tinted: rgba(255, 255, 255, 0.55);
@@ -3224,6 +3226,7 @@ main {
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
   --glass-shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(79, 209, 197, 0.08);
+  --glass-shadow-hover-tight: 0 6px 16px -6px rgba(0, 0, 0, 0.6), 0 0 12px -6px rgba(79, 209, 197, 0.2);
   --glass-solid: #0b1020;
   --glass-bg-tinted: rgba(4, 6, 15, 0.45);
 }
@@ -3322,6 +3325,14 @@ main {
 [data-theme] .timeline-card:hover,
 [data-theme] .contact-card:hover {
   box-shadow: var(--glass-highlight), var(--glass-shadow-hover);
+}
+
+/* Experiência, certificações do carrossel e contato ficam a 12-32px uns dos outros:
+   a sombra grande invadia os vizinhos (que são de vidro e escureciam). Usa a sombra compacta. */
+[data-theme] .timeline-card:hover,
+[data-theme] .cert-item:hover,
+[data-theme] .contact-card:hover {
+  box-shadow: var(--glass-highlight), var(--glass-shadow-hover-tight);
 }
 
 [data-theme] .cert-featured:hover {

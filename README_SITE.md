@@ -294,6 +294,7 @@ Tokens definidos no bloco "Liquid Glass" no fim do `style.css`. As regras usam o
 | `--glass-sheen` | gradiente branco 55% → 0 | gradiente branco 9% → 0 | Reflexo diagonal (`background-image`) |
 | `--glass-highlight` | `inset` branco 90% | `inset` branco 12% | Brilho especular na borda superior |
 | `--glass-shadow` / `--glass-shadow-hover` | sombra azulada suave | sombra preta + brilho teal | Profundidade em repouso / hover |
+| `--glass-shadow-hover-tight` | `0 6px 16px -6px` azulada | `0 6px 16px -6px` preta + brilho teal | Hover de Experiência, certificações do carrossel e contato: cabe no espaço entre cards (12-32px) e não escurece os vizinhos de vidro |
 | `--glass-solid` | `#f7fafd` | `#0b1020` | Fundo sólido usado nos fallbacks |
 | `--glass-bg-tinted` | `rgba(255,255,255,0.55)` | `rgba(4,6,15,0.45)` | Fundo dos cards de certificação em destaque (no escuro, mais denso para o texto suave passar de 4.5:1) |
 
