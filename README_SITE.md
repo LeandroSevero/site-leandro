@@ -86,11 +86,12 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - As respostas do chat sobre certificações listam os mesmos itens, na mesma ordem e com as mesmas datas
 
 ### Seção de Experiência
-- Timeline vertical com 6 posições profissionais
+- Timeline vertical com 6 posições profissionais: Supervisor de DevOps, Analista DevOps, Analista de Infraestrutura de TI, Suporte de Helpdesk e Telecom, Analista de Telecom e Soldado (cargos com nível, em pt e en, iguais nas respostas do chat)
 - Acordeão expansível por cargo com descrição detalhada
 - Tags de tecnologias por posição
 
 ### Formulário de Contato (Modal)
+- E-mail público único do site: `leandroolise@gmail.com` (card "E-mail" da seção Contato como link `mailto:` e rodapé). O remetente técnico dos e-mails enviados pelo servidor continua definido por `CONTACT_FROM_EMAIL`
 - Campos: Nome, E-mail, Telefone (opcional), Assunto, Mensagem
 - Máscara automática no campo de telefone
 - Contadores de caracteres em tempo real (Assunto e Mensagem)
@@ -169,8 +170,9 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 │
 └── public/
     ├── robots.txt
-    ├── sitemap.xml
-    ├── _redirects               # Redirects para Netlify (compatibilidade)
+    ├── og-image.jpg             # Imagem de compartilhamento (Open Graph / Twitter), 1200x630
+    ├── 404.html                 # Página "não encontrada" (pt/en), servida com status 404 pela Vercel
+    ├── _redirects               # Redirects para Netlify (sem efeito na Vercel; as rotas ficam no vercel.json)
     └── icons/                   # Ícones SVG das tecnologias e dos emissores de certificação (carregados dinamicamente, sem import)
         ├── Azure DevOps/
         ├── Azure/
@@ -364,11 +366,16 @@ Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` 
 - Feedback de validação com `role="alert"`
 
 ### SEO
-- Meta tags: `description`, `author`, `robots`
-- Open Graph (`og:title`, `og:description`, `og:image`, `og:url`)
-- Twitter Cards
-- `sitemap.xml` e `robots.txt`
-- URLs canônicas com âncoras
+- Meta tags: `description`, `author`, `robots` (`index, follow` em produção)
+- `<link rel="canonical" href="https://leandrosevero.com.br/">`
+- Open Graph completo: `og:title`, `og:description`, `og:url`, `og:site_name`, `og:type`, `og:locale` e `og:image` (`https://leandrosevero.com.br/og-image.jpg`, 1200x630, com `og:image:type`, `width`, `height` e `alt`)
+- Twitter/X Card `summary_large_image` (`twitter:title`, `twitter:description`, `twitter:image`, `twitter:image:alt`)
+- Imagem de compartilhamento `public/og-image.jpg` (1200x630, JPG ~76 KB, tema escuro): foto, "Leandro Severo", "Supervisor de DevOps" e "leandrosevero.com.br"
+- Dados estruturados JSON-LD `Person` no `<head>`: `name`, `url`, `image`, `jobTitle`, `worksFor` (Employer Tudo do RH), `address` (Curitiba, PR, BR), `alumniOf` (UNICURITIBA e PUCPR), `knowsAbout` e `sameAs` (LinkedIn e Instagram). Sem e-mail e sem telefone
+- Todo o conteúdo e as meta tags estão no HTML servido (funciona sem JavaScript); o portão do Turnstile é liberado automaticamente para robôs (`bot`, `crawler`, `spider`, `facebookexternalhit`...)
+- `sitemap.xml` gerado a cada build por um plugin no `vite.config.js`, com `<lastmod>` = data do build (fuso de Brasília); `robots.txt` aponta para ele
+- Página 404 real: `public/404.html` (pt e en, tema e idioma do site, botão "Voltar ao início"), servida com status HTTP 404 para endereços inexistentes; só as seções `/sobre`, `/skills`, `/certificados`, `/experiencia` e `/contato` são reescritas para a página inicial
+- Homologação fora dos buscadores: `testing.leandrosevero.com.br` responde com `X-Robots-Tag: noindex, nofollow` (regra por host no `vercel.json`); produção segue indexável
 - `lang` do documento atualizado conforme idioma selecionado
 
 ---
@@ -381,11 +388,19 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 {
   "buildCommand": "npm run build",
   "installCommand": "rm -rf node_modules && npm ci",
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/:secao(sobre|skills|certificados|experiencia|contato)", "destination": "/" },
+    { "source": "/:secao(sobre|skills|certificados|experiencia|contato)/", "destination": "/" }
+  ],
+  "headers": [
+    { "source": "/(.*)", "has": [{ "type": "host", "value": "testing.leandrosevero.com.br" }],
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }
+  ],
+  "crons": [{ "path": "/api/health", "schedule": "0 9 * * *" }]
 }
 ```
 
-Todas as rotas são redirecionadas para `index.html` para suporte ao roteamento SPA com History API.
+Só os caminhos das seções (usados pela History API ao navegar pelo menu) são reescritos para `index.html`. Arquivos estáticos, `/api/*`, `/Curriculo-Leandro.pdf`, `/robots.txt`, `/sitemap.xml` e os assets são servidos normalmente, e qualquer outro endereço recebe `public/404.html` com status **404**. Em homologação, todas as respostas levam `X-Robots-Tag: noindex, nofollow`.
 
 ### Ambientes
 
