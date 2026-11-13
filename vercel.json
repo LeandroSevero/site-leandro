@@ -3,8 +3,29 @@
   "buildCommand": "npm run build",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/:secao(sobre|skills|certificados|experiencia|contato)",
       "destination": "/"
+    },
+    {
+      "source": "/:secao(sobre|skills|certificados|experiencia|contato)/",
+      "destination": "/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "testing.leandrosevero.com.br"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ],
   "crons": [

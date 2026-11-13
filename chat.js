@@ -34,7 +34,7 @@ const TOPICS = {
       ],
     },
     experience: {
-      message: 'Aqui está a trajetória do Leandro:\n\n• Supervisor de DevOps - Employer Tudo do RH (Jul 2025 - Presente)\n• Analista DevOps - Employer (Set 2024 - Jul 2025)\n• Analista de Infraestrutura TI - Employer (Fev 2023 - Set 2024)\n• Helpdesk e Telecom - Employer (Fev 2022 - Fev 2023)\n• Telecom - Employer (Jun 2021 - Fev 2022)\n• Soldado - Exército Brasileiro (Fev 2018 - Fev 2021)',
+      message: 'Aqui está a trajetória do Leandro:\n\n• Supervisor de DevOps - Employer Tudo do RH (Jul 2025 - Presente)\n• Analista DevOps - Employer (Set 2024 - Jul 2025)\n• Analista de Infraestrutura TI - Employer (Fev 2023 - Set 2024)\n• Helpdesk e Telecom - Employer (Fev 2022 - Fev 2023)\n• Analista de Telecom - Employer (Jun 2021 - Fev 2022)\n• Soldado - Exército Brasileiro (Fev 2018 - Fev 2021)',
       options: [
         { label: 'Detalhar o cargo atual', next: 'current_role' },
         { label: 'Stacks que utiliza', next: 'skills' },
@@ -133,7 +133,7 @@ const TOPICS = {
       ],
     },
     experience: {
-      message: "Here's Leandro's career timeline:\n\n• DevOps Supervisor - Employer Tudo do RH (Jul 2025 - Present)\n• DevOps Analyst - Employer (Sep 2024 - Jul 2025)\n• IT Infrastructure Analyst - Employer (Feb 2023 - Sep 2024)\n• Helpdesk & Telecom - Employer (Feb 2022 - Feb 2023)\n• Telecom - Employer (Jun 2021 - Feb 2022)\n• Soldier - Brazilian Army (Feb 2018 - Feb 2021)",
+      message: "Here's Leandro's career timeline:\n\n• DevOps Supervisor - Employer Tudo do RH (Jul 2025 - Present)\n• DevOps Analyst - Employer (Sep 2024 - Jul 2025)\n• IT Infrastructure Analyst - Employer (Feb 2023 - Sep 2024)\n• Helpdesk & Telecom - Employer (Feb 2022 - Feb 2023)\n• Telecom Analyst - Employer (Jun 2021 - Feb 2022)\n• Soldier - Brazilian Army (Feb 2018 - Feb 2021)",
       options: [
         { label: 'Current role in detail', next: 'current_role' },
         { label: 'Tech stack he uses', next: 'skills' },
