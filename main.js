@@ -1,6 +1,7 @@
 import { dictionaries } from './i18n.js';
 import { initContactModal } from './contact-modal.js';
 import { initVisitGate } from './visit-gate.js';
+import { initSiteMeta } from './site-meta.js';
 import {
   logoDark,
   logoLight,
@@ -113,6 +114,7 @@ const applyTranslations = (locale) => {
   });
 
   updateSkillDescs(locale);
+  document.dispatchEvent(new CustomEvent('site:lang', { detail: locale }));
 };
 
 const toggleLang = () => {
@@ -182,6 +184,7 @@ const SECTION_SLUG_MAP = {
   'skills': 'skills',
   'certificados': 'certificados',
   'experiencia': 'experiencia',
+  'como-feito': 'como-feito',
   'contato': 'contato',
 };
 
@@ -1038,6 +1041,7 @@ const init = () => {
   initTimelineDot();
   initContactModal();
   initScrollTop();
+  initSiteMeta();
   initAzureEasterEgg();
   handleDeepLink();
 };

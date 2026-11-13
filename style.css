@@ -3630,6 +3630,187 @@ main {
   transform: translate(-50%, -50%);
 }
 
+/* --- Seção "Como este site é feito" --- */
+:root {
+  --pipe-stroke: rgba(26, 95, 168, 0.28);
+  --status-ok: #15803d;
+  --status-warn: #b45309;
+  --status-off: #6b7a90;
+}
+
+[data-theme="dark"] {
+  --pipe-stroke: rgba(255, 255, 255, 0.2);
+  --status-ok: #22c55e;
+  --status-warn: #f59e0b;
+  --status-off: #8a94a8;
+}
+
+/* Indicador de status ao vivo */
+.site-status {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: var(--space-8);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--glass-border-control);
+  border-radius: 999px;
+  background-color: var(--glass-bg);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-highlight);
+  color: var(--color-fg);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.site-status-dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--status-off);
+}
+
+.site-status[data-state="operational"] .site-status-dot {
+  background-color: var(--status-ok);
+  animation: status-pulse 2.4s ease-in-out infinite;
+}
+
+.site-status[data-state="degraded"] .site-status-dot {
+  background-color: var(--status-warn);
+}
+
+.site-status[data-state="unavailable"] .site-status-text,
+.site-status[data-state="loading"] .site-status-text {
+  color: var(--color-fg-muted);
+}
+
+.site-status-time {
+  color: var(--color-fg-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+@keyframes status-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+  50% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+}
+
+/* Diagrama do pipeline (SVG inline): horizontal a partir de 1100px, vertical abaixo */
+.pipeline {
+  margin: 0 0 var(--space-8);
+}
+
+.pipeline-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.pipeline-v {
+  display: none;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1099px) {
+  .pipeline-h { display: none; }
+  .pipeline-v { display: block; }
+}
+
+.pipe-box {
+  fill: var(--glass-bg);
+  stroke: var(--pipe-stroke);
+  stroke-width: 1.5;
+}
+
+.pipe-step-prod .pipe-box {
+  stroke: var(--color-primary);
+}
+
+.pipe-num {
+  fill: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.pipe-num-v {
+  font-size: 18px;
+}
+
+.pipe-title {
+  fill: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.pipe-sub {
+  fill: var(--color-fg-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  text-anchor: middle;
+}
+
+.pipe-left {
+  text-anchor: start;
+}
+
+.pipe-line {
+  stroke: var(--color-primary);
+  stroke-width: 2;
+}
+
+.pipe-arrow-head {
+  fill: var(--color-primary);
+}
+
+/* Menu com 6 itens: sem quebra de linha e espaçamento menor em telas médias */
+.nav-desktop a {
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-desktop {
+    gap: var(--space-5);
+  }
+}
+
+/* Cards de práticas (reaproveitam .card) */
+.build-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--space-4);
+}
+
+/* Rodapé: versão e último deploy */
+.footer-build {
+  margin-top: var(--space-2);
+}
+
+.footer-commit {
+  position: relative;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-commit::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
 /* --- Menos movimento: sem quique e sem o reflexo diagonal do vidro --- */
 @media (prefers-reduced-motion: reduce) {
   :root,
@@ -3638,7 +3819,8 @@ main {
   }
 
   [data-theme] .scroll-down,
-  [data-theme] .scroll-top-btn {
+  [data-theme] .scroll-top-btn,
+  .site-status[data-state] .site-status-dot {
     animation: none;
   }
 }

@@ -1,5 +1,5 @@
 import { timingSafeEqual } from 'crypto';
-import { getDb } from './lib/mongodb.js';
+import { runHealthChecks } from './lib/health-checks.js';
 
 // Check de saúde do site e keep-alive do MongoDB Atlas.
 // - Chamado 1x por dia pelo cron da Vercel (Authorization: Bearer <CRON_SECRET>, enviado automaticamente)
@@ -7,15 +7,7 @@ import { getDb } from './lib/mongodb.js';
 // - O ping abre uma conexão real com o cluster: conta como atividade e evita que o
 //   cluster gratuito do Atlas seja pausado por falta de uso.
 // - Nunca devolve valores de variáveis nem envia e-mail.
-
-const DB_NAME = 'contact';
-const PING_TIMEOUT_MS = 4000;
-
-const REQUIRED_ENV = {
-  turnstile: ['VITE_TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY'],
-  resend: ['RESEND_API_KEY'],
-  contato: ['CONTACT_TO_EMAIL', 'CONTACT_FROM_EMAIL'],
-};
+// - A mesma lógica (api/lib/health-checks.js) alimenta o /api/status público, que só diz operational/degraded.
 
 const safeEqual = (a, b) => {
   const ba = Buffer.from(a);
@@ -32,28 +24,6 @@ const isAuthorized = (req) => {
   return accepted.some((secret) => safeEqual(token, secret));
 };
 
-const withTimeout = (promise, ms) =>
-  Promise.race([
-    promise,
-    new Promise((_, reject) => setTimeout(() => reject(Object.assign(new Error('timeout'), { name: 'TimeoutError' })), ms)),
-  ]);
-
-const checkMongo = async () => {
-  const started = Date.now();
-  try {
-    const db = await withTimeout(getDb(DB_NAME), PING_TIMEOUT_MS);
-    await withTimeout(db.command({ ping: 1 }), PING_TIMEOUT_MS);
-    return { ok: true, ms: Date.now() - started };
-  } catch (err) {
-    return { ok: false, ms: Date.now() - started, erro: err?.name || 'Error' };
-  }
-};
-
-const checkEnv = (names) => {
-  const missing = names.filter((name) => !process.env[name]);
-  return missing.length ? { ok: false, faltando: missing } : { ok: true };
-};
-
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
@@ -66,13 +36,8 @@ export default async function handler(req, res) {
     return res.status(401).json({ status: 'unauthorized' });
   }
 
-  const checks = { mongodb: await checkMongo() };
-  for (const [name, vars] of Object.entries(REQUIRED_ENV)) {
-    checks[name] = checkEnv(vars);
-  }
-
-  const failed = Object.keys(checks).filter((name) => !checks[name].ok);
-  if (failed.length) {
+  const { ok, failed, checks } = await runHealthChecks();
+  if (!ok) {
     console.error('[api/health] check falhou', { falhas: failed, mongodb: checks.mongodb.erro || null });
     return res.status(503).json({ status: 'error', failed, checks, timestamp: new Date().toISOString() });
   }

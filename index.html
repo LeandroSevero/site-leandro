@@ -92,6 +92,7 @@
         <a href="#skills" data-i18n="nav.skills">Skills</a>
         <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
         <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
+        <a href="#como-feito" data-i18n="nav.build">Como é feito</a>
         <a href="#contato" data-i18n="nav.contact">Contato</a>
 
         <button id="lang-toggle" class="lang-toggle" aria-label="Mudar idioma">
@@ -149,7 +150,8 @@
       <a href="#skills" data-i18n="nav.skills">Skills</a>
       <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
       <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
-      <a href="#contato" data-i18n="nav.contact">Contato</a>
+      <a href="#como-feito" data-i18n="nav.build">Como é feito</a>
+        <a href="#contato" data-i18n="nav.contact">Contato</a>
     </div>
   </header>
 
@@ -603,10 +605,94 @@
       </div>
     </section>
 
+    <section id="como-feito" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number" data-i18n="build.section">05.</span>
+          <h2 data-i18n="build.title">Como este site é feito</h2>
+          <p data-i18n="build.intro">Este site é mantido com as mesmas práticas que uso no trabalho: versionamento no Git, ambientes separados de homologação e produção, deploy automático e monitoramento contínuo. Cada mudança é testada em homologação antes de chegar aqui.</p>
+        </div>
+
+        <div class="site-status" id="site-status" data-state="loading" role="status" aria-live="polite">
+          <span class="site-status-dot" aria-hidden="true"></span>
+          <span class="site-status-text" data-i18n="build.status.loading">Verificando status...</span>
+          <span class="site-status-time"></span>
+        </div>
+
+        <figure class="pipeline">
+          <svg class="pipeline-svg pipeline-h" viewBox="0 0 1180 150" role="img" aria-labelledby="pipe-h-title pipe-h-desc" xmlns="http://www.w3.org/2000/svg">
+            <title id="pipe-h-title" data-i18n="build.pipe.title">Pipeline de publicação do site</title>
+            <desc id="pipe-h-desc" data-i18n="build.pipe.desc">GitHub, branch develop, passa por build e checks, publica em homologação (testing), segue por Pull Request para produção (main) e é monitorado por um health check diário e um alerta semanal.</desc>
+            <defs>
+              <marker id="pipe-arrow-h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="pipe-arrow-head"/></marker>
+            </defs>
+            <g class="pipe-step"><rect x="0" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="80" y="62" class="pipe-num">1</text><text x="80" y="86" class="pipe-title">GitHub</text><text x="80" y="108" class="pipe-sub" data-i18n="build.pipe.1.sub">branch develop</text></g>
+            <line x1="166" y1="75" x2="198" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
+            <g class="pipe-step"><rect x="204" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="284" y="62" class="pipe-num">2</text><text x="284" y="86" class="pipe-title" data-i18n="build.pipe.2.title">Build e checks</text><text x="284" y="108" class="pipe-sub">Vite + Vercel</text></g>
+            <line x1="370" y1="75" x2="402" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
+            <g class="pipe-step"><rect x="408" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="488" y="62" class="pipe-num">3</text><text x="488" y="86" class="pipe-title" data-i18n="build.pipe.3.title">Homologação</text><text x="488" y="108" class="pipe-sub">testing</text></g>
+            <line x1="574" y1="75" x2="606" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
+            <g class="pipe-step"><rect x="612" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="692" y="62" class="pipe-num">4</text><text x="692" y="86" class="pipe-title">Pull Request</text><text x="692" y="108" class="pipe-sub">develop &gt; main</text></g>
+            <line x1="778" y1="75" x2="810" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
+            <g class="pipe-step pipe-step-prod"><rect x="816" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="896" y="62" class="pipe-num">5</text><text x="896" y="86" class="pipe-title" data-i18n="build.pipe.5.title">Produção</text><text x="896" y="108" class="pipe-sub">main</text></g>
+            <line x1="982" y1="75" x2="1014" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
+            <g class="pipe-step"><rect x="1020" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="1100" y="52" class="pipe-num">6</text><text x="1100" y="76" class="pipe-title" data-i18n="build.pipe.6.title">Monitoramento</text><text x="1100" y="98" class="pipe-sub" data-i18n="build.pipe.6.sub1">health check diário</text><text x="1100" y="117" class="pipe-sub" data-i18n="build.pipe.6.sub2">+ alerta semanal</text></g>
+          </svg>
+
+          <svg class="pipeline-svg pipeline-v" viewBox="0 0 320 690" role="img" aria-labelledby="pipe-v-title pipe-v-desc" xmlns="http://www.w3.org/2000/svg">
+            <title id="pipe-v-title" data-i18n="build.pipe.title">Pipeline de publicação do site</title>
+            <desc id="pipe-v-desc" data-i18n="build.pipe.desc">GitHub, branch develop, passa por build e checks, publica em homologação (testing), segue por Pull Request para produção (main) e é monitorado por um health check diário e um alerta semanal.</desc>
+            <defs>
+              <marker id="pipe-arrow-v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="pipe-arrow-head"/></marker>
+            </defs>
+            <g class="pipe-step"><rect x="10" y="5" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="54" class="pipe-num pipe-num-v">1</text><text x="70" y="44" class="pipe-title pipe-left">GitHub</text><text x="70" y="68" class="pipe-sub pipe-left" data-i18n="build.pipe.1.sub">branch develop</text></g>
+            <line x1="160" y1="95" x2="160" y2="118" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
+            <g class="pipe-step"><rect x="10" y="122" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="171" class="pipe-num pipe-num-v">2</text><text x="70" y="161" class="pipe-title pipe-left" data-i18n="build.pipe.2.title">Build e checks</text><text x="70" y="185" class="pipe-sub pipe-left">Vite + Vercel</text></g>
+            <line x1="160" y1="212" x2="160" y2="235" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
+            <g class="pipe-step"><rect x="10" y="239" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="288" class="pipe-num pipe-num-v">3</text><text x="70" y="278" class="pipe-title pipe-left" data-i18n="build.pipe.3.title">Homologação</text><text x="70" y="302" class="pipe-sub pipe-left">testing</text></g>
+            <line x1="160" y1="329" x2="160" y2="352" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
+            <g class="pipe-step"><rect x="10" y="356" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="405" class="pipe-num pipe-num-v">4</text><text x="70" y="395" class="pipe-title pipe-left">Pull Request</text><text x="70" y="419" class="pipe-sub pipe-left">develop &gt; main</text></g>
+            <line x1="160" y1="446" x2="160" y2="469" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
+            <g class="pipe-step pipe-step-prod"><rect x="10" y="473" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="522" class="pipe-num pipe-num-v">5</text><text x="70" y="512" class="pipe-title pipe-left" data-i18n="build.pipe.5.title">Produção</text><text x="70" y="536" class="pipe-sub pipe-left">main</text></g>
+            <line x1="160" y1="563" x2="160" y2="586" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
+            <g class="pipe-step"><rect x="10" y="590" width="300" height="95" rx="16" class="pipe-box"/><text x="40" y="643" class="pipe-num pipe-num-v">6</text><text x="70" y="625" class="pipe-title pipe-left" data-i18n="build.pipe.6.title">Monitoramento</text><text x="70" y="649" class="pipe-sub pipe-left" data-i18n="build.pipe.6.sub1">health check diário</text><text x="70" y="669" class="pipe-sub pipe-left" data-i18n="build.pipe.6.sub2">+ alerta semanal</text></g>
+          </svg>
+        </figure>
+
+        <div class="build-cards">
+          <article class="card">
+            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></div>
+            <h3 data-i18n="build.card.1.title">Ambientes separados</h3>
+            <p data-i18n="build.card.1.text">A branch develop publica em homologação (testing) e a main em produção: nada chega ao site sem passar por testes.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z"/></svg></div>
+            <h3 data-i18n="build.card.2.title">Deploy automático (Vercel)</h3>
+            <p data-i18n="build.card.2.text">Cada push gera build e deploy automáticos, com checks no Pull Request antes do merge.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <h3 data-i18n="build.card.3.title">Health check e keep-alive</h3>
+            <p data-i18n="build.card.3.text">Um cron diário testa o banco e as configurações e mantém o banco ativo; um alerta semanal avisa se algo quebrar.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg></div>
+            <h3 data-i18n="build.card.4.title">Segredos por ambiente</h3>
+            <p data-i18n="build.card.4.text">Chaves e tokens ficam só nas variáveis de ambiente, com chaves de teste fora da produção; nada vai para o código.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"/><path d="M5 8h14"/><path d="M12 8v6"/><path d="m8 21 4-7 4 7"/></svg></div>
+            <h3 data-i18n="build.card.5.title">Acessibilidade WCAG AA</h3>
+            <p data-i18n="build.card.5.text">Contraste mínimo de 4.5:1, foco visível, navegação por teclado e respeito à preferência por menos movimento.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section id="contato" class="section">
       <div class="container">
         <div class="section-header">
-          <span class="section-number" data-i18n="contact.section">05. Contato</span>
+          <span class="section-number" data-i18n="contact.section">06. Contato</span>
           <h2 data-i18n="contact.title">Vamos conversar?</h2>
           <p data-i18n="contact.desc">Estou aberto a novas oportunidades, colaborações e conversas sobre tecnologia. Entre em contato!</p>
         </div>
@@ -675,6 +761,7 @@
   <footer class="footer">
     <div class="container">
       <p>&copy; <span id="year">2025</span> Leandro Severo &middot; <a href="mailto:leandroolise@gmail.com" class="footer-email">leandroolise@gmail.com</a></p>
+      <p class="footer-build" id="footer-build" hidden></p>
     </div>
   </footer>
 

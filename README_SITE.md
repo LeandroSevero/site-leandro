@@ -90,6 +90,19 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Acordeão expansível por cargo com descrição detalhada
 - Tags de tecnologias por posição
 
+### Seção "Como este site é feito" (05.)
+- Item "Como é feito" / "How it's built" no menu (desktop e mobile) e rota `/como-feito`
+- Texto curto sobre as práticas usadas no site: versionamento, ambientes separados, deploy automático e monitoramento
+- **Status ao vivo:** chama `/api/status` (público) e mostra bolinha verde "Todos os sistemas operando", âmbar "Instabilidade detectada" ou cinza "Status indisponível" (se a chamada falhar, sem quebrar a página), com "verificado há X min". Atualiza a cada 5 min; a bolinha só pulsa sem `prefers-reduced-motion`
+- **Diagrama do pipeline** em SVG inline, sem bibliotecas: GitHub (develop) > Build e checks > Homologação (testing) > Pull Request > Produção (main) > Monitoramento. Horizontal a partir de 1100px e vertical abaixo; `role="img"` com `<title>` e `<desc>` traduzidos; cores pelas variáveis do tema
+- **5 cards** (mesmo estilo dos cards do "Sobre"): Ambientes separados, Deploy automático (Vercel), Health check e keep-alive, Segredos por ambiente e Acessibilidade WCAG AA
+- Implementação: `site-meta.js` (status e rodapé), traduções em `i18n.js` (chaves `build.*` e `footer.*`)
+
+### Rodapé: versão e último deploy
+- Linha "Versão vX.Y.Z · Último deploy: DD/MM/AAAA · commit abc1234", com o commit linkando para o GitHub (nova aba, foco visível e área de toque de 44px)
+- Versão lida do `package.json`; commit, repositório e data do deploy vêm das variáveis de sistema da Vercel no build (`VERCEL_GIT_COMMIT_SHA`, `VERCEL_GIT_REPO_OWNER`, `VERCEL_GIT_REPO_SLUG`), injetadas pelo Vite (`define` no `vite.config.js`). Em build local, sem essas variáveis, mostra "dev"
+- A cada release, a versão do `package.json` é atualizada junto com a tag (regra no `AGENTS.md`)
+
 ### Formulário de Contato (Modal)
 - E-mail público único do site: `leandroolise@gmail.com` (card "E-mail" da seção Contato como link `mailto:` e rodapé). O remetente técnico dos e-mails enviados pelo servidor continua definido por `CONTACT_FROM_EMAIL`
 - Campos: Nome, E-mail, Telefone (opcional), Assunto, Mensagem
@@ -142,6 +155,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── chat.js                      # Assistente virtual: fluxos, TTS, FAB, sugestões
 ├── contact-modal.js             # Modal de contato: validação, estados, Turnstile
 ├── visit-gate.js                # Verificação de primeira visita (Turnstile + cookie)
+├── site-meta.js                 # Status ao vivo da seção "Como este site é feito" e versão/último deploy no rodapé
 ├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
 ├── style.css                    # Estilos globais com CSS custom properties e camada Liquid Glass (~3500 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
@@ -154,8 +168,10 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── api/
 │   ├── contact.js               # Endpoint POST /api/contact (validação, Resend, MongoDB)
 │   ├── verify-visit.js          # Endpoint POST /api/verify-visit (Turnstile da primeira visita)
-│   ├── health.js                # Endpoint GET /api/health (ping no MongoDB + variáveis; keep-alive e monitoramento)
+│   ├── health.js                # Endpoint GET /api/health (ping no MongoDB + variáveis; keep-alive e monitoramento; exige token)
+│   ├── status.js                # Endpoint GET /api/status (público: só "operational"/"degraded" + checkedAt; cache de 5 min na CDN)
 │   └── lib/
+│       ├── health-checks.js     # Checks compartilhados por /api/health e /api/status (ping no MongoDB + variáveis)
 │       ├── mongodb.js           # Conexão e utilitários MongoDB (rate limiting, TTL)
 │       └── turnstile.js         # Validação server-side do token Turnstile (siteverify)
 │
@@ -200,7 +216,8 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 03 | **Skills** | 12 tecnologias com ícone, categoria e descrição detalhada localizada |
 | 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
 | 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
-| 06 | **Contato** | E-mail, LinkedIn, Instagram, localização com mapa e formulário modal |
+| 06 | **Como este site é feito** | Texto sobre as práticas, status ao vivo (`/api/status`), diagrama do pipeline em SVG e 5 cards de práticas (no site aparece como "05.") |
+| 07 | **Contato** | E-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
 
 ---
 
@@ -420,6 +437,7 @@ A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a da
 | Parte | Onde | O que faz |
 |---|---|---|
 | `/api/health` | `api/health.js` | Faz `ping` no MongoDB com uma conexão real (timeout de 4s) e confere se as variáveis do Turnstile, do Resend e de contato existem (sem mostrar valores e sem enviar e-mail). Responde `200 {"status":"ok","checks":{...}}` ou `503 {"status":"error","failed":[...]}`. Exige `Authorization: Bearer <HEALTHCHECK_TOKEN>` ou `Bearer <CRON_SECRET>`; sem token válido, `401` sem detalhes. Sempre `Cache-Control: no-store` |
+| `/api/status` | `api/status.js` | Versão **pública** (sem token) dos mesmos checks (`api/lib/health-checks.js`), usada pelo indicador da seção "Como este site é feito". Responde só `{"status":"operational"\|"degraded","checkedAt":"<ISO>"}`, sem nomes de variáveis, tempos internos ou mensagens de erro. `Cache-Control: public, s-maxage=300, stale-while-revalidate=600`: a CDN da Vercel guarda a resposta por 5 min, então o banco não é consultado a cada visita |
 | Cron diário da Vercel | `vercel.json` (`crons`) | Chama `/api/health` todo dia às 09:00 UTC (06:00 em Brasília). É o keep-alive: mantém o cluster ativo mesmo se o repositório ficar meses sem commits. A Vercel só executa crons em **produção** (lidos do `vercel.json` da `main`); basta, porque produção e homologação usam o mesmo cluster |
 | Alerta semanal do GitHub | `.github/workflows/health.yml` | Toda segunda-feira às 12:00 UTC (09:00 em Brasília) e sob demanda (`workflow_dispatch`), chama `/api/health` em produção e em homologação com o secret `HEALTHCHECK_TOKEN`. Falha se algum ambiente não responder `200` com `"status":"ok"` (o redirecionamento SPA devolveria `200` com HTML), e o GitHub avisa o dono do repositório por e-mail. `schedule` e `workflow_dispatch` só funcionam com o arquivo na `main`; um `push` na `develop` que altere o workflow ou `api/health.js` também o executa, para validar antes de produção |
 

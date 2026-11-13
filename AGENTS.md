@@ -17,6 +17,7 @@ Sempre responder ao usuário em **portugues brasileiro (pt-BR)**, independenteme
 * **Nunca** fazer push, merge ou rebase na `main` sem pedido explícito do usuário contendo a palavra **"produção"**.
 * Pull Requests `develop → main` podem ser abertos quando o usuário pedir, mas **nunca** mesclados sem a autorização acima.
 * Antes de pedir a promoção para produção, confirmar o deploy em https://testing.leandrosevero.com.br.
+* A cada release, atualizar a versão do package.json junto com a tag (ex.: tag `v2.3.0` ↔ `"version": "2.3.0"`). O rodapé do site mostra essa versão.
 
 ### Cloudflare Turnstile
 
