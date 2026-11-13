@@ -397,7 +397,7 @@ A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a da
 | `VITE_TURNSTILE_SITE_KEY` | Chave do site do Cloudflare Turnstile (front-end, lida em `turnstile.js`; usada na verificação de primeira visita e no formulário). Embutida no build: alterações exigem novo deploy |
 | `TURNSTILE_SECRET_KEY` | Chave secreta do Turnstile (servidor, lida em `api/lib/turnstile.js`; usada por `/api/verify-visit` e `/api/contact`) |
 | `RESEND_API_KEY` | Chave da API Resend para envio de e-mails |
-| `MONGODB_URI` | String de conexão MongoDB |
+| `mongodb_MONGODB_URI` | String de conexão MongoDB (lida em `api/lib/mongodb.js`). Nome com prefixo `mongodb_` em minúsculas, criado pela integração MongoDB Atlas da Vercel; precisa existir também no Preview da `develop` para o formulário funcionar em homologação |
 | `CONTACT_TO_EMAIL` | E-mail de destino dos formulários |
 | `CONTACT_FROM_EMAIL` | Remetente dos e-mails enviados pelo formulário |
 
