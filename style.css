@@ -3593,32 +3593,7 @@ main {
   border-color: var(--skill-color, var(--color-primary));
 }
 
-/* --- Certificações: link "Ver credencial" e etiqueta "Expirada" --- */
-:root {
-  --cert-status-fg: #4a6080;
-  --cert-status-bg: rgba(74, 96, 128, 0.1);
-  --cert-status-border: rgba(74, 96, 128, 0.22);
-}
-
-[data-theme="dark"] {
-  --cert-status-fg: #b9c2d6;
-  --cert-status-bg: rgba(255, 255, 255, 0.06);
-  --cert-status-border: rgba(255, 255, 255, 0.14);
-}
-
-.cert-status {
-  display: inline-block;
-  margin-top: var(--space-2);
-  padding: 0.1rem 0.5rem;
-  border: 1px solid var(--cert-status-border);
-  border-radius: 999px;
-  background-color: var(--cert-status-bg);
-  color: var(--cert-status-fg);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
+/* --- Certificações: link "Ver credencial" --- */
 .cert-link {
   position: relative;
   display: flex;

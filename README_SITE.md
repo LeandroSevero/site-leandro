@@ -79,7 +79,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - 3 certificados em destaque: Google SecOps Foundation (Google, Out 2026), Claude with Google Cloud's Vertex AI (Anthropic, Mar 2026) e Azure DevOps - Integração Contínua e Entrega Contínua (Udemy, Dez 2023)
 - Carrossel infinito e contínuo com mais 9 certificações e cursos, ordenados da mais recente para a mais antiga: Segurança da Informação, Liderança Inovadora, Fortinet Certified Associate Cybersecurity, AWS Knowledge: Cloud Essentials, Active Directory - Do Zero ao Avançado, Fortinet NSE 1 & 2, Computer Hardware Basics, Arquitetura de Redes e Noções básicas de Disciplined Agile
 - Link "Ver credencial" (nova aba, `rel="noopener noreferrer"`) só nos itens com credencial pública, com `aria-label` descritivo traduzido, foco visível e área de toque de 44px
-- Etiqueta discreta "Expirada" (`.cert-status`) nas certificações Fortinet vencidas, com contraste AA nos dois temas (5.3:1 no claro, 8.4:1 no escuro)
+- Todos os itens mostram só a data de emissão (sem indicação de expiração, inclusive nas certificações Fortinet e nas respostas do chat)
 - Ícones dos emissores em `/public/icons/<nome>/icon.svg` (logotipo simples do emissor; Google e Anthropic incluídos)
 - Velocidade reduzida ao passar o mouse (hover); ao focar um link pelo teclado, o carrossel para e mantém o card visível
 - As cópias usadas no loop infinito têm `aria-hidden="true"` e `inert`: leitores de tela e o Tab veem cada item uma vez só
