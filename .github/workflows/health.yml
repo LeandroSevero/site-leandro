@@ -1,0 +1,58 @@
+name: Health check
+
+# Verifica /api/health em produção e em homologação e falha se algum ambiente
+# não estiver saudável; o GitHub avisa o dono do repositório por e-mail.
+# Obs.: "schedule" e "workflow_dispatch" só valem com este arquivo na branch padrão (main).
+# O gatilho "push" na develop permite validar mudanças no monitoramento antes de produção.
+on:
+  schedule:
+    - cron: '0 12 * * 1' # toda segunda-feira, 12:00 UTC (09:00 em Brasília)
+  workflow_dispatch:
+  push:
+    branches: [develop]
+    paths:
+      - '.github/workflows/health.yml'
+      - 'api/health.js'
+
+permissions: {}
+
+jobs:
+  health:
+    name: ${{ matrix.ambiente }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ambiente: producao
+            url: https://leandrosevero.com.br/api/health
+          - ambiente: testing
+            url: https://testing.leandrosevero.com.br/api/health
+    steps:
+      - name: Chamar /api/health (${{ matrix.ambiente }})
+        env:
+          TOKEN: ${{ secrets.HEALTHCHECK_TOKEN }}
+          URL: ${{ matrix.url }}
+          AMBIENTE: ${{ matrix.ambiente }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Secret HEALTHCHECK_TOKEN não configurado no repositório."
+            exit 1
+          fi
+          for tentativa in 1 2; do
+            code=$(curl -sS -o body.json -w '%{http_code}' --max-time 25 \
+              -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" "$URL" || echo "000")
+            status=$(jq -r '.status // empty' body.json 2>/dev/null || true)
+            echo "Tentativa $tentativa: HTTP $code, status=${status:-sem JSON}"
+            if [ "$code" = "200" ] && [ "$status" = "ok" ]; then break; fi
+            sleep 10
+          done
+          echo "Resposta:"
+          jq . body.json 2>/dev/null || head -c 300 body.json
+          echo
+          if [ "$code" != "200" ] || [ "$status" != "ok" ]; then
+            echo "::error::$AMBIENTE não está saudável (HTTP $code, status=${status:-sem JSON})."
+            exit 1
+          fi
+          echo "$AMBIENTE saudável."
