@@ -1,6 +1,6 @@
 import { runHealthChecks } from './lib/health-checks.js';
 
-// Status PÚBLICO do site (sem token), usado pelo indicador da seção "Como este site é feito".
+// Status PÚBLICO do site (sem token), usado pelo painel ao vivo da seção "Sobre o site".
 // Reaproveita os checks do /api/health, mas responde SÓ:
 //   {"status":"operational"|"degraded","checkedAt":"<ISO>"}
 // Nunca expõe nomes de variáveis, tempos internos nem mensagens de erro.

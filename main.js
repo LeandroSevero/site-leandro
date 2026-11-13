@@ -184,7 +184,7 @@ const SECTION_SLUG_MAP = {
   'skills': 'skills',
   'certificados': 'certificados',
   'experiencia': 'experiencia',
-  'como-feito': 'como-feito',
+  'sobre-o-site': 'sobre-o-site',
   'contato': 'contato',
 };
 

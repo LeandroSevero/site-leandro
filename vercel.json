@@ -3,11 +3,11 @@
   "buildCommand": "npm run build",
   "rewrites": [
     {
-      "source": "/:secao(sobre|skills|certificados|experiencia|como-feito|contato)",
+      "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)",
       "destination": "/"
     },
     {
-      "source": "/:secao(sobre|skills|certificados|experiencia|como-feito|contato)/",
+      "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)/",
       "destination": "/"
     }
   ],

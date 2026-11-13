@@ -90,17 +90,24 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Acordeão expansível por cargo com descrição detalhada
 - Tags de tecnologias por posição
 
-### Seção "Como este site é feito" (05.)
-- Item "Como é feito" / "How it's built" no menu (desktop e mobile) e rota `/como-feito`
-- Texto curto sobre as práticas usadas no site: versionamento, ambientes separados, deploy automático e monitoramento
-- **Status ao vivo:** chama `/api/status` (público) e mostra bolinha verde "Todos os sistemas operando", âmbar "Instabilidade detectada" ou cinza "Status indisponível" (se a chamada falhar, sem quebrar a página), com "verificado há X min". Atualiza a cada 5 min; a bolinha só pulsa sem `prefers-reduced-motion`
-- **Diagrama do pipeline** em SVG inline, sem bibliotecas: GitHub (develop) > Build e checks > Homologação (testing) > Pull Request > Produção (main) > Monitoramento. Horizontal a partir de 1100px e vertical abaixo; `role="img"` com `<title>` e `<desc>` traduzidos; cores pelas variáveis do tema
-- **5 cards** (mesmo estilo dos cards do "Sobre"): Ambientes separados, Deploy automático (Vercel), Health check e keep-alive, Segredos por ambiente e Acessibilidade WCAG AA
-- Implementação: `site-meta.js` (status e rodapé), traduções em `i18n.js` (chaves `build.*` e `footer.*`)
+### Seção "Sobre o site" (05.)
+- Item "Sobre o site" / "About this site" no menu (desktop e mobile) e rota `/sobre-o-site`. Título "Por trás deste site" / "Behind this site" e subtítulo "Um site pessoal operado como um produto em produção."
+- **Tom proposital:** os textos dizem o que existe (entrega contínua, ambientes isolados, monitoramento contínuo, alertas automáticos, segurança em camadas), nunca como. Nenhum nome de ferramenta ou fornecedor, branch, agendamento ou endpoint aparece na seção, nos tooltips, na descrição do SVG ou no rodapé (pt e en)
+- **Fluxo animado:** 5 etapas (Código > Validação > Homologação > Aprovação > Produção) como `<button>` reais sobre uma trilha SVG inline, mais o laço "Observabilidade" voltando de Produção para Código (abaixo das etapas no desktop; na vertical, à esquerda, abaixo de 768px). A trilha é recalculada a partir da posição das etapas (resize e `ResizeObserver`)
+  - Pulsos de luz (gradiente radial na cor primária) percorrem a trilha via `requestAnimationFrame` + `getPointAtLength`; cada etapa acende, mostra um check e apaga quando o pulso passa; ao chegar em Produção, um pulso menor percorre o laço e acende o selo "Observabilidade". JS/CSS puro, sem bibliotecas
+  - Hover ou foco numa etapa pausa o fluxo e mostra um tooltip genérico (`role="tooltip"` + `aria-describedby`); Esc tira o foco
+  - `IntersectionObserver`: só anima com a seção visível
+  - SVG com `role="img"`, `<title>` e `<desc>` traduzidos
+- **Simular deploy:** botão que roda uma execução guiada: as etapas acendem uma a uma, sincronizadas com um mini terminal (`role="log"`, `aria-live="polite"`) que digita "iniciando entrega vX.Y.Z", "validação ... ok", "homologação ... ok", "aprovação ... ok", "produção ... no ar" e "monitoramento ativo" (versão do `package.json`). Depois vira "Simular de novo"; em repouso o terminal mostra "pronto para simular uma entrega"
+- **Painel ao vivo (somente dados reais):** status de `/api/status` (verde pulsando "Todos os sistemas operando", âmbar "Instabilidade detectada", cinza "Status indisponível" se a chamada falhar, sem quebrar a página), tempo de resposta medido no navegador com `performance.now()` ("respondeu em 182 ms", com contagem animada), versão e data da última atualização (data do deploy). Atualiza a cada 5 min. Sem uptime nem métricas inventadas
+- **5 pilares** (cards com leve elevação e ícone animado no hover, sem logos): Entrega contínua, Ambientes isolados, Observabilidade 24/7, Segurança em camadas e Acessível e rápido
+- **`prefers-reduced-motion`:** fluxo estático com todas as etapas concluídas, terminal já preenchido, sem pulsos, contagem, piscar do cursor ou elevação
+- **Acessibilidade:** contraste AA medido nos dois temas, foco visível, alvos de toque de 44px e sem rolagem lateral em 390px
+- Implementação: `site-meta.js` (fluxo, simulação, painel e rodapé), estilos no bloco "Seção Sobre o site" do `style.css`, traduções em `i18n.js` (chaves `site.*`, `nav.site` e `footer.updated`)
 
-### Rodapé: versão e último deploy
-- Linha "Versão vX.Y.Z · Último deploy: DD/MM/AAAA · commit abc1234", com o commit linkando para o GitHub (nova aba, foco visível e área de toque de 44px)
-- Versão lida do `package.json`; commit, repositório e data do deploy vêm das variáveis de sistema da Vercel no build (`VERCEL_GIT_COMMIT_SHA`, `VERCEL_GIT_REPO_OWNER`, `VERCEL_GIT_REPO_SLUG`), injetadas pelo Vite (`define` no `vite.config.js`). Em build local, sem essas variáveis, mostra "dev"
+### Rodapé: versão e data da atualização
+- Linha "v2.3.0 · Atualizado em DD/MM/AAAA" ("Updated on MM/DD/YYYY" em inglês), sem commit e sem link externo
+- Versão lida do `package.json`; a data é gravada no build da plataforma de deploy (variável `VERCEL` presente), injetada pelo Vite (`define` no `vite.config.js`: `__APP_VERSION__` e `__BUILD_DATE__`). Em build local mostra "v2.3.0 · dev"
 - A cada release, a versão do `package.json` é atualizada junto com a tag (regra no `AGENTS.md`)
 
 ### Formulário de Contato (Modal)
@@ -155,7 +162,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── chat.js                      # Assistente virtual: fluxos, TTS, FAB, sugestões
 ├── contact-modal.js             # Modal de contato: validação, estados, Turnstile
 ├── visit-gate.js                # Verificação de primeira visita (Turnstile + cookie)
-├── site-meta.js                 # Status ao vivo da seção "Como este site é feito" e versão/último deploy no rodapé
+├── site-meta.js                 # Seção "Sobre o site" (fluxo animado, simular deploy, painel ao vivo) e versão no rodapé
 ├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
 ├── style.css                    # Estilos globais com CSS custom properties e camada Liquid Glass (~3500 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
@@ -216,7 +223,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 03 | **Skills** | 12 tecnologias com ícone, categoria e descrição detalhada localizada |
 | 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
 | 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
-| 06 | **Como este site é feito** | Texto sobre as práticas, status ao vivo (`/api/status`), diagrama do pipeline em SVG e 5 cards de práticas (no site aparece como "05.") |
+| 06 | **Sobre o site** | "Por trás deste site": fluxo de entrega animado com simulação de deploy, painel ao vivo (status real, tempo de resposta, versão e data) e 5 pilares (no site aparece como "05.") |
 | 07 | **Contato** | E-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
 
 ---
@@ -391,7 +398,7 @@ Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` 
 - Dados estruturados JSON-LD `Person` no `<head>`: `name`, `url`, `image`, `jobTitle`, `worksFor` (Employer Tudo do RH), `address` (Curitiba, PR, BR), `alumniOf` (UNICURITIBA e PUCPR), `knowsAbout` e `sameAs` (LinkedIn e Instagram). Sem e-mail e sem telefone
 - Todo o conteúdo e as meta tags estão no HTML servido (funciona sem JavaScript); o portão do Turnstile é liberado automaticamente para robôs (`bot`, `crawler`, `spider`, `facebookexternalhit`...)
 - `sitemap.xml` gerado a cada build por um plugin no `vite.config.js`, com `<lastmod>` = data do build (fuso de Brasília); `robots.txt` aponta para ele
-- Página 404 real: `public/404.html` (pt e en, tema e idioma do site, botão "Voltar ao início"), servida com status HTTP 404 para endereços inexistentes; só as seções `/sobre`, `/skills`, `/certificados`, `/experiencia` e `/contato` são reescritas para a página inicial
+- Página 404 real: `public/404.html` (pt e en, tema e idioma do site, botão "Voltar ao início"), servida com status HTTP 404 para endereços inexistentes; só as seções `/sobre`, `/skills`, `/certificados`, `/experiencia`, `/sobre-o-site` e `/contato` são reescritas para a página inicial
 - Homologação fora dos buscadores: `testing.leandrosevero.com.br` responde com `X-Robots-Tag: noindex, nofollow` (regra por host no `vercel.json`); produção segue indexável
 - `lang` do documento atualizado conforme idioma selecionado
 
@@ -406,8 +413,8 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
   "buildCommand": "npm run build",
   "installCommand": "rm -rf node_modules && npm ci",
   "rewrites": [
-    { "source": "/:secao(sobre|skills|certificados|experiencia|contato)", "destination": "/" },
-    { "source": "/:secao(sobre|skills|certificados|experiencia|contato)/", "destination": "/" }
+    { "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)", "destination": "/" },
+    { "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)/", "destination": "/" }
   ],
   "headers": [
     { "source": "/(.*)", "has": [{ "type": "host", "value": "testing.leandrosevero.com.br" }],
@@ -437,7 +444,7 @@ A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a da
 | Parte | Onde | O que faz |
 |---|---|---|
 | `/api/health` | `api/health.js` | Faz `ping` no MongoDB com uma conexão real (timeout de 4s) e confere se as variáveis do Turnstile, do Resend e de contato existem (sem mostrar valores e sem enviar e-mail). Responde `200 {"status":"ok","checks":{...}}` ou `503 {"status":"error","failed":[...]}`. Exige `Authorization: Bearer <HEALTHCHECK_TOKEN>` ou `Bearer <CRON_SECRET>`; sem token válido, `401` sem detalhes. Sempre `Cache-Control: no-store` |
-| `/api/status` | `api/status.js` | Versão **pública** (sem token) dos mesmos checks (`api/lib/health-checks.js`), usada pelo indicador da seção "Como este site é feito". Responde só `{"status":"operational"\|"degraded","checkedAt":"<ISO>"}`, sem nomes de variáveis, tempos internos ou mensagens de erro. `Cache-Control: public, s-maxage=300, stale-while-revalidate=600`: a CDN da Vercel guarda a resposta por 5 min, então o banco não é consultado a cada visita |
+| `/api/status` | `api/status.js` | Versão **pública** (sem token) dos mesmos checks (`api/lib/health-checks.js`), usada pelo painel ao vivo da seção "Sobre o site" (o site mostra só o status; nada desta tabela aparece no site). Responde só `{"status":"operational"\|"degraded","checkedAt":"<ISO>"}`, sem nomes de variáveis, tempos internos ou mensagens de erro. `Cache-Control: public, s-maxage=300, stale-while-revalidate=600`: a CDN da Vercel guarda a resposta por 5 min, então o banco não é consultado a cada visita |
 | Cron diário da Vercel | `vercel.json` (`crons`) | Chama `/api/health` todo dia às 09:00 UTC (06:00 em Brasília). É o keep-alive: mantém o cluster ativo mesmo se o repositório ficar meses sem commits. A Vercel só executa crons em **produção** (lidos do `vercel.json` da `main`); basta, porque produção e homologação usam o mesmo cluster |
 | Alerta semanal do GitHub | `.github/workflows/health.yml` | Toda segunda-feira às 12:00 UTC (09:00 em Brasília) e sob demanda (`workflow_dispatch`), chama `/api/health` em produção e em homologação com o secret `HEALTHCHECK_TOKEN`. Falha se algum ambiente não responder `200` com `"status":"ok"` (o redirecionamento SPA devolveria `200` com HTML), e o GitHub avisa o dono do repositório por e-mail. `schedule` e `workflow_dispatch` só funcionam com o arquivo na `main`; um `push` na `develop` que altere o workflow ou `api/health.js` também o executa, para validar antes de produção |
 

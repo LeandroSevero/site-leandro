@@ -92,7 +92,7 @@
         <a href="#skills" data-i18n="nav.skills">Skills</a>
         <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
         <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
-        <a href="#como-feito" data-i18n="nav.build">Como é feito</a>
+        <a href="#sobre-o-site" data-i18n="nav.site">Sobre o site</a>
         <a href="#contato" data-i18n="nav.contact">Contato</a>
 
         <button id="lang-toggle" class="lang-toggle" aria-label="Mudar idioma">
@@ -150,7 +150,7 @@
       <a href="#skills" data-i18n="nav.skills">Skills</a>
       <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
       <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
-      <a href="#como-feito" data-i18n="nav.build">Como é feito</a>
+      <a href="#sobre-o-site" data-i18n="nav.site">Sobre o site</a>
         <a href="#contato" data-i18n="nav.contact">Contato</a>
     </div>
   </header>
@@ -605,85 +605,139 @@
       </div>
     </section>
 
-    <section id="como-feito" class="section">
+    <section id="sobre-o-site" class="section">
       <div class="container">
         <div class="section-header">
-          <span class="section-number" data-i18n="build.section">05.</span>
-          <h2 data-i18n="build.title">Como este site é feito</h2>
-          <p data-i18n="build.intro">Este site é mantido com as mesmas práticas que uso no trabalho: versionamento no Git, ambientes separados de homologação e produção, deploy automático e monitoramento contínuo. Cada mudança é testada em homologação antes de chegar aqui.</p>
+          <span class="section-number" data-i18n="site.section">05.</span>
+          <h2 data-i18n="site.title">Por trás deste site</h2>
+          <p data-i18n="site.subtitle">Um site pessoal operado como um produto em produção.</p>
         </div>
 
-        <div class="site-status" id="site-status" data-state="loading" role="status" aria-live="polite">
-          <span class="site-status-dot" aria-hidden="true"></span>
-          <span class="site-status-text" data-i18n="build.status.loading">Verificando status...</span>
-          <span class="site-status-time"></span>
-        </div>
-
-        <figure class="pipeline">
-          <svg class="pipeline-svg pipeline-h" viewBox="0 0 1180 150" role="img" aria-labelledby="pipe-h-title pipe-h-desc" xmlns="http://www.w3.org/2000/svg">
-            <title id="pipe-h-title" data-i18n="build.pipe.title">Pipeline de publicação do site</title>
-            <desc id="pipe-h-desc" data-i18n="build.pipe.desc">GitHub, branch develop, passa por build e checks, publica em homologação (testing), segue por Pull Request para produção (main) e é monitorado por um health check diário e um alerta semanal.</desc>
+        <figure class="flow" id="flow">
+          <svg class="flow-svg" id="flow-svg" role="img" aria-labelledby="flow-title flow-desc" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <title id="flow-title" data-i18n="site.flow.title">Fluxo de entrega do site</title>
+            <desc id="flow-desc" data-i18n="site.flow.desc">Cada mudança passa por cinco etapas: código, validação, homologação, aprovação e produção. Em produção, a observabilidade acompanha o site e retroalimenta o código, fechando um ciclo contínuo.</desc>
             <defs>
-              <marker id="pipe-arrow-h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="pipe-arrow-head"/></marker>
+              <radialGradient id="flow-pulse-grad">
+                <stop offset="0%" class="flow-pulse-core"/>
+                <stop offset="45%" class="flow-pulse-mid"/>
+                <stop offset="100%" class="flow-pulse-edge"/>
+              </radialGradient>
             </defs>
-            <g class="pipe-step"><rect x="0" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="80" y="62" class="pipe-num">1</text><text x="80" y="86" class="pipe-title">GitHub</text><text x="80" y="108" class="pipe-sub" data-i18n="build.pipe.1.sub">branch develop</text></g>
-            <line x1="166" y1="75" x2="198" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
-            <g class="pipe-step"><rect x="204" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="284" y="62" class="pipe-num">2</text><text x="284" y="86" class="pipe-title" data-i18n="build.pipe.2.title">Build e checks</text><text x="284" y="108" class="pipe-sub">Vite + Vercel</text></g>
-            <line x1="370" y1="75" x2="402" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
-            <g class="pipe-step"><rect x="408" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="488" y="62" class="pipe-num">3</text><text x="488" y="86" class="pipe-title" data-i18n="build.pipe.3.title">Homologação</text><text x="488" y="108" class="pipe-sub">testing</text></g>
-            <line x1="574" y1="75" x2="606" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
-            <g class="pipe-step"><rect x="612" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="692" y="62" class="pipe-num">4</text><text x="692" y="86" class="pipe-title">Pull Request</text><text x="692" y="108" class="pipe-sub">develop &gt; main</text></g>
-            <line x1="778" y1="75" x2="810" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
-            <g class="pipe-step pipe-step-prod"><rect x="816" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="896" y="62" class="pipe-num">5</text><text x="896" y="86" class="pipe-title" data-i18n="build.pipe.5.title">Produção</text><text x="896" y="108" class="pipe-sub">main</text></g>
-            <line x1="982" y1="75" x2="1014" y2="75" class="pipe-line" marker-end="url(#pipe-arrow-h)"/>
-            <g class="pipe-step"><rect x="1020" y="15" width="160" height="120" rx="16" class="pipe-box"/><text x="1100" y="52" class="pipe-num">6</text><text x="1100" y="76" class="pipe-title" data-i18n="build.pipe.6.title">Monitoramento</text><text x="1100" y="98" class="pipe-sub" data-i18n="build.pipe.6.sub1">health check diário</text><text x="1100" y="117" class="pipe-sub" data-i18n="build.pipe.6.sub2">+ alerta semanal</text></g>
+            <path class="flow-track" id="flow-track" d=""/>
+            <path class="flow-loop" id="flow-loop" d=""/>
+            <g id="flow-pulses"></g>
           </svg>
 
-          <svg class="pipeline-svg pipeline-v" viewBox="0 0 320 690" role="img" aria-labelledby="pipe-v-title pipe-v-desc" xmlns="http://www.w3.org/2000/svg">
-            <title id="pipe-v-title" data-i18n="build.pipe.title">Pipeline de publicação do site</title>
-            <desc id="pipe-v-desc" data-i18n="build.pipe.desc">GitHub, branch develop, passa por build e checks, publica em homologação (testing), segue por Pull Request para produção (main) e é monitorado por um health check diário e um alerta semanal.</desc>
-            <defs>
-              <marker id="pipe-arrow-v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="pipe-arrow-head"/></marker>
-            </defs>
-            <g class="pipe-step"><rect x="10" y="5" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="54" class="pipe-num pipe-num-v">1</text><text x="70" y="44" class="pipe-title pipe-left">GitHub</text><text x="70" y="68" class="pipe-sub pipe-left" data-i18n="build.pipe.1.sub">branch develop</text></g>
-            <line x1="160" y1="95" x2="160" y2="118" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
-            <g class="pipe-step"><rect x="10" y="122" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="171" class="pipe-num pipe-num-v">2</text><text x="70" y="161" class="pipe-title pipe-left" data-i18n="build.pipe.2.title">Build e checks</text><text x="70" y="185" class="pipe-sub pipe-left">Vite + Vercel</text></g>
-            <line x1="160" y1="212" x2="160" y2="235" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
-            <g class="pipe-step"><rect x="10" y="239" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="288" class="pipe-num pipe-num-v">3</text><text x="70" y="278" class="pipe-title pipe-left" data-i18n="build.pipe.3.title">Homologação</text><text x="70" y="302" class="pipe-sub pipe-left">testing</text></g>
-            <line x1="160" y1="329" x2="160" y2="352" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
-            <g class="pipe-step"><rect x="10" y="356" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="405" class="pipe-num pipe-num-v">4</text><text x="70" y="395" class="pipe-title pipe-left">Pull Request</text><text x="70" y="419" class="pipe-sub pipe-left">develop &gt; main</text></g>
-            <line x1="160" y1="446" x2="160" y2="469" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
-            <g class="pipe-step pipe-step-prod"><rect x="10" y="473" width="300" height="86" rx="16" class="pipe-box"/><text x="40" y="522" class="pipe-num pipe-num-v">5</text><text x="70" y="512" class="pipe-title pipe-left" data-i18n="build.pipe.5.title">Produção</text><text x="70" y="536" class="pipe-sub pipe-left">main</text></g>
-            <line x1="160" y1="563" x2="160" y2="586" class="pipe-line" marker-end="url(#pipe-arrow-v)"/>
-            <g class="pipe-step"><rect x="10" y="590" width="300" height="95" rx="16" class="pipe-box"/><text x="40" y="643" class="pipe-num pipe-num-v">6</text><text x="70" y="625" class="pipe-title pipe-left" data-i18n="build.pipe.6.title">Monitoramento</text><text x="70" y="649" class="pipe-sub pipe-left" data-i18n="build.pipe.6.sub1">health check diário</text><text x="70" y="669" class="pipe-sub pipe-left" data-i18n="build.pipe.6.sub2">+ alerta semanal</text></g>
-          </svg>
+          <ol class="flow-steps" id="flow-steps">
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-0">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span class="flow-index">1</span></span>
+                <span class="flow-label" data-i18n="site.step.0">Código</span>
+              </button>
+              <span class="flow-tip" id="flow-tip-0" role="tooltip" data-i18n="site.tip.0">Toda mudança começa versionada e rastreável.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-1">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span class="flow-index">2</span></span>
+                <span class="flow-label" data-i18n="site.step.1">Validação</span>
+              </button>
+              <span class="flow-tip" id="flow-tip-1" role="tooltip" data-i18n="site.tip.1">Cada mudança é verificada automaticamente antes de seguir.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-2">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span class="flow-index">3</span></span>
+                <span class="flow-label" data-i18n="site.step.2">Homologação</span>
+              </button>
+              <span class="flow-tip" id="flow-tip-2" role="tooltip" data-i18n="site.tip.2">Um ambiente isolado recebe a mudança para testes reais.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-3">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span class="flow-index">4</span></span>
+                <span class="flow-label" data-i18n="site.step.3">Aprovação</span>
+              </button>
+              <span class="flow-tip" id="flow-tip-3" role="tooltip" data-i18n="site.tip.3">Nada avança sem revisão e aprovação explícita.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-4">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span class="flow-index">5</span></span>
+                <span class="flow-label" data-i18n="site.step.4">Produção</span>
+              </button>
+              <span class="flow-tip" id="flow-tip-4" role="tooltip" data-i18n="site.tip.4">A versão aprovada entra no ar sem interrupção.</span>
+            </li>
+          </ol>
+
+          <div class="flow-loop-wrap">
+            <button type="button" class="flow-loop-label" id="flow-loop-label" aria-describedby="flow-tip-loop">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+              <span data-i18n="site.loop">Observabilidade</span>
+            </button>
+            <span class="flow-tip flow-tip-loop" id="flow-tip-loop" role="tooltip" data-i18n="site.tip.loop">O site é observado continuamente e qualquer desvio gera um alerta.</span>
+          </div>
         </figure>
 
-        <div class="build-cards">
-          <article class="card">
-            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></div>
-            <h3 data-i18n="build.card.1.title">Ambientes separados</h3>
-            <p data-i18n="build.card.1.text">A branch develop publica em homologação (testing) e a main em produção: nada chega ao site sem passar por testes.</p>
+        <div class="site-grid">
+          <div class="flow-console">
+            <div class="flow-console-head">
+              <button type="button" class="flow-run" id="flow-run">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+                <span id="flow-run-text" data-i18n="site.run">Simular deploy</span>
+              </button>
+            </div>
+            <div class="flow-terminal" role="log" aria-live="polite" data-i18n-aria="site.terminal.aria" aria-label="Terminal da simulação de deploy">
+              <div class="flow-terminal-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+              <pre class="flow-terminal-body" id="flow-terminal-body"></pre>
+            </div>
+          </div>
+
+          <section class="live-panel" aria-labelledby="live-title">
+            <h3 class="live-title" id="live-title"><span class="live-beacon" aria-hidden="true"></span><span data-i18n="site.live.title">Painel ao vivo</span></h3>
+            <dl class="live-grid">
+              <div class="live-item">
+                <dt data-i18n="site.live.status">Status</dt>
+                <dd class="live-status" id="live-status" data-state="loading" role="status" aria-live="polite"><span class="live-status-dot" aria-hidden="true"></span><span class="live-status-text" id="live-status-text">Verificando...</span></dd>
+              </div>
+              <div class="live-item">
+                <dt data-i18n="site.live.latency">Tempo de resposta</dt>
+                <dd id="live-latency">-</dd>
+              </div>
+              <div class="live-item">
+                <dt data-i18n="site.live.version">Versão</dt>
+                <dd id="live-version">-</dd>
+              </div>
+              <div class="live-item">
+                <dt data-i18n="site.live.updated">Última atualização</dt>
+                <dd id="live-updated">-</dd>
+              </div>
+            </dl>
+          </section>
+        </div>
+
+        <div class="pillars">
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/><path d="M5 6v12"/></svg></div>
+            <h3 data-i18n="site.pillar.1.title">Entrega contínua</h3>
+            <p data-i18n="site.pillar.1.text">Mudanças chegam ao ar em minutos, sempre validadas.</p>
           </article>
-          <article class="card">
-            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z"/></svg></div>
-            <h3 data-i18n="build.card.2.title">Deploy automático (Vercel)</h3>
-            <p data-i18n="build.card.2.text">Cada push gera build e deploy automáticos, com checks no Pull Request antes do merge.</p>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></div>
+            <h3 data-i18n="site.pillar.2.title">Ambientes isolados</h3>
+            <p data-i18n="site.pillar.2.text">Nada vai para produção sem passar por homologação.</p>
           </article>
-          <article class="card">
-            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-            <h3 data-i18n="build.card.3.title">Health check e keep-alive</h3>
-            <p data-i18n="build.card.3.text">Um cron diário testa o banco e as configurações e mantém o banco ativo; um alerta semanal avisa se algo quebrar.</p>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <h3 data-i18n="site.pillar.3.title">Observabilidade 24/7</h3>
+            <p data-i18n="site.pillar.3.text">O site é monitorado continuamente, com alertas automáticos se algo sair do normal.</p>
           </article>
-          <article class="card">
-            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg></div>
-            <h3 data-i18n="build.card.4.title">Segredos por ambiente</h3>
-            <p data-i18n="build.card.4.text">Chaves e tokens ficam só nas variáveis de ambiente, com chaves de teste fora da produção; nada vai para o código.</p>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <h3 data-i18n="site.pillar.4.title">Segurança em camadas</h3>
+            <p data-i18n="site.pillar.4.text">Proteção contra robôs e segredos isolados por ambiente.</p>
           </article>
-          <article class="card">
-            <div class="card-icon card-icon-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"/><path d="M5 8h14"/><path d="M12 8v6"/><path d="m8 21 4-7 4 7"/></svg></div>
-            <h3 data-i18n="build.card.5.title">Acessibilidade WCAG AA</h3>
-            <p data-i18n="build.card.5.text">Contraste mínimo de 4.5:1, foco visível, navegação por teclado e respeito à preferência por menos movimento.</p>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <h3 data-i18n="site.pillar.5.title">Acessível e rápido</h3>
+            <p data-i18n="site.pillar.5.text">Contraste AA, navegação por teclado e carregamento leve.</p>
           </article>
         </div>
       </div>
