@@ -70,7 +70,7 @@ const TOPICS = {
       ],
     },
     certs: {
-      message: 'Aqui estão as certificações mais relevantes:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps - CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Arquitetura de Redes\n🖥️ Active Directory - Do Zero ao Avançado\n🏅 Liderança Inovadora (STF)\n🔐 Segurança da Informação (Bradesco)',
+      message: "Aqui estão as certificações e cursos do Leandro:\n\n🛡️ Google SecOps Foundation - Google, Out 2026\n🤖 Claude with Google Cloud's Vertex AI - Anthropic, Mar 2026\n☁️ Azure DevOps - Integração Contínua e Entrega Contínua - Udemy, Dez 2023\n🔐 Segurança da Informação - Fundação Bradesco, Out 2024\n🏅 Liderança Inovadora - Supremo Tribunal Federal, Mai 2024\n🛡️ Fortinet Certified Associate Cybersecurity - Fortinet, Dez 2023 (expirada em Dez 2025)\n☁️ AWS Knowledge: Cloud Essentials - Amazon Web Services, Ago 2023\n🖥️ Active Directory - Do Zero ao Avançado - Udemy, Ago 2023\n🔒 Fortinet NSE 1 & 2 - Fortinet, Jul - Ago 2023 (expiradas em 2025)\n💻 Computer Hardware Basics - Cisco, Jul 2023\n🌐 Arquitetura de Redes - Udemy, Jun 2023\n🏅 Noções básicas de Disciplined Agile - Project Management Institute, Ago 2022\n\nOs links para conferir as credenciais estão na seção Certificações e Cursos do site.",
       options: [
         { label: 'Ver formação acadêmica', next: 'education' },
         { label: 'Tecnologias que usa', next: 'skills' },
@@ -169,7 +169,7 @@ const TOPICS = {
       ],
     },
     certs: {
-      message: "Here are his most relevant certifications:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps - CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Network Architecture\n🖥️ Active Directory - Zero to Advanced\n🏅 Innovative Leadership (STF)\n🔐 Information Security (Bradesco)",
+      message: "Here are Leandro's certifications and courses:\n\n🛡️ Google SecOps Foundation - Google, Oct 2026\n🤖 Claude with Google Cloud's Vertex AI - Anthropic, Mar 2026\n☁️ Azure DevOps - Continuous Integration and Continuous Delivery - Udemy, Dec 2023\n🔐 Information Security - Fundação Bradesco, Oct 2024\n🏅 Innovative Leadership - Brazilian Supreme Federal Court (STF), May 2024\n🛡️ Fortinet Certified Associate Cybersecurity - Fortinet, Dec 2023 (expired Dec 2025)\n☁️ AWS Knowledge: Cloud Essentials - Amazon Web Services, Aug 2023\n🖥️ Active Directory - From Zero to Advanced - Udemy, Aug 2023\n🔒 Fortinet NSE 1 & 2 - Fortinet, Jul - Aug 2023 (expired in 2025)\n💻 Computer Hardware Basics - Cisco, Jul 2023\n🌐 Network Architecture - Udemy, Jun 2023\n🏅 Disciplined Agile Fundamentals - Project Management Institute, Aug 2022\n\nCredential links are in the Certifications & Courses section of the site.",
       options: [
         { label: 'Academic background', next: 'education' },
         { label: 'Tech stack', next: 'skills' },

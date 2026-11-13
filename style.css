@@ -3593,6 +3593,68 @@ main {
   border-color: var(--skill-color, var(--color-primary));
 }
 
+/* --- Certificações: link "Ver credencial" e etiqueta "Expirada" --- */
+:root {
+  --cert-status-fg: #4a6080;
+  --cert-status-bg: rgba(74, 96, 128, 0.1);
+  --cert-status-border: rgba(74, 96, 128, 0.22);
+}
+
+[data-theme="dark"] {
+  --cert-status-fg: #b9c2d6;
+  --cert-status-bg: rgba(255, 255, 255, 0.06);
+  --cert-status-border: rgba(255, 255, 255, 0.14);
+}
+
+.cert-status {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--cert-status-border);
+  border-radius: 999px;
+  background-color: var(--cert-status-bg);
+  color: var(--cert-status-fg);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.cert-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: opacity var(--transition);
+}
+
+.cert-link::after {
+  content: '\2197';
+  margin-left: 0.25rem;
+  text-decoration: none;
+}
+
+.cert-link:hover {
+  opacity: 0.8;
+}
+
+/* Área de toque de 44x44px sem mudar o tamanho visual do link */
+.cert-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
 /* --- Menos movimento: sem quique e sem o reflexo diagonal do vidro --- */
 @media (prefers-reduced-motion: reduce) {
   :root,

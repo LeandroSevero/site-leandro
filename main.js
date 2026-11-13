@@ -764,7 +764,10 @@ const initCertsCarousel = () => {
   const items = Array.from(track.children);
   items.forEach(item => {
     const clone = item.cloneNode(true);
+    // Cópia só visual (para o loop infinito): fora da árvore de acessibilidade e sem foco nos links
     clone.setAttribute('aria-hidden', 'true');
+    clone.setAttribute('inert', '');
+    clone.querySelectorAll('a, button').forEach((el) => el.setAttribute('tabindex', '-1'));
 
     const iconEl = clone.querySelector('[data-cert-icon]');
     if (iconEl) {
@@ -826,8 +829,34 @@ const initCertsCarousel = () => {
   };
 
   if (wrapper) {
-    wrapper.addEventListener('mouseenter', () => { targetSpeed = SPEED_SLOW; });
-    wrapper.addEventListener('mouseleave', () => { targetSpeed = SPEED_NORMAL; });
+    let focused = false;
+    wrapper.addEventListener('mouseenter', () => { if (!focused) targetSpeed = SPEED_SLOW; });
+    wrapper.addEventListener('mouseleave', () => { if (!focused) targetSpeed = SPEED_NORMAL; });
+
+    // Teclado: ao focar um link do carrossel, para o movimento e mantém o card visível
+    const outer = wrapper.closest('.certs-carousel-outer');
+    wrapper.addEventListener('focusin', (e) => {
+      focused = true;
+      targetSpeed = 0;
+      currentSpeed = 0;
+      const card = e.target.closest('.cert-item');
+      if (outer && card) {
+        const view = outer.getBoundingClientRect();
+        const box = card.getBoundingClientRect();
+        if (box.left < view.left + 24 || box.right > view.right - 24) {
+          offset = Math.max(0, offset + (box.left - view.left) - 24);
+          if (halfWidth && offset >= halfWidth) offset -= halfWidth;
+          track.style.transform = `translateX(-${offset}px)`;
+        }
+        outer.scrollLeft = 0;
+      }
+    });
+    wrapper.addEventListener('focusout', (e) => {
+      if (wrapper.contains(e.relatedTarget)) return;
+      focused = false;
+      if (outer) outer.scrollLeft = 0;
+      targetSpeed = wrapper.matches(':hover') ? SPEED_SLOW : SPEED_NORMAL;
+    });
   }
 
   measure();
