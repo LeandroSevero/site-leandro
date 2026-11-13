@@ -13,16 +13,27 @@ const getClientPromise = () => {
 
   if (clientPromise) return clientPromise;
 
+  // Desiste rápido se o cluster estiver fora do ar (o padrão do driver é 30s,
+  // mais que o tempo máximo da função na Vercel).
+  const options = { serverSelectionTimeoutMS: 4000, connectTimeoutMS: 4000 };
+
   if (process.env.NODE_ENV === 'development') {
     if (!global._mongoClientPromise) {
-      client = new MongoClient(uri);
+      client = new MongoClient(uri, options);
       global._mongoClientPromise = client.connect();
     }
     clientPromise = global._mongoClientPromise;
   } else {
-    client = new MongoClient(uri);
+    client = new MongoClient(uri, options);
     clientPromise = client.connect();
   }
+
+  // Se a conexão falhar, não guarda a promessa rejeitada: a próxima chamada
+  // tenta conectar de novo (senão a instância ficaria "presa" na falha).
+  clientPromise.catch(() => {
+    clientPromise = null;
+    if (process.env.NODE_ENV === 'development') global._mongoClientPromise = null;
+  });
 
   return clientPromise;
 };

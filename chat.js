@@ -24,7 +24,7 @@ const TOPICS = {
       ],
     },
     full_summary: {
-      message: 'Aqui vai um pitch rápido 🚀\n\nLeandro tem mais de 4 anos de experiência em infraestrutura e DevOps, com foco em cloud (AWS, Azure, GCP), automação de pipelines CI/CD e orquestração de containers com Kubernetes. Hoje lidera o time de DevOps da Employer Tudo do RH, combinando visão técnica com gestão de pessoas — formação em ADS e pós em Gestão de Pessoas.',
+      message: 'Aqui vai um pitch rápido 🚀\n\nLeandro tem mais de 4 anos de experiência em infraestrutura e DevOps, com foco em cloud (AWS, Azure, GCP), automação de pipelines CI/CD e orquestração de containers com Kubernetes. Hoje lidera o time de DevOps da Employer Tudo do RH, combinando visão técnica com gestão de pessoas - formação em ADS e pós em Gestão de Pessoas.',
       options: [
         { label: 'Ver trajetória completa', next: 'experience' },
         { label: 'Tecnologias em detalhes', next: 'skills' },
@@ -34,7 +34,7 @@ const TOPICS = {
       ],
     },
     experience: {
-      message: 'Aqui está a trajetória do Leandro:\n\n• Supervisor de DevOps – Employer Tudo do RH (Jul 2025 – Presente)\n• Analista DevOps – Employer (Set 2024 – Jul 2025)\n• Analista de Infraestrutura TI – Employer (Fev 2023 – Set 2024)\n• Helpdesk e Telecom – Employer (Fev 2022 – Fev 2023)\n• Telecom – Employer (Jun 2021 – Fev 2022)\n• Soldado – Exército Brasileiro (Fev 2018 – Fev 2021)',
+      message: 'Aqui está a trajetória do Leandro:\n\n• Supervisor de DevOps - Employer Tudo do RH (Jul 2025 - Presente)\n• Analista DevOps - Employer (Set 2024 - Jul 2025)\n• Analista de Infraestrutura TI - Employer (Fev 2023 - Set 2024)\n• Helpdesk e Telecom - Employer (Fev 2022 - Fev 2023)\n• Telecom - Employer (Jun 2021 - Fev 2022)\n• Soldado - Exército Brasileiro (Fev 2018 - Fev 2021)',
       options: [
         { label: 'Detalhar o cargo atual', next: 'current_role' },
         { label: 'Stacks que utiliza', next: 'skills' },
@@ -61,7 +61,7 @@ const TOPICS = {
       ],
     },
     education: {
-      message: 'A formação do Leandro une técnica e liderança:\n\n🎓 Análise e Desenvolvimento de Sistemas – UNICURITIBA\n📚 Pós-graduação em Gestão de Pessoas – PUCPR\n\nEssa combinação é o que permite entregar soluções robustas e liderar times com clareza.',
+      message: 'A formação do Leandro une técnica e liderança:\n\n🎓 Análise e Desenvolvimento de Sistemas - UNICURITIBA\n📚 Pós-graduação em Gestão de Pessoas - PUCPR\n\nEssa combinação é o que permite entregar soluções robustas e liderar times com clareza.',
       options: [
         { label: 'Ver certificações', next: 'certs' },
         { label: 'Tecnologias que domina', next: 'skills' },
@@ -70,7 +70,7 @@ const TOPICS = {
       ],
     },
     certs: {
-      message: 'Aqui estão as certificações mais relevantes:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps – CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Arquitetura de Redes\n🖥️ Active Directory – Do Zero ao Avançado\n🏅 Liderança Inovadora (STF)\n🔐 Segurança da Informação (Bradesco)',
+      message: "Aqui estão as certificações e cursos do Leandro:\n\n🛡️ Google SecOps Foundation - Google, Out 2026\n🤖 Claude with Google Cloud's Vertex AI - Anthropic, Mar 2026\n☁️ Azure DevOps - Integração Contínua e Entrega Contínua - Udemy, Dez 2023\n🔐 Segurança da Informação - Fundação Bradesco, Out 2024\n🏅 Liderança Inovadora - Supremo Tribunal Federal, Mai 2024\n🛡️ Fortinet Certified Associate Cybersecurity - Fortinet, Dez 2023 (expirada em Dez 2025)\n☁️ AWS Knowledge: Cloud Essentials - Amazon Web Services, Ago 2023\n🖥️ Active Directory - Do Zero ao Avançado - Udemy, Ago 2023\n🔒 Fortinet NSE 1 & 2 - Fortinet, Jul - Ago 2023 (expiradas em 2025)\n💻 Computer Hardware Basics - Cisco, Jul 2023\n🌐 Arquitetura de Redes - Udemy, Jun 2023\n🏅 Noções básicas de Disciplined Agile - Project Management Institute, Ago 2022\n\nOs links para conferir as credenciais estão na seção Certificações e Cursos do site.",
       options: [
         { label: 'Ver formação acadêmica', next: 'education' },
         { label: 'Tecnologias que usa', next: 'skills' },
@@ -123,7 +123,7 @@ const TOPICS = {
       ],
     },
     full_summary: {
-      message: "Here's a quick pitch 🚀\n\nLeandro has 4+ years in infrastructure and DevOps, focused on cloud (AWS, Azure, GCP), CI/CD pipeline automation, and container orchestration with Kubernetes. Today he leads the DevOps team at Employer Tudo do RH, combining strong technical vision with people management skills — backed by a degree in Systems Analysis and a postgrad in People Management.",
+      message: "Here's a quick pitch 🚀\n\nLeandro has 4+ years in infrastructure and DevOps, focused on cloud (AWS, Azure, GCP), CI/CD pipeline automation, and container orchestration with Kubernetes. Today he leads the DevOps team at Employer Tudo do RH, combining strong technical vision with people management skills - backed by a degree in Systems Analysis and a postgrad in People Management.",
       options: [
         { label: 'Full career timeline', next: 'experience' },
         { label: 'Technologies in detail', next: 'skills' },
@@ -133,7 +133,7 @@ const TOPICS = {
       ],
     },
     experience: {
-      message: "Here's Leandro's career timeline:\n\n• DevOps Supervisor – Employer Tudo do RH (Jul 2025 – Present)\n• DevOps Analyst – Employer (Sep 2024 – Jul 2025)\n• IT Infrastructure Analyst – Employer (Feb 2023 – Sep 2024)\n• Helpdesk & Telecom – Employer (Feb 2022 – Feb 2023)\n• Telecom – Employer (Jun 2021 – Feb 2022)\n• Soldier – Brazilian Army (Feb 2018 – Feb 2021)",
+      message: "Here's Leandro's career timeline:\n\n• DevOps Supervisor - Employer Tudo do RH (Jul 2025 - Present)\n• DevOps Analyst - Employer (Sep 2024 - Jul 2025)\n• IT Infrastructure Analyst - Employer (Feb 2023 - Sep 2024)\n• Helpdesk & Telecom - Employer (Feb 2022 - Feb 2023)\n• Telecom - Employer (Jun 2021 - Feb 2022)\n• Soldier - Brazilian Army (Feb 2018 - Feb 2021)",
       options: [
         { label: 'Current role in detail', next: 'current_role' },
         { label: 'Tech stack he uses', next: 'skills' },
@@ -160,7 +160,7 @@ const TOPICS = {
       ],
     },
     education: {
-      message: "Leandro's background blends tech and leadership:\n\n🎓 Systems Analysis and Development – UNICURITIBA\n📚 Postgraduate in People Management – PUCPR\n\nThis mix is what allows him to deliver robust solutions while leading teams effectively.",
+      message: "Leandro's background blends tech and leadership:\n\n🎓 Systems Analysis and Development - UNICURITIBA\n📚 Postgraduate in People Management - PUCPR\n\nThis mix is what allows him to deliver robust solutions while leading teams effectively.",
       options: [
         { label: 'View certifications', next: 'certs' },
         { label: 'Tech stack', next: 'skills' },
@@ -169,7 +169,7 @@ const TOPICS = {
       ],
     },
     certs: {
-      message: "Here are his most relevant certifications:\n\n🛡️ Fortinet Certified Associate Cybersecurity\n☁️ Azure DevOps – CI/CD (Udemy)\n☁️ AWS Cloud Essentials (Amazon)\n🔒 Fortinet NSE 1 & 2\n🌐 Network Architecture\n🖥️ Active Directory – Zero to Advanced\n🏅 Innovative Leadership (STF)\n🔐 Information Security (Bradesco)",
+      message: "Here are Leandro's certifications and courses:\n\n🛡️ Google SecOps Foundation - Google, Oct 2026\n🤖 Claude with Google Cloud's Vertex AI - Anthropic, Mar 2026\n☁️ Azure DevOps - Continuous Integration and Continuous Delivery - Udemy, Dec 2023\n🔐 Information Security - Fundação Bradesco, Oct 2024\n🏅 Innovative Leadership - Brazilian Supreme Federal Court (STF), May 2024\n🛡️ Fortinet Certified Associate Cybersecurity - Fortinet, Dec 2023 (expired Dec 2025)\n☁️ AWS Knowledge: Cloud Essentials - Amazon Web Services, Aug 2023\n🖥️ Active Directory - From Zero to Advanced - Udemy, Aug 2023\n🔒 Fortinet NSE 1 & 2 - Fortinet, Jul - Aug 2023 (expired in 2025)\n💻 Computer Hardware Basics - Cisco, Jul 2023\n🌐 Network Architecture - Udemy, Jun 2023\n🏅 Disciplined Agile Fundamentals - Project Management Institute, Aug 2022\n\nCredential links are in the Certifications & Courses section of the site.",
       options: [
         { label: 'Academic background', next: 'education' },
         { label: 'Tech stack', next: 'skills' },
@@ -337,6 +337,7 @@ const resetIdleTimer = () => {
 };
 
 const setFabIcon = (open) => {
+  fab.setAttribute('aria-expanded', open ? 'true' : 'false');
   const icon = fab.querySelector('.chat-fab-icon');
   const arrow = fab.querySelector('.chat-fab-arrow');
   if (!icon || !arrow) return;

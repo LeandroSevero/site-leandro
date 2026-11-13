@@ -39,6 +39,8 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Alternância entre modo claro e escuro com um clique
 - Preferência persistida no `localStorage`
 - Troca automática de logo e avatar do chat conforme o tema (a foto do hero é a mesma nos dois temas)
+- Efeito **Liquid Glass** (somente CSS) nos dois temas: superfícies translúcidas com `backdrop-filter: blur() saturate()`, brilho especular no topo (`inset box-shadow`) e reflexo em gradiente. Aplicado em header, menu mobile, rodapé, botões (LinkedIn, Instagram, Contato, idioma, menu, tema). Os botões "Explorar portfólio" e "Voltar ao topo" ficam sem vidro e têm o mesmo visual: seta + rótulo em caixa alta, cor suave e animação de quique, cards (Sobre, Tecnologias, Certificações, Experiência, Contato), modal de contato e chat flutuante
+- No tema claro, o fundo ganhou manchas suaves em gradiente radial para o vidro ter o que refratar
 
 ### Internacionalização (i18n)
 - Suporte completo a **Português (pt-BR)** e **Inglês (en)**
@@ -62,20 +64,26 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ### Animações e Interações
 - Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll
 - Saída suave com movimento inverso coerente por tipo: `translateY` inverte direção, `translateX` inverte eixo, `scale` retrai levemente
+- Ao sair pela borda inferior, o elemento volta ao estado inicial (deslocado para baixo) em vez de usar a animação de saída, que o subiria de volta para a tela e criaria um loop entra/sai (elemento "tremendo" quando parado na borda)
 - Animação de typewriter no badge do hero
 - Timeline animada com ponto flutuante que acompanha o scroll
 - Easter egg: clique no certificado Azure DevOps ativa animação de fantasma com rastro de partículas
 
 ### Seção de Skills
-- **Desktop:** grid de cards clicáveis com painel lateral de descrição localizada
+- **Desktop:** grid de cards com painel lateral de descrição localizada; o card é selecionado ao passar o mouse ou pelo teclado (Tab + Enter/Espaço, com `role="button"` e `aria-pressed`)
 - **Mobile:** carrossel com navegação por botões, dots indicadores e auto-play (4,5s)
-- Cores e ícones individuais por tecnologia
+- Cores e ícones individuais por tecnologia (`color` em `SKILL_DATA`); no tema claro, o nome da tecnologia usa um tom mais escuro da mesma cor (`textLight`) e, no escuro, Azure/Azure DevOps/AD, Microsoft 365 e Kubernetes usam um tom mais claro (`textDark`), para atingir 4.5:1 — ícone, borda e destaque seguem com a cor da marca
 - Descrições traduzidas para pt-BR e en
 
 ### Seção de Certificados
-- 3 certificados em destaque
-- Carrossel infinito e contínuo com 8+ certificados adicionais
-- Velocidade reduzida ao passar o mouse (hover)
+- 3 certificados em destaque: Google SecOps Foundation (Google, Out 2026), Claude with Google Cloud's Vertex AI (Anthropic, Mar 2026) e Azure DevOps - Integração Contínua e Entrega Contínua (Udemy, Dez 2023)
+- Carrossel infinito e contínuo com mais 9 certificações e cursos, ordenados da mais recente para a mais antiga: Segurança da Informação, Liderança Inovadora, Fortinet Certified Associate Cybersecurity, AWS Knowledge: Cloud Essentials, Active Directory - Do Zero ao Avançado, Fortinet NSE 1 & 2, Computer Hardware Basics, Arquitetura de Redes e Noções básicas de Disciplined Agile
+- Link "Ver credencial" (nova aba, `rel="noopener noreferrer"`) só nos itens com credencial pública, com `aria-label` descritivo traduzido, foco visível e área de toque de 44px
+- Etiqueta discreta "Expirada" (`.cert-status`) nas certificações Fortinet vencidas, com contraste AA nos dois temas (5.3:1 no claro, 8.4:1 no escuro)
+- Ícones dos emissores em `/public/icons/<nome>/icon.svg` (logotipo simples do emissor; Google e Anthropic incluídos)
+- Velocidade reduzida ao passar o mouse (hover); ao focar um link pelo teclado, o carrossel para e mantém o card visível
+- As cópias usadas no loop infinito têm `aria-hidden="true"` e `inert`: leitores de tela e o Tab veem cada item uma vez só
+- As respostas do chat sobre certificações listam os mesmos itens, na mesma ordem e com as mesmas datas
 
 ### Seção de Experiência
 - Timeline vertical com 6 posições profissionais
@@ -95,7 +103,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Textos de estado completamente traduzidos
 
 ### Assistente Virtual (Chat)
-- Widget flutuante (FAB) com badge de notificação
+- Widget flutuante (FAB) com badge de notificação; o FAB é um `<button>` (`aria-label="Abrir chat"`, `aria-expanded` atualizado ao abrir/fechar, `aria-controls="chat-float"`), acessível por teclado
 - Aparece após o usuário rolar além da seção hero
 - **12 fluxos de conversa** pré-definidos: sobre, resumo, experiência, cargo atual, tecnologias, formação, certificações, contato
 - Bubble de sugestão automática após 30s de inatividade ou ao rolar >300px
@@ -134,7 +142,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── contact-modal.js             # Modal de contato: validação, estados, Turnstile
 ├── visit-gate.js                # Verificação de primeira visita (Turnstile + cookie)
 ├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
-├── style.css                    # Estilos globais com CSS custom properties (~1700 linhas)
+├── style.css                    # Estilos globais com CSS custom properties e camada Liquid Glass (~3500 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
 ├── vercel.json                  # Configuração de deploy (rewrites SPA)
 ├── package.json                 # Dependências e scripts
@@ -152,7 +160,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 │       ├── images.js            # Importação central de logo e avatares do chat (cache busting)
 │       ├── logo.svg             # Logo (versão fundo escuro)
 │       ├── logoparaofundobranco.svg # Logo (versão fundo claro)
-│       ├── leandro.webp         # Foto do hero (600×600, mesma para os dois temas)
+│       ├── leandro.webp         # Foto do hero (640×800 vertical, com fundo, mesma para os dois temas)
 │       ├── atendimento.webp     # Avatar do chat (tema claro, 128×128)
 │       └── atendimentoescuro.webp   # Avatar do chat (tema escuro, 128×128)
 │
@@ -160,7 +168,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
     ├── robots.txt
     ├── sitemap.xml
     ├── _redirects               # Redirects para Netlify (compatibilidade)
-    └── icons/                   # Ícones SVG das tecnologias (carregados dinamicamente, sem import)
+    └── icons/                   # Ícones SVG das tecnologias e dos emissores de certificação (carregados dinamicamente, sem import)
         ├── Azure DevOps/
         ├── Azure/
         ├── AWS/
@@ -185,7 +193,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 01 | **Hero** | Foto, badge de cargo, descrição, links para LinkedIn, Instagram e contato |
 | 02 | **Sobre** | 6 parágrafos sobre formação e atuação profissional, 3 cards informativos |
 | 03 | **Skills** | 12 tecnologias com ícone, categoria e descrição detalhada localizada |
-| 04 | **Certificados** | 3 em destaque + carrossel com 8 certificações adicionais |
+| 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
 | 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
 | 06 | **Contato** | E-mail, LinkedIn, Instagram, localização com mapa e formulário modal |
 
@@ -216,11 +224,13 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 1. Validação de campos (tipo, tamanho, regex)
 2. Sanitização contra XSS (tags HTML, atributos de evento, protocolos perigosos)
 3. Verificação do token Cloudflare Turnstile
-4. Conexão ao MongoDB
-5. Checagem de rate limit por IP e por e-mail (hash SHA256)
+4. Conexão ao MongoDB (desiste em ~4s se o cluster não responder)
+5. Checagem de rate limit por IP e por e-mail (hash SHA256), quando o banco está disponível
 6. Envio de e-mail ao admin via Resend
 7. Envio de auto-resposta ao remetente
-8. Registro da submission no MongoDB
+8. Registro da submission no MongoDB, quando o banco está disponível
+
+**Resiliência:** uma falha no MongoDB (conexão, checagem do limite ou gravação) não impede o envio. O erro é registrado no log da função (`console.error` com a etapa e o tipo do erro, sem dados do visitante), o e-mail segue pelo Resend e o visitante recebe sucesso. Nesse caso o limite diário não é aplicado e o contato não é gravado no banco, mas chega por e-mail. Se o envio pelo Resend falhar, a API responde com erro. Uma conexão que falhou não fica em cache: a próxima requisição tenta conectar de novo.
 
 ### Rate Limiting
 - Máximo de **2 envios por dia** por IP
@@ -274,6 +284,29 @@ Todas as cores são definidas via CSS custom properties em `:root` (modo claro) 
 | `--color-glass2` | `rgba(255,255,255,0.07)` | Glassmorphism nível 2 |
 | `--color-glass3` | `rgba(255,255,255,0.11)` | Glassmorphism nível 3 |
 
+### Liquid Glass
+
+Tokens definidos no bloco "Liquid Glass" no fim do `style.css`. As regras usam o prefixo `[data-theme]` para sobrescrever os estilos anteriores sem `!important`.
+
+| Token CSS | Modo Claro | Modo Escuro | Uso |
+|---|---|---|---|
+| `--glass-blur` | `blur(16px) saturate(170%)` | `blur(18px) saturate(160%)` | `backdrop-filter` de todas as superfícies de vidro |
+| `--glass-bg` | `rgba(255,255,255,0.55)` | `rgba(255,255,255,0.055)` | Fundo de cards, botões secundários e controles |
+| `--glass-bg-hover` | `rgba(255,255,255,0.7)` | `rgba(255,255,255,0.085)` | Fundo no hover |
+| `--glass-bg-strong` | `rgba(255,255,255,0.82)` | `rgba(8,12,26,0.74)` | Modal de contato e painel do chat (mais opaco para leitura) |
+| `--glass-bg-bar` | `rgba(240,244,248,0.62)` | `rgba(4,6,15,0.55)` | Header, menu mobile e rodapé |
+| `--glass-border` | `rgba(255,255,255,0.75)` | `rgba(255,255,255,0.13)` | Borda clara do vidro |
+| `--glass-border-hover` | primária a 45% | `rgba(79,209,197,0.4)` | Borda no hover |
+| `--glass-border-control` | `rgba(26,95,168,0.18)` | `rgba(255,255,255,0.13)` | Borda de botões pequenos e campos do formulário (no claro, a borda branca sumiria sobre o fundo) |
+| `--glass-sheen` | gradiente branco 55% → 0 | gradiente branco 9% → 0 | Reflexo diagonal (`background-image`) |
+| `--glass-highlight` | `inset` branco 90% | `inset` branco 12% | Brilho especular na borda superior |
+| `--glass-shadow` / `--glass-shadow-hover` | sombra azulada suave | sombra preta + brilho teal | Profundidade em repouso / hover |
+| `--glass-shadow-hover-tight` | `0 6px 16px -6px` azulada | `0 6px 16px -6px` preta + brilho teal | Hover dos cards Sobre, certificações (destaque e carrossel), Experiência e contato: cabe no espaço entre cards (12-32px) e não escurece os vizinhos de vidro |
+| `--glass-solid` | `#f7fafd` | `#0b1020` | Fundo sólido usado nos fallbacks |
+| `--glass-bg-tinted` | `rgba(255,255,255,0.55)` | `rgba(4,6,15,0.45)` | Fundo dos cards de certificação em destaque (no escuro, mais denso para o texto suave passar de 4.5:1) |
+
+Os botões com cor primária (LinkedIn, baixar currículo, botão do chat) mantêm a cor sólida e recebem um gradiente de brilho com `inset box-shadow`, sem perder contraste do texto.
+
 ### Header
 
 | Token CSS | Modo Claro | Modo Escuro |
@@ -281,21 +314,23 @@ Todas as cores são definidas via CSS custom properties em `:root` (modo claro) 
 | `--color-header-bg` | `rgba(240,244,248,0.88)` | `rgba(4,6,15,0.75)` |
 | `--color-header-shadow` | `rgba(26,95,168,0.08)` | `rgba(0,0,0,0.6)` |
 
+Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` continua como fallback em navegadores sem `backdrop-filter`.
+
 ### Cores Utilitárias Fixas
 
 | Cor | Valor | Uso |
 |---|---|---|
 | Sucesso | `#22c55e` | Badge de status online |
-| Dark toggle bg | `#2a2a35` | Fundo do botão de tema (dark) |
-| Light toggle bg | `#daeeff` | Fundo do botão de tema (light) |
+| Dark toggle bg | `rgba(30,27,46,0.65)` | Fundo translúcido do botão de tema (dark) |
+| Light toggle bg | `rgba(186,220,248,0.75)` | Fundo translúcido do botão de tema (light) |
 
 ---
 
 ## Performance
 
-- **Build size total:** ~89KB JS + ~54KB CSS (gzip: ~30KB + ~9KB)
+- **Build size total:** ~88KB JS + ~61KB CSS (gzip: ~30KB + ~11KB)
 - **Zero dependências de framework front-end**
-- Foto do hero e avatares do chat em **WebP** com transparência, no dobro do maior tamanho exibido (retina): hero 600×600 (~17KB, antes 577KB em SVG com PNG embutido) e avatares 128×128 (~3–5KB, antes até 356KB)
+- Foto do hero e avatares do chat em **WebP**, no dobro do maior tamanho exibido (retina): hero 640×800 (proporção 4:5) com fundo, de corpo inteiro com a nuvem do Google Cloud ao fundo (~43KB, antes 577KB em SVG com PNG embutido; exibida em 20×25rem no desktop e 16×20rem no mobile), e avatares 128×128 com transparência (~3–5KB, antes até 356KB)
 - Foto do hero referenciada direto no HTML com `fetchpriority="high"`, para começar a baixar antes do JavaScript (melhor LCP)
 - Biblioteca **Lottie** (~298KB) carregada sob demanda ao abrir o modal de contato, e não mais em toda visita
 - Todas as imagens do site (logo, hero, avatar do chat) centralizadas em `src/assets/` — Vite gera hash automático no nome do arquivo (ex: `leandro-C8rK_Nfc.webp`), eliminando cache stale após deploy
@@ -314,8 +349,14 @@ Todas as cores são definidas via CSS custom properties em `:root` (modo claro) 
 ### Acessibilidade
 - HTML5 semântico (`header`, `main`, `section`, `article`, `footer`, `nav`)
 - `aria-label`, `aria-expanded`, `aria-hidden`, `aria-live`, `aria-required` em todos os elementos interativos
-- Navegação completa por teclado
+- Navegação completa por teclado, com foco visível (`:focus-visible`) em links, botões e campos nos dois temas: contorno de 2px na cor primária
+- Área de toque mínima de 44×44px nos botões pequenos (idioma, tema, menu e setas do carrossel) via pseudo-elemento invisível, sem alterar o tamanho visual
+- Sem rolagem horizontal no celular: `main { overflow-x: clip }` corta o deslocamento inicial da animação de entrada do card "Sobre" (`translateX(32px)`), que deixava a página 9px mais larga até o card aparecer; a animação visível não muda
+- `prefers-reduced-motion: reduce` desliga o quique do "Explorar portfólio" e do "Voltar ao topo" e remove o reflexo diagonal do vidro
+- Contraste dos textos sobre vidro medido nos dois temas (mínimo 4.5:1); no escuro, os cards de certificação em destaque e o cabeçalho/opções do chat usam fundo um pouco mais denso para atingir o mínimo
+- Ajustes de cor de texto para 4.5:1: verde do chat no tema claro `#107837` (status "Online" e botão "Quero entrar em contato"), placeholder do formulário sem a opacidade extra de 60%, rótulos "Explorar portfólio" e "Voltar ao topo" sem a opacidade de 75% e nome da tecnologia em tom ajustado da cor da marca (mais escuro no claro; mais claro no escuro para Azure, Microsoft 365 e Kubernetes)
 - Contraste de cores adequado (WCAG AA)
+- Liquid Glass com fallbacks: `prefers-reduced-transparency: reduce` e `prefers-contrast: more` trocam o vidro por fundos sólidos (o segundo também reforça as bordas), e navegadores sem `backdrop-filter` (`@supports`) usam fundos opacos
 - Textos alternativos em imagens
 - Feedback de validação com `role="alert"`
 
@@ -350,7 +391,7 @@ Todas as rotas são redirecionadas para `index.html` para suporte ao roteamento 
 | `develop` | Testes (homologação) | [testing.leandrosevero.com.br](https://testing.leandrosevero.com.br) |
 | `main` | Produção | [leandrosevero.com.br](https://leandrosevero.com.br) |
 
-**Fluxo de publicação:** alterações são feitas e enviadas para `develop` (deploy automático no ambiente de testes). Após validação, abre-se um Pull Request de `develop` para `main`; o merge dispara o deploy de produção.
+**Fluxo de publicação:** alterações são feitas e enviadas para `develop` (deploy automático no ambiente de testes). Após validação, abre-se um Pull Request de `develop` para `main`; o merge dispara o deploy de produção. Push, merge ou rebase na `main` só acontecem com autorização explícita do responsável (regra registrada no `AGENTS.md`).
 
 A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a data da última verificação do fluxo de deploy e pode ser conferida no código-fonte de cada ambiente.
 
@@ -360,15 +401,26 @@ A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a da
 
 | Variável | Uso |
 |---|---|
-| `VITE_TURNSTILE_SITE_KEY` | Chave do site do Cloudflare Turnstile (front-end; usada na verificação de primeira visita e no formulário). Embutida no build: alterações exigem novo deploy |
-| `TURNSTILE_SECRET_KEY` | Chave secreta do Turnstile (API: `/api/verify-visit` e `/api/contact`) |
-
-Os hostnames `leandrosevero.com.br`, `www.leandrosevero.com.br` e `testing.leandrosevero.com.br` precisam estar cadastrados no widget do Turnstile no painel da Cloudflare.
-
-Para desenvolvimento local, use as chaves de teste da Cloudflare em `.env.local` (não versionado): `1x00000000000000000000AA` (sempre passa) ou `3x00000000000000000000FF` (força o desafio interativo).
+| `VITE_TURNSTILE_SITE_KEY` | Chave do site do Cloudflare Turnstile (front-end, lida em `turnstile.js`; usada na verificação de primeira visita e no formulário). Embutida no build: alterações exigem novo deploy |
+| `TURNSTILE_SECRET_KEY` | Chave secreta do Turnstile (servidor, lida em `api/lib/turnstile.js`; usada por `/api/verify-visit` e `/api/contact`) |
 | `RESEND_API_KEY` | Chave da API Resend para envio de e-mails |
-| `MONGODB_URI` | String de conexão MongoDB |
+| `mongodb_MONGODB_URI` | String de conexão MongoDB (lida em `api/lib/mongodb.js`). Nome com prefixo `mongodb_` em minúsculas, criado pela integração MongoDB Atlas da Vercel; precisa existir também no Preview da `develop` para o formulário funcionar em homologação |
 | `CONTACT_TO_EMAIL` | E-mail de destino dos formulários |
+| `CONTACT_FROM_EMAIL` | Remetente dos e-mails enviados pelo formulário |
+
+### Chaves do Turnstile por ambiente
+
+| Ambiente | Onde configurar | `VITE_TURNSTILE_SITE_KEY` | `TURNSTILE_SECRET_KEY` |
+|---|---|---|---|
+| Produção (`main`) | Vercel → Production | chave real | chave real |
+| Homologação (`develop`) | Vercel → Preview, branch `develop` | `1x00000000000000000000AA` (teste) | `1x0000000000000000000000000000000AA` (teste) |
+| Local | `.env.local` (copiar de `.env.example`) | `1x00000000000000000000AA` (teste) | `1x0000000000000000000000000000000AA` (teste) |
+
+As chaves de teste oficiais da Cloudflare sempre passam e funcionam em qualquer domínio; testes automatizados usam somente elas. Para forçar o desafio interativo localmente, use a site key `3x00000000000000000000FF`.
+
+Os hostnames `leandrosevero.com.br` e `www.leandrosevero.com.br` precisam estar cadastrados no widget real do Turnstile no painel da Cloudflare.
+
+**Fluxo de verificação:** o front obtém um token do widget (`turnstile.render` com a site key) e o envia para `/api/verify-visit` (primeira visita, grava o cookie `ls_verified` por 30 dias) ou `/api/contact` (formulário). O servidor valida o token em `https://challenges.cloudflare.com/turnstile/v0/siteverify` com a secret key e o IP do visitante; sem a secret configurada, a verificação falha.
 
 ---
 

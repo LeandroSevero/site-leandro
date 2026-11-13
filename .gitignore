@@ -2,6 +2,8 @@ node_modules/
 dist/
 .env
 .env.*
+!.env.example
 .vercel/
 .DS_Store
 *.log
+.tmp/

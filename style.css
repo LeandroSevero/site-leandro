@@ -409,8 +409,8 @@ main {
 
 .image-wrapper {
   position: relative;
-  width: 12rem;
-  height: 12rem;
+  width: 16rem;
+  height: 20rem;
   border-radius: var(--radius-xl);
   border: 2px solid var(--color-border);
   overflow: hidden;
@@ -428,8 +428,8 @@ main {
   position: absolute;
   right: -0.5rem;
   bottom: -0.5rem;
-  width: 12rem;
-  height: 12rem;
+  width: 16rem;
+  height: 20rem;
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-primary);
   opacity: 0.2;
@@ -440,7 +440,7 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top;
+  object-position: center;
 }
 
 .hero-text {
@@ -1591,13 +1591,13 @@ main {
   }
 
   .image-wrapper {
-    width: 16rem;
-    height: 16rem;
+    width: 20rem;
+    height: 25rem;
   }
 
   .image-wrapper::after {
-    width: 16rem;
-    height: 16rem;
+    width: 20rem;
+    height: 25rem;
   }
 
   .about-grid {
@@ -3181,4 +3181,520 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .visit-gate { transition: none; }
   .visit-gate-icon { animation: none; }
+}
+
+/* ==========================================================================
+   Liquid Glass
+   Camada visual aplicada sobre os estilos acima (somente CSS).
+   - Tokens --glass-* por tema em :root / [data-theme="dark"].
+   - Seletores prefixados com [data-theme] para vencer as regras antigas
+     de mesma especificidade sem usar !important.
+   - Fallbacks: sem suporte a backdrop-filter, prefers-reduced-transparency
+     e prefers-contrast: more usam fundos sólidos.
+   ========================================================================== */
+
+:root {
+  --glass-blur: blur(16px) saturate(170%);
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-hover: rgba(255, 255, 255, 0.7);
+  --glass-bg-strong: rgba(255, 255, 255, 0.82);
+  --glass-bg-bar: rgba(240, 244, 248, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-border-hover: rgba(var(--color-primary-rgb), 0.45);
+  --glass-border-control: rgba(26, 95, 168, 0.18);
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.12) 45%, rgba(255, 255, 255, 0) 100%);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(26, 95, 168, 0.06);
+  --glass-shadow: 0 8px 28px rgba(26, 95, 168, 0.1);
+  --glass-shadow-hover: 0 14px 36px rgba(26, 95, 168, 0.16);
+  /* Sombra de hover compacta: cabe no espaço entre cards (alcance ~10px nas laterais, 16px abaixo, 4px acima).
+     Usada em todos os cards de vidro que ficam lado a lado; --glass-shadow-hover fica sem uso nos cards. */
+  --glass-shadow-hover-tight: 0 6px 16px -6px rgba(26, 95, 168, 0.24);
+  --glass-solid: #f7fafd;
+  /* Fundo dos cards de certificação em destaque (no escuro, mais denso para o texto suave passar de 4.5:1) */
+  --glass-bg-tinted: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme="dark"] {
+  --glass-blur: blur(18px) saturate(160%);
+  --glass-bg: rgba(255, 255, 255, 0.055);
+  --glass-bg-hover: rgba(255, 255, 255, 0.085);
+  --glass-bg-strong: rgba(8, 12, 26, 0.74);
+  --glass-bg-bar: rgba(4, 6, 15, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.13);
+  --glass-border-hover: rgba(79, 209, 197, 0.4);
+  --glass-border-control: rgba(255, 255, 255, 0.13);
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(255, 255, 255, 0) 100%);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --glass-shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(79, 209, 197, 0.08);
+  --glass-shadow-hover-tight: 0 6px 16px -6px rgba(0, 0, 0, 0.6), 0 0 12px -6px rgba(79, 209, 197, 0.2);
+  --glass-solid: #0b1020;
+  --glass-bg-tinted: rgba(4, 6, 15, 0.45);
+}
+
+/* Fundo claro com manchas suaves para o vidro ter o que refratar */
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse 70% 55% at 8% 15%, rgba(26, 95, 168, 0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 92% 85%, rgba(124, 106, 247, 0.08) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+
+/* --- Barras: cabeçalho, menu mobile, rodapé --- */
+[data-theme] header,
+[data-theme] .mobile-menu {
+  background-color: var(--glass-bg-bar);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom-color: var(--glass-border);
+}
+
+[data-theme] header {
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+[data-theme] header.scrolled {
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.04), 0 6px 24px var(--color-header-shadow);
+}
+
+[data-theme] .footer {
+  background-color: var(--glass-bg-bar);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-top-color: var(--glass-border);
+  box-shadow: var(--glass-highlight);
+}
+
+/* --- Superfícies de vidro: cards, botões secundários, controles --- */
+[data-theme] .btn-secondary,
+[data-theme] .lang-toggle,
+[data-theme] .menu-toggle,
+[data-theme] .skills-carousel-btn,
+[data-theme] .card,
+[data-theme] .skill-card,
+[data-theme] .skills-carousel-slide,
+[data-theme] .skills-carousel-desc,
+[data-theme] .cert-item,
+[data-theme] .timeline-card,
+[data-theme] .contact-card {
+  background-color: var(--glass-bg);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+}
+
+/* Controles pequenos: sombra externa mais discreta */
+[data-theme] .btn-secondary,
+[data-theme] .lang-toggle,
+[data-theme] .menu-toggle,
+[data-theme] .skills-carousel-btn {
+  border-color: var(--glass-border-control);
+  box-shadow: var(--glass-highlight), 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+/* Certificações em destaque mantêm o tom da cor primária */
+[data-theme] .cert-featured {
+  background-color: var(--glass-bg-tinted);
+  background-image:
+    var(--glass-sheen),
+    linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+}
+
+/* Estados de hover (recolocados porque as regras acima vencem as antigas) */
+[data-theme] .btn-secondary:hover,
+[data-theme] .lang-toggle:hover,
+[data-theme] .skills-carousel-btn:hover,
+[data-theme] .card:hover,
+[data-theme] .cert-item:hover,
+[data-theme] .timeline-card:hover,
+[data-theme] .contact-card:hover {
+  background-color: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+}
+
+[data-theme] .card:hover,
+[data-theme] .cert-item:hover,
+[data-theme] .cert-featured:hover,
+[data-theme] .timeline-card:hover,
+[data-theme] .contact-card:hover {
+  box-shadow: var(--glass-highlight), var(--glass-shadow-hover);
+}
+
+/* Sobre, certificações (destaque e carrossel), experiência e contato ficam a 12-32px uns dos outros:
+   a sombra grande invadia os vizinhos (que são de vidro e escureciam). Usa a sombra compacta. */
+[data-theme] .card:hover,
+[data-theme] .cert-featured:hover,
+[data-theme] .timeline-card:hover,
+[data-theme] .cert-item:hover,
+[data-theme] .contact-card:hover {
+  box-shadow: var(--glass-highlight), var(--glass-shadow-hover-tight);
+}
+
+[data-theme] .cert-featured:hover {
+  border-color: rgba(var(--color-primary-rgb), 0.55);
+}
+
+[data-theme] .menu-toggle:hover {
+  background-color: var(--glass-bg-hover);
+}
+
+[data-theme] .skill-card:hover,
+[data-theme] .skill-card.active {
+  background-color: var(--skill-bg, var(--glass-bg-hover));
+  border-color: var(--skill-color, var(--color-primary));
+  box-shadow: var(--glass-highlight), var(--glass-shadow-hover);
+}
+
+/* "Voltar ao topo" com o mesmo visual do "Explorar portfólio":
+   sem fundo nem borda, seta + rótulo em caixa alta e animação de quique */
+[data-theme] .scroll-top-btn {
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--color-fg-muted);
+  letter-spacing: 0;
+  transition: color var(--transition);
+  animation: bounce-mobile 2s infinite;
+}
+
+[data-theme] .scroll-top-btn span {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 1;
+}
+
+[data-theme] .scroll-top-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+}
+
+[data-theme] .scroll-top-btn:hover {
+  background: none;
+  border: none;
+  color: var(--color-fg);
+}
+
+/* --- Botões com cor primária: vidro "líquido" colorido --- */
+[data-theme] .btn-primary,
+[data-theme] .chat-fab,
+[data-theme] .cv-download-btn {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 6px 20px rgba(var(--color-primary-rgb), 0.3);
+}
+
+[data-theme] .btn-primary {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+[data-theme] .btn-primary:hover,
+[data-theme] .cv-download-btn:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 8px 26px rgba(var(--color-primary-rgb), 0.42);
+}
+
+[data-theme] .chat-fab {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+[data-theme] .chat-fab:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 8px 28px rgba(var(--color-primary-rgb), 0.5);
+}
+
+/* --- Botão de tema: trilho translúcido com brilho no topo --- */
+[data-theme="light"] .light-switch-track {
+  background-color: rgba(186, 220, 248, 0.75);
+  border-color: rgba(26, 95, 168, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 8px 1px rgba(176, 216, 245, 0.45);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+[data-theme="dark"] .light-switch-track {
+  background-color: rgba(30, 27, 46, 0.65);
+  border-color: rgba(167, 139, 250, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 10px 2px rgba(167, 139, 250, 0.15);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* --- Painéis sobrepostos: modal de contato e chat --- */
+[data-theme] .contact-modal,
+[data-theme] .chat-float {
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-highlight), 0 24px 64px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme] .contact-modal-header {
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom-color: var(--glass-border);
+}
+
+[data-theme] .chat-header {
+  background-color: var(--glass-bg);
+  background-image: var(--glass-sheen);
+  border-bottom-color: var(--glass-border);
+}
+
+[data-theme] .contact-modal-close,
+[data-theme] .contact-form-input {
+  background-color: var(--glass-bg);
+  border-color: var(--glass-border-control);
+  box-shadow: var(--glass-highlight);
+}
+
+[data-theme] .contact-form-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--glass-highlight), 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
+}
+
+[data-theme] .contact-modal-close:hover {
+  background-color: var(--glass-bg-hover);
+  border-color: var(--color-fg-muted);
+}
+
+/* --- Fallbacks de acessibilidade e compatibilidade --- */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root,
+  [data-theme="dark"] {
+    --glass-bg: var(--glass-solid);
+    --glass-bg-hover: var(--glass-solid);
+    --glass-bg-strong: var(--glass-solid);
+    --glass-bg-tinted: var(--glass-solid);
+    --glass-bg-bar: var(--color-header-bg);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root,
+  [data-theme="dark"] {
+    --glass-bg: var(--glass-solid);
+    --glass-bg-hover: var(--glass-solid);
+    --glass-bg-strong: var(--glass-solid);
+    --glass-bg-tinted: var(--glass-solid);
+    --glass-bg-bar: var(--glass-solid);
+    --glass-sheen: none;
+    --glass-blur: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --glass-border: var(--color-fg-muted);
+    --glass-border-control: var(--color-fg-muted);
+  }
+
+  [data-theme="dark"] {
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-border-control: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* --- Contraste no tema escuro: fundo um pouco mais denso atrás do texto verde do chat --- */
+[data-theme="dark"] .chat-header {
+  background-color: transparent;
+}
+
+[data-theme="dark"] .chat-options {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* --- Sem largura extra no celular ---
+   O estado inicial da animação de entrada do card "Sobre" (.reveal-right, translateX(32px))
+   passava 9px da borda da tela até o card aparecer. clip corta só o eixo X: não cria
+   contêiner de rolagem, não afeta o eixo Y nem a animação visível. */
+main {
+  overflow-x: clip;
+}
+
+/* --- Contraste de texto (mínimo 4.5:1) com a menor mudança visual --- */
+
+/* Verde do chat: tom mais escuro só no tema claro (#16a34a dava 3.3 e 2.8) */
+[data-theme="light"] .chat-header-status {
+  color: #107837;
+}
+
+[data-theme="light"] .chat-option-btn.contact-btn {
+  color: #107837;
+  border-color: #107837;
+}
+
+[data-theme="light"] .chat-option-btn.contact-btn:hover {
+  background-color: #107837;
+  color: #fff;
+}
+
+/* Placeholder: sem a opacidade extra de 60%; segue mais suave que o texto digitado */
+[data-theme] .contact-form-input::placeholder {
+  opacity: 1;
+}
+
+/* "Explorar portfólio": sem a opacidade de 75% no rótulo */
+[data-theme] .scroll-down-label {
+  opacity: 1;
+}
+
+/* Nome da tecnologia: a cor da marca continua no ícone, na borda e no destaque;
+   só o texto usa um tom mais escuro da mesma cor no tema claro (--skill-text-light, definido em main.js) */
+.skill-card,
+.skills-carousel-slide,
+#skills-desc-name {
+  --skill-text: var(--skill-color);
+}
+
+[data-theme="light"] .skill-card,
+[data-theme="light"] .skills-carousel-slide,
+[data-theme="light"] #skills-desc-name {
+  --skill-text: var(--skill-text-light, var(--skill-color));
+}
+
+/* No escuro, só as marcas escuras demais (Azure, Microsoft 365, Kubernetes) têm --skill-text-dark */
+[data-theme="dark"] .skill-card,
+[data-theme="dark"] .skills-carousel-slide,
+[data-theme="dark"] #skills-desc-name {
+  --skill-text: var(--skill-text-dark, var(--skill-color));
+}
+
+[data-theme] .skill-card:hover .skill-name,
+[data-theme] .skill-card.active .skill-name {
+  color: var(--skill-text, var(--color-primary));
+}
+
+/* Card de tecnologia agora recebe foco: mesmo destaque do hover */
+[data-theme] .skill-card:focus-visible {
+  border-color: var(--skill-color, var(--color-primary));
+}
+
+/* --- Certificações: link "Ver credencial" e etiqueta "Expirada" --- */
+:root {
+  --cert-status-fg: #4a6080;
+  --cert-status-bg: rgba(74, 96, 128, 0.1);
+  --cert-status-border: rgba(74, 96, 128, 0.22);
+}
+
+[data-theme="dark"] {
+  --cert-status-fg: #b9c2d6;
+  --cert-status-bg: rgba(255, 255, 255, 0.06);
+  --cert-status-border: rgba(255, 255, 255, 0.14);
+}
+
+.cert-status {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--cert-status-border);
+  border-radius: 999px;
+  background-color: var(--cert-status-bg);
+  color: var(--cert-status-fg);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.cert-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: opacity var(--transition);
+}
+
+.cert-link::after {
+  content: '\2197';
+  margin-left: 0.25rem;
+  text-decoration: none;
+}
+
+.cert-link:hover {
+  opacity: 0.8;
+}
+
+/* Área de toque de 44x44px sem mudar o tamanho visual do link */
+.cert-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+/* --- Menos movimento: sem quique e sem o reflexo diagonal do vidro --- */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-theme="dark"] {
+    --glass-sheen: none;
+  }
+
+  [data-theme] .scroll-down,
+  [data-theme] .scroll-top-btn {
+    animation: none;
+  }
+}
+
+/* --- Foco visível para teclado, nos dois temas --- */
+[data-theme] :is(a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+[data-theme] .contact-form-input:focus-visible {
+  outline-offset: 1px;
+}
+
+/* --- Área de toque mínima de 44x44px nos botões pequenos, sem mudar o tamanho visual --- */
+[data-theme] .lang-toggle,
+[data-theme] .theme-toggle,
+[data-theme] .menu-toggle,
+[data-theme] .skills-carousel-btn {
+  position: relative;
+}
+
+[data-theme] .lang-toggle::before,
+[data-theme] .theme-toggle::before,
+[data-theme] .menu-toggle::before,
+[data-theme] .skills-carousel-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
 }
