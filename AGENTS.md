@@ -24,6 +24,13 @@ Sempre responder ao usuário em **portugues brasileiro (pt-BR)**, independenteme
 * Testes automatizados em testing/local usam as chaves de teste do Turnstile; nunca use as chaves reais em testes.
 * Nunca escreva valores de chaves reais em código, commits, logs ou respostas.
 
+### Monitoramento e keep-alive (não remover)
+
+* `/api/health` (`api/health.js`) faz `ping` real no MongoDB e confere as variáveis de Turnstile, Resend e contato, sem expor valores e sem enviar e-mail. Só responde com `Authorization: Bearer <HEALTHCHECK_TOKEN>` ou `Bearer <CRON_SECRET>`.
+* O cron diário em `vercel.json` é o **keep-alive** do cluster gratuito do MongoDB Atlas, que é pausado após um período sem conexões (já aconteceu e derrubou o formulário). Ele só roda em produção e precisa de `CRON_SECRET` em Production.
+* `.github/workflows/health.yml` checa produção e homologação toda segunda e avisa por e-mail se algum falhar. Usa o secret `HEALTHCHECK_TOKEN` do GitHub.
+* Tokens (`HEALTHCHECK_TOKEN`, `CRON_SECRET`) nunca vão para código, commits, logs ou respostas.
+
 
 
 ## Atualização obrigatória do README_SITE.md

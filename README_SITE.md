@@ -79,7 +79,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - 3 certificados em destaque: Google SecOps Foundation (Google, Out 2026), Claude with Google Cloud's Vertex AI (Anthropic, Mar 2026) e Azure DevOps - Integração Contínua e Entrega Contínua (Udemy, Dez 2023)
 - Carrossel infinito e contínuo com mais 9 certificações e cursos, ordenados da mais recente para a mais antiga: Segurança da Informação, Liderança Inovadora, Fortinet Certified Associate Cybersecurity, AWS Knowledge: Cloud Essentials, Active Directory - Do Zero ao Avançado, Fortinet NSE 1 & 2, Computer Hardware Basics, Arquitetura de Redes e Noções básicas de Disciplined Agile
 - Link "Ver credencial" (nova aba, `rel="noopener noreferrer"`) só nos itens com credencial pública, com `aria-label` descritivo traduzido, foco visível e área de toque de 44px
-- Etiqueta discreta "Expirada" (`.cert-status`) nas certificações Fortinet vencidas, com contraste AA nos dois temas (5.3:1 no claro, 8.4:1 no escuro)
+- Todos os itens mostram só a data de emissão (sem indicação de expiração, inclusive nas certificações Fortinet e nas respostas do chat)
 - Ícones dos emissores em `/public/icons/<nome>/icon.svg` (logotipo simples do emissor; Google e Anthropic incluídos)
 - Velocidade reduzida ao passar o mouse (hover); ao focar um link pelo teclado, o carrossel para e mantém o card visível
 - As cópias usadas no loop infinito têm `aria-hidden="true"` e `inert`: leitores de tela e o Tab veem cada item uma vez só
@@ -144,13 +144,16 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
 ├── style.css                    # Estilos globais com CSS custom properties e camada Liquid Glass (~3500 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
-├── vercel.json                  # Configuração de deploy (rewrites SPA)
+├── vercel.json                  # Configuração de deploy (rewrites SPA + cron diário de /api/health)
+├── .env.example                 # Variáveis para uso local (chaves de TESTE do Turnstile)
+├── .github/workflows/health.yml # Alerta semanal: checa /api/health em produção e homologação
 ├── package.json                 # Dependências e scripts
 ├── .env                         # Variáveis de ambiente (não versionado)
 │
 ├── api/
 │   ├── contact.js               # Endpoint POST /api/contact (validação, Resend, MongoDB)
 │   ├── verify-visit.js          # Endpoint POST /api/verify-visit (Turnstile da primeira visita)
+│   ├── health.js                # Endpoint GET /api/health (ping no MongoDB + variáveis; keep-alive e monitoramento)
 │   └── lib/
 │       ├── mongodb.js           # Conexão e utilitários MongoDB (rate limiting, TTL)
 │       └── turnstile.js         # Validação server-side do token Turnstile (siteverify)
@@ -395,6 +398,22 @@ Todas as rotas são redirecionadas para `index.html` para suporte ao roteamento 
 
 A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a data da última verificação do fluxo de deploy e pode ser conferida no código-fonte de cada ambiente.
 
+### Monitoramento e keep-alive do banco
+
+**Por que existe:** o cluster gratuito (M0) do MongoDB Atlas é pausado automaticamente após um período sem conexões. Com o cluster pausado, o formulário de contato perde o limite diário e o registro dos envios (o e-mail continua saindo, ver Resiliência na API de Contato). O keep-alive abre uma conexão por dia para manter o cluster ativo, e o alerta semanal avisa se algum ambiente quebrar.
+
+| Parte | Onde | O que faz |
+|---|---|---|
+| `/api/health` | `api/health.js` | Faz `ping` no MongoDB com uma conexão real (timeout de 4s) e confere se as variáveis do Turnstile, do Resend e de contato existem (sem mostrar valores e sem enviar e-mail). Responde `200 {"status":"ok","checks":{...}}` ou `503 {"status":"error","failed":[...]}`. Exige `Authorization: Bearer <HEALTHCHECK_TOKEN>` ou `Bearer <CRON_SECRET>`; sem token válido, `401` sem detalhes. Sempre `Cache-Control: no-store` |
+| Cron diário da Vercel | `vercel.json` (`crons`) | Chama `/api/health` todo dia às 09:00 UTC (06:00 em Brasília). É o keep-alive: mantém o cluster ativo mesmo se o repositório ficar meses sem commits. A Vercel só executa crons em **produção** (lidos do `vercel.json` da `main`); basta, porque produção e homologação usam o mesmo cluster |
+| Alerta semanal do GitHub | `.github/workflows/health.yml` | Toda segunda-feira às 12:00 UTC (09:00 em Brasília) e sob demanda (`workflow_dispatch`), chama `/api/health` em produção e em homologação com o secret `HEALTHCHECK_TOKEN`. Falha se algum ambiente não responder `200` com `"status":"ok"` (o redirecionamento SPA devolveria `200` com HTML), e o GitHub avisa o dono do repositório por e-mail. `schedule` e `workflow_dispatch` só funcionam com o arquivo na `main`; um `push` na `develop` que altere o workflow ou `api/health.js` também o executa, para validar antes de produção |
+
+Exemplo de chamada manual (o token fica numa variável, nunca no histórico de comandos):
+
+```bash
+curl -s -H "Authorization: Bearer $HEALTHCHECK_TOKEN" https://testing.leandrosevero.com.br/api/health
+```
+
 ---
 
 ## Variáveis de Ambiente
@@ -407,6 +426,8 @@ A meta tag `<meta name="deploy-check">` no `<head>` do `index.html` contém a da
 | `mongodb_MONGODB_URI` | String de conexão MongoDB (lida em `api/lib/mongodb.js`). Nome com prefixo `mongodb_` em minúsculas, criado pela integração MongoDB Atlas da Vercel; precisa existir também no Preview da `develop` para o formulário funcionar em homologação |
 | `CONTACT_TO_EMAIL` | E-mail de destino dos formulários |
 | `CONTACT_FROM_EMAIL` | Remetente dos e-mails enviados pelo formulário |
+| `HEALTHCHECK_TOKEN` | Token aceito por `/api/health` (cabeçalho `Authorization: Bearer ...`), usado pelo GitHub Action de monitoramento. Mesmo valor em Production, no Preview da `develop` e no secret `HEALTHCHECK_TOKEN` do repositório no GitHub |
+| `CRON_SECRET` | Token que a Vercel envia automaticamente nos crons (`Authorization: Bearer ...`); aceito por `/api/health`. Necessário só em Production, onde os crons rodam |
 
 ### Chaves do Turnstile por ambiente
 
