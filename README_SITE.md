@@ -219,11 +219,13 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 1. Validação de campos (tipo, tamanho, regex)
 2. Sanitização contra XSS (tags HTML, atributos de evento, protocolos perigosos)
 3. Verificação do token Cloudflare Turnstile
-4. Conexão ao MongoDB
-5. Checagem de rate limit por IP e por e-mail (hash SHA256)
+4. Conexão ao MongoDB (desiste em ~4s se o cluster não responder)
+5. Checagem de rate limit por IP e por e-mail (hash SHA256), quando o banco está disponível
 6. Envio de e-mail ao admin via Resend
 7. Envio de auto-resposta ao remetente
-8. Registro da submission no MongoDB
+8. Registro da submission no MongoDB, quando o banco está disponível
+
+**Resiliência:** uma falha no MongoDB (conexão, checagem do limite ou gravação) não impede o envio. O erro é registrado no log da função (`console.error` com a etapa e o tipo do erro, sem dados do visitante), o e-mail segue pelo Resend e o visitante recebe sucesso. Nesse caso o limite diário não é aplicado e o contato não é gravado no banco, mas chega por e-mail. Se o envio pelo Resend falhar, a API responde com erro. Uma conexão que falhou não fica em cache: a próxima requisição tenta conectar de novo.
 
 ### Rate Limiting
 - Máximo de **2 envios por dia** por IP

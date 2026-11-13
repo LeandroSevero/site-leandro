@@ -92,6 +92,15 @@ const getTomorrowMidnight = () => {
 
 const hashValue = (value) => createHash('sha256').update(value).digest('hex');
 
+// Registra falhas do banco com contexto, sem dados do visitante (nome, e-mail, IP, mensagem).
+const logDbError = (etapa, err) => {
+  console.error('[api/contact] MongoDB indisponível; seguindo sem o banco', {
+    etapa,
+    erro: err?.name || 'Error',
+    codigo: err?.code ?? null,
+  });
+};
+
 const checkRateLimit = async (rateLimits, type, key) => {
   const day = getToday();
   const doc = await rateLimits.findOne({ type: { $eq: type }, key: { $eq: key }, day: { $eq: day } });
@@ -257,28 +266,32 @@ export default async function handler(req, res) {
   const emailNormalized = email.trim().toLowerCase();
   const emailHash = hashValue(emailNormalized);
 
-  let db;
+  // O banco é usado para o limite diário e para guardar uma cópia do contato.
+  // Se estiver fora do ar, o contato NÃO se perde: o e-mail é enviado mesmo assim.
+  let db = null;
   try {
     db = await getDb(DB_NAME);
-  } catch {
-    return res.status(500).json({ success: false, message: 'Erro de conexão com banco de dados. Tente novamente mais tarde.' });
+  } catch (err) {
+    logDbError('conexao', err);
   }
 
-  ensureIndexes(db).catch(() => {});
+  const rateLimits = db ? db.collection('contact_rate_limits') : null;
 
-  const rateLimits = db.collection('contact_rate_limits');
+  if (db) {
+    ensureIndexes(db).catch(() => {});
 
-  try {
-    const [ipCount, emailCount] = await Promise.all([
-      checkRateLimit(rateLimits, 'ip', remoteip || 'unknown'),
-      checkRateLimit(rateLimits, 'email', emailHash),
-    ]);
+    try {
+      const [ipCount, emailCount] = await Promise.all([
+        checkRateLimit(rateLimits, 'ip', remoteip || 'unknown'),
+        checkRateLimit(rateLimits, 'email', emailHash),
+      ]);
 
-    if (ipCount >= DAILY_LIMIT || emailCount >= DAILY_LIMIT) {
-      return res.status(429).json({ success: false, message: 'Limite diário de mensagens atingido. Tente novamente amanhã.' });
+      if (ipCount >= DAILY_LIMIT || emailCount >= DAILY_LIMIT) {
+        return res.status(429).json({ success: false, message: 'Limite diário de mensagens atingido. Tente novamente amanhã.' });
+      }
+    } catch (err) {
+      logDbError('limite_diario', err);
     }
-  } catch {
-    return res.status(500).json({ success: false, message: 'Erro ao verificar limite de envios. Tente novamente mais tarde.' });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -319,7 +332,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('AUTO REPLY START', cleanEmail);
+    console.log('AUTO REPLY START');
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
       from: 'Leandro Severo <contato@leandrosevero.com.br>',
@@ -336,23 +349,26 @@ export default async function handler(req, res) {
     console.error('AUTO REPLY ERROR', err);
   }
 
-  try {
-    const now = new Date();
-    await Promise.all([
-      db.collection('contact_submissions').insertOne({
-        name: cleanName,
-        email: cleanEmail,
-        emailNormalized,
-        phone: cleanPhone,
-        subject: cleanSubject,
-        message: cleanMessage,
-        ip: remoteip || 'unknown',
-        createdAt: now,
-      }),
-      incrementRateLimit(rateLimits, 'ip', remoteip || 'unknown'),
-      incrementRateLimit(rateLimits, 'email', emailHash),
-    ]);
-  } catch {
+  if (db) {
+    try {
+      const now = new Date();
+      await Promise.all([
+        db.collection('contact_submissions').insertOne({
+          name: cleanName,
+          email: cleanEmail,
+          emailNormalized,
+          phone: cleanPhone,
+          subject: cleanSubject,
+          message: cleanMessage,
+          ip: remoteip || 'unknown',
+          createdAt: now,
+        }),
+        incrementRateLimit(rateLimits, 'ip', remoteip || 'unknown'),
+        incrementRateLimit(rateLimits, 'email', emailHash),
+      ]);
+    } catch (err) {
+      logDbError('gravacao', err);
+    }
   }
 
   return res.status(200).json({ success: true, message: 'Mensagem enviada com sucesso.' });
