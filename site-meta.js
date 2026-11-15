@@ -488,6 +488,7 @@ const initFlow = () => {
   const TOUCH_TIP_MS = 3000;
   const shown = new Map(); // etapa -> motivos (mouse, foco, toque)
   let touchTimer = 0;
+  let touchScrollY = 0; // posição da página quando o tooltip de toque abriu
   const holderOf = (el) => el.closest('.flow-step, .flow-loop-wrap');
   const setTip = (el, reason, on) => {
     const reasons = shown.get(el) || new Set();
@@ -514,6 +515,7 @@ const initFlow = () => {
       clearTouch();
       if (!wasOpen) {
         setTip(el, 'touch', true);
+        touchScrollY = window.scrollY;
         touchTimer = setTimeout(clearTouch, TOUCH_TIP_MS);
       }
     });
@@ -528,7 +530,10 @@ const initFlow = () => {
   document.addEventListener('pointerdown', (e) => {
     if (!pausers.some((el) => el.contains(e.target))) clearTouch();
   }, { passive: true });
-  window.addEventListener('scroll', () => { if (shown.size) clearTouch(); }, { passive: true });
+  // Só rolagem real fecha: ajustes mínimos do navegador (imagens carregando, barra de endereço) não contam
+  window.addEventListener('scroll', () => {
+    if (shown.size && Math.abs(window.scrollY - touchScrollY) > 12) clearTouch();
+  }, { passive: true });
 
   // Anima só quando a seção está visível
   const io = new IntersectionObserver((entries) => {
