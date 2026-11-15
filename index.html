@@ -92,6 +92,7 @@
         <a href="#skills" data-i18n="nav.skills">Skills</a>
         <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
         <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
+        <a href="#sobre-o-site" data-i18n="nav.site">Sobre o site</a>
         <a href="#contato" data-i18n="nav.contact">Contato</a>
 
         <button id="lang-toggle" class="lang-toggle" aria-label="Mudar idioma">
@@ -149,7 +150,8 @@
       <a href="#skills" data-i18n="nav.skills">Skills</a>
       <a href="#certificados" data-i18n="nav.certificates">Certificados</a>
       <a href="#experiencia" data-i18n="nav.experience">Experiência</a>
-      <a href="#contato" data-i18n="nav.contact">Contato</a>
+      <a href="#sobre-o-site" data-i18n="nav.site">Sobre o site</a>
+        <a href="#contato" data-i18n="nav.contact">Contato</a>
     </div>
   </header>
 
@@ -603,10 +605,148 @@
       </div>
     </section>
 
+    <section id="sobre-o-site" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-number" data-i18n="site.section">05.</span>
+          <h2 data-i18n="site.title">Por trás deste site</h2>
+          <p data-i18n="site.subtitle">Um site pessoal operado como um produto em produção.</p>
+        </div>
+
+        <figure class="flow" id="flow">
+          <svg class="flow-svg" id="flow-svg" role="img" aria-labelledby="flow-title flow-desc" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <title id="flow-title" data-i18n="site.flow.title">Fluxo de entrega do site</title>
+            <desc id="flow-desc" data-i18n="site.flow.desc">Cada mudança passa por cinco etapas: código, validação, homologação, aprovação e produção. Em produção, a observabilidade acompanha o site e retroalimenta o código, fechando um ciclo contínuo.</desc>
+            <defs>
+              <radialGradient id="flow-pulse-grad">
+                <stop offset="0%" class="flow-pulse-core"/>
+                <stop offset="45%" class="flow-pulse-mid"/>
+                <stop offset="100%" class="flow-pulse-edge"/>
+              </radialGradient>
+            </defs>
+            <path class="flow-track" id="flow-track" d=""/>
+            <path class="flow-loop" id="flow-loop" d=""/>
+            <g id="flow-pulses"></g>
+          </svg>
+
+          <ol class="flow-steps" id="flow-steps">
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-0">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><svg class="flow-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-4 4 4 4"/><path d="m16 8 4 4-4 4"/><path d="m14 5-4 14"/></svg></span>
+                <span class="flow-text"><span class="flow-label" data-i18n="site.step.0">Código</span><span class="flow-sub" data-i18n="site.sub.0">versionado</span></span>
+              </button>
+              <span class="flow-tip" id="flow-tip-0" role="tooltip" data-i18n="site.tip.0">Toda mudança começa versionada e rastreável.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-1">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><svg class="flow-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                <span class="flow-text"><span class="flow-label" data-i18n="site.step.1">Validação</span><span class="flow-sub" data-i18n="site.sub.1">verificado</span></span>
+              </button>
+              <span class="flow-tip" id="flow-tip-1" role="tooltip" data-i18n="site.tip.1">Cada mudança é verificada automaticamente antes de seguir.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-2">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><svg class="flow-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6l-5.5 9.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></svg></span>
+                <span class="flow-text"><span class="flow-label" data-i18n="site.step.2">Homologação</span><span class="flow-sub" data-i18n="site.sub.2">testado</span></span>
+              </button>
+              <span class="flow-tip" id="flow-tip-2" role="tooltip" data-i18n="site.tip.2">Um ambiente isolado recebe a mudança para testes reais.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-3">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><svg class="flow-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-3 3c0 2 1 3 1 5v2h4v-2c0-2 1-3 1-5a3 3 0 0 0-3-3z"/><path d="M5 13h14v4H5z"/><path d="M6 21h12"/></svg></span>
+                <span class="flow-text"><span class="flow-label" data-i18n="site.step.3">Aprovação</span><span class="flow-sub" data-i18n="site.sub.3">aprovado</span></span>
+              </button>
+              <span class="flow-tip" id="flow-tip-3" role="tooltip" data-i18n="site.tip.3">Nada avança sem revisão e aprovação explícita.</span>
+            </li>
+            <li class="flow-step">
+              <button type="button" class="flow-node" aria-describedby="flow-tip-4">
+                <span class="flow-dot" aria-hidden="true"><svg class="flow-check" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><svg class="flow-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.9A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0"/><path d="M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5"/></svg></span>
+                <span class="flow-text"><span class="flow-label" data-i18n="site.step.4">Produção</span><span class="flow-sub" data-i18n="site.sub.4">no ar</span></span>
+              </button>
+              <span class="flow-tip" id="flow-tip-4" role="tooltip" data-i18n="site.tip.4">A versão aprovada entra no ar sem interrupção.</span>
+            </li>
+          </ol>
+
+          <div class="flow-loop-wrap">
+            <button type="button" class="flow-loop-label" id="flow-loop-label" aria-describedby="flow-tip-loop">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+              <span data-i18n="site.loop">Observabilidade</span>
+            </button>
+            <span class="flow-tip flow-tip-loop" id="flow-tip-loop" role="tooltip" data-i18n="site.tip.loop">O site é observado continuamente e qualquer desvio gera um alerta.</span>
+          </div>
+        </figure>
+
+        <div class="site-grid">
+          <div class="flow-console">
+            <div class="flow-console-head">
+              <button type="button" class="flow-run" id="flow-run">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+                <span id="flow-run-text" data-i18n="site.run">Simular deploy</span>
+              </button>
+            </div>
+            <div class="flow-terminal" role="log" aria-live="polite" data-i18n-aria="site.terminal.aria" aria-label="Terminal da simulação de deploy">
+              <div class="flow-terminal-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+              <pre class="flow-terminal-body" id="flow-terminal-body"></pre>
+            </div>
+          </div>
+
+          <section class="live-panel" aria-labelledby="live-title">
+            <h3 class="live-title" id="live-title"><span class="live-beacon" aria-hidden="true"></span><span data-i18n="site.live.title">Painel ao vivo</span></h3>
+            <dl class="live-grid">
+              <div class="live-item">
+                <dt data-i18n="site.live.status">Status</dt>
+                <dd class="live-status" id="live-status" data-state="loading" role="status" aria-live="polite"><span class="live-status-dot" aria-hidden="true"></span><span class="live-status-text" id="live-status-text">Verificando...</span></dd>
+              </div>
+              <div class="live-item">
+                <dt data-i18n="site.live.latency">Tempo de resposta</dt>
+                <dd id="live-latency">-</dd>
+              </div>
+              <div class="live-item">
+                <dt data-i18n="site.live.version">Versão</dt>
+                <dd id="live-version">-</dd>
+              </div>
+              <div class="live-item">
+                <dt data-i18n="site.live.updated">Última atualização</dt>
+                <dd id="live-updated">-</dd>
+              </div>
+            </dl>
+          </section>
+        </div>
+
+        <div class="pillars">
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/><path d="M5 6v12"/></svg></div>
+            <h3 data-i18n="site.pillar.1.title">Entrega contínua</h3>
+            <p data-i18n="site.pillar.1.text">Mudanças chegam ao ar em minutos, sempre validadas.</p>
+          </article>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></div>
+            <h3 data-i18n="site.pillar.2.title">Ambientes isolados</h3>
+            <p data-i18n="site.pillar.2.text">Nada vai para produção sem passar por homologação.</p>
+          </article>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <h3 data-i18n="site.pillar.3.title">Observabilidade 24/7</h3>
+            <p data-i18n="site.pillar.3.text">O site é monitorado continuamente, com alertas automáticos se algo sair do normal.</p>
+          </article>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <h3 data-i18n="site.pillar.4.title">Segurança em camadas</h3>
+            <p data-i18n="site.pillar.4.text">Proteção contra robôs e segredos isolados por ambiente.</p>
+          </article>
+          <article class="card pillar">
+            <div class="card-icon card-icon-primary pillar-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <h3 data-i18n="site.pillar.5.title">Acessível e rápido</h3>
+            <p data-i18n="site.pillar.5.text">Contraste AA, navegação por teclado e carregamento leve.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section id="contato" class="section">
       <div class="container">
         <div class="section-header">
-          <span class="section-number" data-i18n="contact.section">05. Contato</span>
+          <span class="section-number" data-i18n="contact.section">06. Contato</span>
           <h2 data-i18n="contact.title">Vamos conversar?</h2>
           <p data-i18n="contact.desc">Estou aberto a novas oportunidades, colaborações e conversas sobre tecnologia. Entre em contato!</p>
         </div>
@@ -675,6 +815,7 @@
   <footer class="footer">
     <div class="container">
       <p>&copy; <span id="year">2025</span> Leandro Severo &middot; <a href="mailto:leandroolise@gmail.com" class="footer-email">leandroolise@gmail.com</a></p>
+      <p class="footer-build" id="footer-build" hidden></p>
     </div>
   </footer>
 

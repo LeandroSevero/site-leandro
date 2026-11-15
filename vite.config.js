@@ -1,6 +1,16 @@
 import { defineConfig } from 'vite';
+import { readFileSync } from 'fs';
 
 const SITE_URL = 'https://leandrosevero.com.br/';
+
+// Versão (package.json) e data do deploy. A data só é gravada em builds da plataforma de deploy
+// (variável VERCEL presente); em build local o rodapé mostra "dev".
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
+const isDeployBuild = Boolean(process.env.VERCEL);
+const buildInfo = {
+  __APP_VERSION__: JSON.stringify(pkg.version),
+  __BUILD_DATE__: JSON.stringify(isDeployBuild ? new Date().toISOString() : ''),
+};
 
 // Gera dist/sitemap.xml a cada build, com <lastmod> = data do build (fuso de Brasília).
 const sitemapPlugin = () => ({
@@ -24,6 +34,7 @@ const sitemapPlugin = () => ({
 
 export default defineConfig({
   plugins: [sitemapPlugin()],
+  define: buildInfo,
   build: {
     outDir: 'dist',
   },
