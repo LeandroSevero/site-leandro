@@ -3861,7 +3861,7 @@ main {
   transform: scale(1);
 }
 
-.flow-node:hover .flow-dot,
+.flow-step.is-tip .flow-dot,
 .flow-node:focus-visible .flow-dot {
   border-color: var(--color-primary);
 }
@@ -3907,15 +3907,15 @@ main {
   text-align: right;
 }
 
-.flow-step:is(:hover, :focus-within) .flow-tip,
-.flow-loop-wrap:is(:hover, :focus-within) .flow-tip {
+.flow-step.is-tip .flow-tip,
+.flow-loop-wrap.is-tip .flow-tip {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, 0);
 }
 
-.flow-step:first-child:is(:hover, :focus-within) .flow-tip,
-.flow-step:last-child:is(:hover, :focus-within) .flow-tip {
+.flow-step.is-tip:first-child .flow-tip,
+.flow-step.is-tip:last-child .flow-tip {
   transform: translate(0, 0);
 }
 
@@ -3926,7 +3926,7 @@ main {
 }
 
 /* O tooltip do selo também abre por cima das etapas (no celular ele sai para o lado) */
-.flow-loop-wrap:is(:hover, :focus-within) {
+.flow-loop-wrap.is-tip {
   z-index: 4;
 }
 
@@ -4025,9 +4025,9 @@ main {
     transform: translate(0, -4px);
   }
 
-  .flow-step:is(:hover, :focus-within) .flow-tip,
-  .flow-step:first-child:is(:hover, :focus-within) .flow-tip,
-  .flow-step:last-child:is(:hover, :focus-within) .flow-tip {
+  .flow-step.is-tip .flow-tip,
+  .flow-step.is-tip:first-child .flow-tip,
+  .flow-step.is-tip:last-child .flow-tip {
     transform: translate(0, 0);
   }
 
@@ -4063,7 +4063,7 @@ main {
     text-align: left;
   }
 
-  .flow-loop-wrap:is(:hover, :focus-within) .flow-tip-loop {
+  .flow-loop-wrap.is-tip .flow-tip-loop {
     transform: translate(0, 0);
   }
 }
@@ -4305,20 +4305,32 @@ main {
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-[data-theme] .pillar:hover {
-  transform: translateY(-4px);
+@media (hover: hover) {
+  [data-theme] .pillar:hover {
+    transform: translateY(-4px);
+  }
+
+  .pillar-icon svg {
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .pillar:hover .pillar-icon svg {
+    transform: scale(1.15) rotate(-8deg);
+  }
+
+  .pillar:nth-child(1):hover .pillar-icon svg { transform: translateX(3px) scale(1.12); }
+  .pillar:nth-child(3):hover .pillar-icon svg { transform: scale(1.15); }
 }
 
-.pillar-icon svg {
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* Toque: o :hover "gruda" depois do toque; o pilar volta ao estado normal */
+@media (hover: none) {
+  [data-theme] .pillar.card:hover {
+    transform: none;
+    background-color: var(--glass-bg);
+    border-color: var(--glass-border);
+    box-shadow: var(--glass-highlight), var(--glass-shadow);
+  }
 }
-
-.pillar:hover .pillar-icon svg {
-  transform: scale(1.15) rotate(-8deg);
-}
-
-.pillar:nth-child(1):hover .pillar-icon svg { transform: translateX(3px) scale(1.12); }
-.pillar:nth-child(3):hover .pillar-icon svg { transform: scale(1.15); }
 
 /* Menu com 6 itens: sem quebra de linha e espaçamento menor em telas médias */
 .nav-desktop a {

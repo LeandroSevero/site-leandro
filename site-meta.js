@@ -482,23 +482,53 @@ const initFlow = () => {
   window.addEventListener('resize', relayout);
   if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(flow.root);
 
-  // Hover ou foco em uma etapa pausa o fluxo (o tooltip aparece via CSS)
+  // Tooltip e pausa sem estado fixo: mouse (enter/leave), teclado (focus/blur) e toque (some sozinho).
+  // Clique não seleciona nada: o botão não guarda foco nem classe de "ativo".
   const pausers = [...flow.nodes, flow.loopLabel];
-  const hovered = new Set();
-  const updatePause = () => {
-    flow.paused = hovered.size > 0;
+  const TOUCH_TIP_MS = 3000;
+  const shown = new Map(); // etapa -> motivos (mouse, foco, toque)
+  let touchTimer = 0;
+  const holderOf = (el) => el.closest('.flow-step, .flow-loop-wrap');
+  const setTip = (el, reason, on) => {
+    const reasons = shown.get(el) || new Set();
+    if (on) reasons.add(reason); else reasons.delete(reason);
+    if (reasons.size) shown.set(el, reasons); else shown.delete(el);
+    holderOf(el).classList.toggle('is-tip', reasons.size > 0);
+    flow.paused = shown.size > 0;
     flow.root.classList.toggle('is-paused', flow.paused);
   };
+  const clearTouch = () => {
+    clearTimeout(touchTimer);
+    pausers.forEach((el) => setTip(el, 'touch', false));
+  };
+
   pausers.forEach((el) => {
-    const step = el.closest('.flow-step, .flow-loop-wrap');
-    step.addEventListener('pointerenter', () => { hovered.add(el); updatePause(); });
-    step.addEventListener('pointerleave', () => { hovered.delete(el); updatePause(); });
-    el.addEventListener('focus', () => { hovered.add(`f${pausers.indexOf(el)}`); updatePause(); });
-    el.addEventListener('blur', () => { hovered.delete(`f${pausers.indexOf(el)}`); updatePause(); });
+    const holder = holderOf(el);
+    holder.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') setTip(el, 'mouse', true); });
+    holder.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') setTip(el, 'mouse', false); });
+    // Clique com mouse ou toque não deixa o botão focado (o foco fixava o tooltip)
+    el.addEventListener('pointerdown', (e) => { e.preventDefault(); });
+    el.addEventListener('pointerup', (e) => {
+      if (e.pointerType === 'mouse') return;
+      const wasOpen = shown.get(el)?.has('touch');
+      clearTouch();
+      if (!wasOpen) {
+        setTip(el, 'touch', true);
+        touchTimer = setTimeout(clearTouch, TOUCH_TIP_MS);
+      }
+    });
+    // Teclado: aparece no foco e some no blur
+    el.addEventListener('focus', () => setTip(el, 'focus', true));
+    el.addEventListener('blur', () => setTip(el, 'focus', false));
     el.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') el.blur();
+      if (e.key === 'Escape') setTip(el, 'focus', false);
     });
   });
+  // Toque fora ou rolagem fecham o tooltip de toque
+  document.addEventListener('pointerdown', (e) => {
+    if (!pausers.some((el) => el.contains(e.target))) clearTouch();
+  }, { passive: true });
+  window.addEventListener('scroll', () => { if (shown.size) clearTouch(); }, { passive: true });
 
   // Anima só quando a seção está visível
   const io = new IntersectionObserver((entries) => {
