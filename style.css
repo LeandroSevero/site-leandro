@@ -3663,8 +3663,11 @@ main {
 .flow {
   position: relative;
   z-index: 2; /* tooltips que passam da borda do painel ficam por cima do terminal e do painel ao vivo */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin: 0 0 var(--space-6);
-  padding: var(--space-8) var(--space-6) var(--space-6);
+  padding: var(--space-6);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   background-color: var(--glass-bg);
@@ -3687,13 +3690,20 @@ main {
 .flow-loop {
   fill: none;
   stroke: var(--flow-stroke);
-  stroke-width: 2;
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .flow-loop {
-  stroke-dasharray: 4 7;
+  stroke: rgba(var(--color-primary-rgb), 0.45);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+
+/* Rastro luminoso do pulso: círculos que se dissipam atrás dele */
+.flow-trail {
+  fill: var(--color-primary);
 }
 
 .flow-pulse-core { stop-color: var(--color-primary); stop-opacity: 0.95; }
@@ -3745,8 +3755,8 @@ main {
   position: relative;
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border: 2px solid var(--flow-stroke);
   border-radius: 50%;
   background-color: var(--flow-node-bg);
@@ -3754,26 +3764,81 @@ main {
   transition: border-color 0.35s ease, box-shadow 0.35s ease, background-color 0.35s ease, transform 0.35s ease;
 }
 
-.flow-index {
+.flow-icon {
   color: var(--color-primary);
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  font-weight: 700;
-  transition: opacity 0.25s ease;
+  transition: transform 0.35s ease;
 }
 
 .flow-check {
   position: absolute;
-  color: var(--color-primary);
+  right: -5px;
+  bottom: -5px;
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  border: 2px solid var(--flow-node-bg);
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-primary-fg);
   opacity: 0;
   transform: scale(0.4);
   transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Anel que se expande ao redor da etapa ativa */
+.flow-dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flow-node.is-active .flow-dot::after {
+  animation: flow-ring 1s ease-out;
+}
+
+@keyframes flow-ring {
+  from { opacity: 0.7; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.55); }
+}
+
+.flow-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
 .flow-label {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 600;
   text-align: center;
+}
+
+.flow-sub {
+  color: var(--color-fg-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.flow-node.is-active .flow-sub,
+.flow-node.is-done .flow-sub {
+  color: var(--color-primary);
+}
+
+/* Final do "Simular deploy": destaque rápido em Produção */
+.flow-node.is-celebrate .flow-dot {
+  animation: flow-celebrate 1.2s ease-out;
+}
+
+@keyframes flow-celebrate {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0.5); }
+  35% { transform: scale(1.14); box-shadow: 0 0 0 14px rgba(var(--color-primary-rgb), 0.12), 0 0 40px var(--flow-glow); }
+  100% { transform: scale(1); box-shadow: 0 0 0 22px rgba(var(--color-primary-rgb), 0), 0 0 0 transparent; }
 }
 
 .flow-node.is-active .flow-dot,
@@ -3783,17 +3848,17 @@ main {
 }
 
 .flow-node.is-active .flow-dot {
-  box-shadow: 0 0 0 6px rgba(var(--color-primary-rgb), 0.14), 0 0 26px var(--flow-glow);
-  transform: scale(1.06);
+  box-shadow: 0 0 0 7px rgba(var(--color-primary-rgb), 0.16), 0 0 34px var(--flow-glow);
+  transform: scale(1.08);
+}
+
+.flow-node.is-active .flow-icon {
+  transform: scale(1.08);
 }
 
 .flow-node:is(.is-active, .is-done) .flow-check {
   opacity: 1;
   transform: scale(1);
-}
-
-.flow-node:is(.is-active, .is-done) .flow-index {
-  opacity: 0;
 }
 
 .flow-node:hover .flow-dot,
@@ -3868,7 +3933,7 @@ main {
 .flow-loop-wrap {
   display: flex;
   justify-content: center;
-  margin-top: var(--space-8);
+  margin-top: var(--space-6);
 }
 
 .flow-loop-label {
@@ -3929,6 +3994,24 @@ main {
 
   .flow-label {
     text-align: left;
+  }
+
+  .flow-dot {
+    width: 56px;
+    height: 56px;
+  }
+
+  .flow-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .flow-text {
+    align-items: flex-start;
+  }
+
+  .flow-sub {
+    display: none;
   }
 
   .flow-tip,
@@ -4175,6 +4258,22 @@ main {
   animation: status-pulse-warn 2.4s ease-in-out infinite;
 }
 
+.live-status {
+  margin: -0.25rem -0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+}
+
+.live-status.is-flash {
+  animation: status-flash 1.1s ease-out;
+}
+
+@keyframes status-flash {
+  0% { background-color: rgba(34, 197, 94, 0); }
+  30% { background-color: rgba(34, 197, 94, 0.22); }
+  100% { background-color: rgba(34, 197, 94, 0); }
+}
+
 .live-status[data-state="unavailable"],
 .live-status[data-state="loading"] {
   color: var(--color-fg-muted);
@@ -4248,7 +4347,10 @@ main {
   [data-theme] .scroll-top-btn,
   .live-status[data-state] .live-status-dot,
   .live-beacon,
-  .flow-term-idle::after {
+  .flow-term-idle::after,
+  .flow-node.is-active .flow-dot::after,
+  .flow-node.is-celebrate .flow-dot,
+  .live-status.is-flash {
     animation: none;
   }
 

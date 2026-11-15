@@ -122,7 +122,7 @@ const renderFooter = () => {
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const PULSE_SPEED = 0.16; // px por ms ao longo da trilha
-const PULSE_GAP_MS = 2600; // intervalo entre pulsos no modo contínuo
+const PULSE_GAP_MS = 1200; // pausa entre um ciclo completo e o próximo
 const STEP_LIT_MS = 900; // tempo que uma etapa fica acesa depois que o pulso passa
 
 const flow = {
@@ -182,20 +182,54 @@ const layoutFlow = () => {
   flow.loopLen = loop.getTotalLength();
 };
 
+const TRAIL_DOTS = 12; // círculos do rastro
+const TRAIL_GAP = 6; // px entre eles ao longo da trilha
+
+// Pulso = cabeça luminosa + rastro que se dissipa atrás dela
 const makePulse = (kind) => {
   const g = document.createElementNS(SVG_NS, 'g');
   g.setAttribute('class', `flow-pulse flow-pulse-${kind}`);
-  const start = (kind === 'loop' ? flow.loop : flow.track).getPointAtLength(0);
-  g.setAttribute('transform', `translate(${start.x} ${start.y})`); // nasce no início da trilha, nunca na origem
+  const trail = [];
+  for (let i = 0; i < TRAIL_DOTS; i += 1) {
+    const c = document.createElementNS(SVG_NS, 'circle');
+    c.setAttribute('class', 'flow-trail');
+    c.setAttribute('r', (4.5 * (1 - i / TRAIL_DOTS) + 0.8).toFixed(2));
+    c.setAttribute('opacity', '0');
+    trail.push(c);
+    g.append(c);
+  }
+  const head = document.createElementNS(SVG_NS, 'g');
   const halo = document.createElementNS(SVG_NS, 'circle');
-  halo.setAttribute('r', kind === 'loop' ? '9' : '14');
+  halo.setAttribute('r', '16');
   halo.setAttribute('fill', 'url(#flow-pulse-grad)');
   const core = document.createElementNS(SVG_NS, 'circle');
-  core.setAttribute('r', kind === 'loop' ? '2.5' : '3.5');
+  core.setAttribute('r', '4');
   core.setAttribute('class', 'flow-pulse-dot');
-  g.append(halo, core);
+  head.append(halo, core);
+  g.append(head);
+  const path = kind === 'loop' ? flow.loop : flow.track;
+  const start = path.getPointAtLength(0);
+  head.setAttribute('transform', `translate(${start.x} ${start.y})`); // nasce no início da trilha, nunca na origem
   flow.pulseLayer.append(g);
+  g._head = head;
+  g._trail = trail;
   return g;
+};
+
+const placePulse = (p, path) => {
+  const pt = path.getPointAtLength(p.d);
+  p.el._head.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+  p.el._trail.forEach((c, i) => {
+    const d = p.d - (i + 1) * TRAIL_GAP;
+    if (d < 0) {
+      c.setAttribute('opacity', '0');
+      return;
+    }
+    const q = path.getPointAtLength(d);
+    c.setAttribute('cx', q.x.toFixed(1));
+    c.setAttribute('cy', q.y.toFixed(1));
+    c.setAttribute('opacity', (0.42 * (1 - i / TRAIL_DOTS) ** 1.6).toFixed(3));
+  });
 };
 
 const spawnPulse = (onDone) => {
@@ -216,9 +250,9 @@ const tick = (now) => {
   const dt = Math.min(64, now - (flow.last || now));
   flow.last = now;
   if (!flow.paused) {
-    if (!flow.simulating) {
-      flow.sinceSpawn += dt;
-      if (flow.sinceSpawn >= PULSE_GAP_MS && !flow.pulses.some((p) => p.kind === 'track')) {
+    if (!flow.simulating && !flow.pulses.length) {
+      flow.sinceSpawn += dt; // conta a pausa só depois que o ciclo anterior (trilha + laço) terminou
+      if (flow.sinceSpawn >= PULSE_GAP_MS) {
         flow.sinceSpawn = 0;
         spawnPulse();
       }
@@ -240,15 +274,15 @@ const tick = (now) => {
           if (!flow.simulating) flow.pulses.push({ kind: 'loop', d: 0, el: makePulse('loop') });
           return false;
         }
-        const pt = flow.track.getPointAtLength(p.d);
-        p.el.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+        placePulse(p, flow.track);
       } else {
         if (p.d >= flow.loopLen) {
           p.el.remove();
+          flow.loopLabel.classList.remove('is-active');
+          if (!flow.simulating) lightStep(0, 500); // o laço volta a Código e fecha o ciclo
           return false;
         }
-        const pt = flow.loop.getPointAtLength(p.d);
-        p.el.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+        placePulse(p, flow.loop);
         flow.loopLabel.classList.toggle('is-active', p.d > flow.loopLen * 0.35 && p.d < flow.loopLen * 0.65);
       }
       return true;
@@ -282,6 +316,23 @@ const applyStatic = () => {
 };
 
 /* ---------- Simulação de deploy com mini terminal ---------- */
+
+// Destaque rápido em Produção e uma piscada verde no status do painel
+const celebrate = () => {
+  if (isReduced()) return;
+  const prod = flow.nodes[flow.nodes.length - 1];
+  prod.classList.remove('is-celebrate');
+  void prod.offsetWidth; // reinicia a animação
+  prod.classList.add('is-celebrate');
+  setTimeout(() => prod.classList.remove('is-celebrate'), 1300);
+  const status = document.getElementById('live-status');
+  if (status && status.dataset.state === 'operational') {
+    status.classList.remove('is-flash');
+    void status.offsetWidth;
+    status.classList.add('is-flash');
+    setTimeout(() => status.classList.remove('is-flash'), 1200);
+  }
+};
 
 const terminalLines = () => [
   { text: t('site.term.start', { v: VERSION_LABEL }) },
@@ -385,6 +436,7 @@ const simulate = async () => {
       } else {
         await typeText(txt, line.text, token);
         flow.pulses.push({ kind: 'loop', d: 0, el: makePulse('loop'), speed: 1.4 });
+        celebrate();
       }
       term.body.append('\n');
       await wait(180, token);
