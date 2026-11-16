@@ -2521,6 +2521,30 @@ main {
   flex-shrink: 0;
 }
 
+/* Troca de tema: o novo tema surge num círculo que nasce do botão (View Transitions + clip-path no JS).
+   Sem o crossfade padrão: a imagem antiga fica parada embaixo e a nova cresce por cima */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Sem View Transitions: crossfade de cores só durante a troca (a classe sai depois de ~300ms) */
+.theme-fade,
+.theme-fade *,
+.theme-fade *::before,
+.theme-fade *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease !important;
+}
+
 /* Animações contínuas (pulsos, quiques, nuvens, fluxo) ficam pausadas quando o bloco está fora da tela
    (.is-offscreen, via IntersectionObserver em main.js) e quando a aba está oculta (html.is-page-hidden) */
 .is-offscreen,
@@ -4397,6 +4421,37 @@ main {
   transform: rotate(-200deg);
 }
 
+/* Observabilidade "monitorando" (fim da simulação): brilho respirando ao redor do selo.
+   O brilho fica numa camada própria e só transform e opacity animam */
+.flow-loop-label {
+  position: relative;
+}
+
+.flow-loop-label::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0.12), 0 0 22px var(--flow-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.flow-loop-label.is-monitoring {
+  border-color: var(--color-primary);
+}
+
+.flow-loop-label.is-monitoring::after {
+  opacity: 1;
+  animation: flow-breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes flow-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
 /* Celular e tablet estreito: fluxo na vertical, laço à esquerda */
 @media (max-width: 767px) {
   .flow {
@@ -4936,6 +4991,7 @@ main {
   .live-status[data-state] .live-status-dot::after,
   .live-beacon::after,
   .flow-term-idle::after,
+  .flow-loop-label.is-monitoring::after,
   .flow-spinner,
   .flow-node.is-ping .flow-dot::after,
   .flow-node.is-celebrate .flow-dot,

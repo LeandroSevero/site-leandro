@@ -37,9 +37,38 @@ const setTheme = (theme) => {
   updateChatImages(theme);
 };
 
-const toggleTheme = () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  setTheme(current === 'dark' ? 'light' : 'dark');
+// Troca de tema com o novo tema "surgindo" da posição do botão:
+// - View Transitions API: revelação circular que nasce no botão e cobre a tela (~500ms)
+// - sem View Transitions: crossfade de cores (~300ms) só durante a troca (classe temporária)
+// - prefers-reduced-motion: troca instantânea
+const THEME_REVEAL_MS = 500;
+const THEME_FADE_MS = 300;
+const toggleTheme = (e) => {
+  const root = document.documentElement;
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setTheme(next);
+    return;
+  }
+  if (typeof document.startViewTransition === 'function') {
+    const btn = e?.currentTarget;
+    const r = btn?.getBoundingClientRect?.();
+    const x = r ? r.left + r.width / 2 : innerWidth - 40;
+    const y = r ? r.top + r.height / 2 : 32;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const vt = document.startViewTransition(() => setTheme(next));
+    vt.ready.then(() => {
+      root.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: THEME_REVEAL_MS, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
+      );
+    }).catch(() => {});
+    return;
+  }
+  root.classList.add('theme-fade');
+  setTheme(next);
+  clearTimeout(toggleTheme._t);
+  toggleTheme._t = setTimeout(() => root.classList.remove('theme-fade'), THEME_FADE_MS + 50);
 };
 
 const getLangPreference = () => {
@@ -136,7 +165,12 @@ const initLang = () => {
   applyTranslations(getLangPreference());
 };
 
+const preloadThemeImages = () => {
+  [logoDark, logoLight, chatAvatarLight, chatAvatarDark].forEach((src) => { const img = new Image(); img.src = src; });
+};
+
 const initThemeToggle = () => {
+  (window.requestIdleCallback || ((fn) => setTimeout(fn, 1500)))(preloadThemeImages);
   [document.getElementById('theme-toggle'), document.getElementById('theme-toggle-mobile')]
     .forEach(btn => btn && btn.addEventListener('click', toggleTheme));
 };
