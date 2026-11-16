@@ -165,7 +165,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Abaixo de "Curitiba - PR, Brasil", uma segunda linha menor: "Aberto a remoto e realocação para a Europa" (en: "Open to remote work and relocation to Europe"), que quebra normalmente sem alargar o card
 
 ### Disponibilidade (Contato)
-- Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades no Brasil e na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Brazil and Europe: remote at first, open to relocation."). Contraste AA nos dois temas; a bolinha não pulsa com menos movimento
+- Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Europe: remote at first, open to relocation."). Contraste AA nos dois temas; a bolinha não pulsa com menos movimento
 - A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade
 - Carregamento lazy do iframe
 
@@ -243,7 +243,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
 | 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
 | 06 | **Sobre o site** | "Por trás deste site": fluxo de entrega animado com simulação de deploy, painel ao vivo (status real, tempo de resposta, versão e data) e 5 pilares (no site aparece como "05.") |
-| 07 | **Contato** | Destaque de disponibilidade (Brasil e Europa), e-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
+| 07 | **Contato** | Destaque de disponibilidade (Europa), e-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
 
 ---
 
