@@ -476,14 +476,34 @@ main {
   height: 8px;
   border-radius: 50%;
   background-color: #22c55e;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
   flex-shrink: 0;
+}
+
+/* Pulso da bolinha verde: um disco atrás dela cresce e esmaece (só transform e opacity, na GPU).
+   Equivale ao anel de 2px (25%) a 5px (10%) que antes animava box-shadow */
+.badge {
+  position: relative;
+  isolation: isolate;
+}
+
+.badge:not(.typewriter-active)::after {
+  content: '';
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  z-index: -1;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  pointer-events: none;
   animation: badge-pulse 2.5s ease-in-out infinite;
 }
 
 @keyframes badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25); }
-  50% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.1); }
+  0%, 100% { transform: scale(1.5); opacity: 0.25; }
+  50% { transform: scale(2.25); opacity: 0.1; }
 }
 
 [data-theme="dark"] .badge {
@@ -1238,17 +1258,39 @@ main {
 
 [data-theme="dark"] .timeline-dot-floating {
   border-color: #04060f;
-  box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.2), 0 0 14px rgba(79, 209, 197, 0.7);
+  box-shadow: none;
+}
+
+/* Pulso do ponto: os dois estados do brilho ficam em camadas próprias e só a opacidade alterna
+   (antes animava box-shadow entre 3px/10px e 5px/20px) */
+[data-theme="dark"] .timeline-dot-floating::before,
+[data-theme="dark"] .timeline-dot-floating::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .timeline-dot-floating::before {
+  box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.18), 0 0 10px rgba(79, 209, 197, 0.5);
+  animation: dot-pulse-a 1s ease-in-out infinite;
+}
+
+[data-theme="dark"] .timeline-dot-floating::after {
+  box-shadow: 0 0 0 5px rgba(79, 209, 197, 0.1), 0 0 20px rgba(79, 209, 197, 0.85);
+  opacity: 0;
   animation: dot-pulse 1s ease-in-out infinite;
 }
 
 @keyframes dot-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.18), 0 0 10px rgba(79, 209, 197, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 0 5px rgba(79, 209, 197, 0.1), 0 0 20px rgba(79, 209, 197, 0.85);
-  }
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes dot-pulse-a {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 .timeline-card {
@@ -1561,9 +1603,26 @@ main {
   height: 8px;
   border-radius: 50%;
   background-color: #22c55e;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
   /* centralizada na primeira linha (altura de linha 1.5em) */
   margin-top: calc((1.5em - 8px) / 2);
+}
+
+.section-header .contact-availability {
+  position: relative;
+  isolation: isolate;
+}
+
+.contact-availability::after {
+  content: '';
+  position: absolute;
+  left: var(--space-4);
+  top: calc(var(--space-3) + (1.5em - 8px) / 2);
+  z-index: -1;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  pointer-events: none;
   animation: badge-pulse 2.5s ease-in-out infinite;
 }
 
@@ -2443,7 +2502,7 @@ main {
   font-weight: 600;
   text-decoration: none;
   letter-spacing: 0.02em;
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
   box-shadow: 0 4px 18px rgba(var(--color-primary-rgb), 0.28);
 }
 
@@ -2460,6 +2519,18 @@ main {
 
 .cv-download-btn svg {
   flex-shrink: 0;
+}
+
+/* Animações contínuas (pulsos, quiques, nuvens, fluxo) ficam pausadas quando o bloco está fora da tela
+   (.is-offscreen, via IntersectionObserver em main.js) e quando a aba está oculta (html.is-page-hidden) */
+.is-offscreen,
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after,
+.is-page-hidden *,
+.is-page-hidden *::before,
+.is-page-hidden *::after {
+  animation-play-state: paused !important;
 }
 
 /* Trajetória: o card inteiro abre a descrição do cargo */
@@ -2495,8 +2566,25 @@ main {
   transition: opacity 0.6s ease 0.2s;
 }
 
-.cv-arrow {
-  transform-box: view-box;
+/* Ícone em três camadas (bandeja, seta e check): só transform e opacity animam, em elementos próprios,
+   para o efeito rodar na GPU sem repintar o botão */
+.cv-icon {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.cv-icon svg {
+  position: absolute;
+  inset: 0;
+}
+
+/* will-change só durante o efeito (a classe sai quando ele termina) */
+.cv-download-btn.is-downloading .cv-progress,
+.cv-download-btn.is-downloading .cv-arrow {
+  will-change: transform, opacity;
 }
 
 .cv-download-btn.is-downloading .cv-arrow {
@@ -2505,8 +2593,7 @@ main {
 
 .cv-check {
   opacity: 0;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+  transform: scale(0.6);
 }
 
 .cv-download-btn.is-done .cv-arrow {
@@ -2514,8 +2601,7 @@ main {
 }
 
 .cv-download-btn.is-done .cv-check {
-  opacity: 1;
-  animation: cv-check-draw 0.35s ease-out forwards;
+  animation: cv-check-in 0.35s ease-out forwards;
 }
 
 @keyframes cv-fill {
@@ -2525,13 +2611,13 @@ main {
 /* A seta desce e some dentro da bandeja, depois reaparece no alto */
 @keyframes cv-arrow-drop {
   0% { transform: translateY(0); opacity: 1; }
-  70% { transform: translateY(7px); opacity: 0; }
-  71% { transform: translateY(-6px); opacity: 0; }
+  70% { transform: translateY(6px); opacity: 0; }
+  71% { transform: translateY(-5px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes cv-check-draw {
-  to { stroke-dashoffset: 0; }
+@keyframes cv-check-in {
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* WhatsApp para oportunidades na Europa: botão secundário com área de toque de 44px */
@@ -3168,19 +3254,35 @@ main {
 }
 
 @keyframes egg-pulse {
-  0%, 60%, 100% {
-    box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0);
-  }
-  30% {
-    box-shadow: 0 0 8px 4px rgba(var(--color-primary-rgb), 0.18);
-  }
+  0%, 60%, 100% { opacity: 0; }
+  30% { opacity: 1; }
 }
 
 #azure-cicd-egg {
+  position: relative;
   cursor: pointer;
   user-select: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Brilho do easter egg numa camada própria: só a opacidade anima */
+#azure-cicd-egg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 8px 4px rgba(var(--color-primary-rgb), 0.18);
+  opacity: 0;
+  pointer-events: none;
   animation: egg-pulse 5s ease-in-out infinite;
+}
+
+#azure-cicd-egg:hover::after {
+  animation-play-state: paused;
+}
+
+#azure-cicd-egg.egg-blocked::after {
+  animation: none;
 }
 
 #azure-cicd-egg:hover {
@@ -3375,7 +3477,8 @@ main {
   .visit-gate { transition: none; }
   .visit-gate-icon { animation: none; }
 
-  .contact-availability::before { animation: none; }
+  .contact-availability::after,
+  .badge::after { animation: none; transform: scale(1.5); opacity: 0.25; }
 
   .cv-download-btn .cv-progress,
   .cv-download-btn .cv-arrow,
@@ -3390,7 +3493,8 @@ main {
   }
 
   .cv-download-btn.is-done .cv-check {
-    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: none;
   }
 
   /* Sem animação de entrada ao rolar: os elementos já ficam no lugar */
@@ -4646,10 +4750,28 @@ main {
 }
 
 .live-beacon {
+  position: relative;
+  isolation: isolate;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background-color: var(--color-primary);
+}
+
+/* Pulsos do painel: disco atrás do ponto cresce e esmaece (só transform e opacity) */
+.live-beacon::after,
+.live-status-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background-color: inherit;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.live-beacon::after {
   animation: status-pulse-primary 2s ease-in-out infinite;
 }
 
@@ -4694,6 +4816,8 @@ main {
 }
 
 .live-status-dot {
+  position: relative;
+  isolation: isolate;
   width: 10px;
   height: 10px;
   flex-shrink: 0;
@@ -4703,12 +4827,15 @@ main {
 
 .live-status[data-state="operational"] .live-status-dot {
   background-color: var(--status-ok);
-  animation: status-pulse 2.4s ease-in-out infinite;
 }
 
 .live-status[data-state="degraded"] .live-status-dot {
   background-color: var(--status-warn);
-  animation: status-pulse-warn 2.4s ease-in-out infinite;
+}
+
+.live-status[data-state="operational"] .live-status-dot::after,
+.live-status[data-state="degraded"] .live-status-dot::after {
+  animation: status-pulse 2.4s ease-in-out infinite;
 }
 
 .live-status {
@@ -4732,19 +4859,15 @@ main {
   color: var(--color-fg-muted);
 }
 
+/* Equivalem ao anel de box-shadow de 0 a 6px (status, 10px -> 22px) e de 0 a 5px (beacon, 8px -> 18px) */
 @keyframes status-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-  50% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-}
-
-@keyframes status-pulse-warn {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
-  50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(2.2); opacity: 0; }
 }
 
 @keyframes status-pulse-primary {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0.5); }
-  50% { box-shadow: 0 0 0 5px rgba(var(--color-primary-rgb), 0); }
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(2.25); opacity: 0; }
 }
 
 /* Pilares (reaproveitam .card), com leve elevação e ícone animado */
@@ -4810,8 +4933,8 @@ main {
 
   [data-theme] .scroll-down,
   [data-theme] .scroll-top-btn,
-  .live-status[data-state] .live-status-dot,
-  .live-beacon,
+  .live-status[data-state] .live-status-dot::after,
+  .live-beacon::after,
   .flow-term-idle::after,
   .flow-spinner,
   .flow-node.is-ping .flow-dot::after,

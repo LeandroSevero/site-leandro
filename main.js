@@ -857,7 +857,6 @@ const initCertsCarousel = () => {
     if (offset >= halfWidth) offset -= halfWidth;
 
     track.style.transform = `translateX(-${offset}px)`;
-    requestAnimationFrame(tick);
   };
 
   if (wrapper) {
@@ -892,7 +891,41 @@ const initCertsCarousel = () => {
   }
 
   measure();
-  requestAnimationFrame(tick);
+
+  // O carrossel só anima com ele na tela e a aba visível: fora disso o loop de rAF para por completo
+  let onScreen = false;
+  let rafId = 0;
+  const sync = () => {
+    const run = onScreen && !document.hidden;
+    if (run && !rafId) {
+      lastTime = null;
+      rafId = requestAnimationFrame(loop);
+    } else if (!run && rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+  };
+  const loop = (timestamp) => {
+    tick(timestamp);
+    rafId = onScreen && !document.hidden ? requestAnimationFrame(loop) : 0;
+  };
+  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; sync(); }, { rootMargin: '100px' })
+    .observe(wrapper || track);
+  document.addEventListener('visibilitychange', sync);
+};
+
+// Pausa as animações CSS contínuas dos blocos fora da tela e de toda a página com a aba oculta
+const initMotionPause = () => {
+  const blocks = document.querySelectorAll('main > section, .scroll-top-section, footer');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => e.target.classList.toggle('is-offscreen', !e.isIntersecting));
+    }, { rootMargin: '100px 0px' });
+    blocks.forEach((b) => io.observe(b));
+  }
+  const onVisibility = () => document.documentElement.classList.toggle('is-page-hidden', document.hidden);
+  document.addEventListener('visibilitychange', onVisibility);
+  onVisibility();
 };
 
 const initScrollTop = () => {
@@ -1070,6 +1103,7 @@ const init = () => {
   initTimelineDot();
   initContactModal();
   initScrollTop();
+  initMotionPause();
   initSiteMeta();
   initCta();
   initAzureEasterEgg();

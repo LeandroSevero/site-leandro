@@ -176,7 +176,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Download do currículo
 - O botão "Baixe o currículo do Leandro" baixa direto, sem abrir o PDF em aba: o PDF fica em `/Curriculo-Leandro-Severo.pdf`, com atributo `download="Curriculo-Leandro-Severo.pdf"` no link (também no link do chat) e `Content-Disposition: attachment; filename="Curriculo-Leandro-Severo.pdf"` no `vercel.json` (testing e produção). O caminho antigo `/Curriculo-Leandro.pdf` redireciona (307) para o novo, para links antigos continuarem funcionando. O arquivo mudou de nome porque, no caminho antigo, a Vercel seguia entregando o PDF com os cabeçalhos de uma publicação anterior (`inline`), ignorando a regra nova
-- Efeito de download (CSS + `cta.js`, só visual: o download começa no próprio clique): a seta desce para dentro da bandeja, uma barra de progresso preenche o botão em ~800ms e o ícone vira check com o texto "Baixado!" (en: "Downloaded!"); depois de ~2s volta ao normal. A largura do botão não muda durante o efeito. Uma região `aria-live` anuncia "Download iniciado" (en: "Download started")
+- Efeito de download (CSS + `cta.js`, só visual: o download começa no próprio clique): a seta desce para dentro da bandeja, uma barra de progresso preenche o botão em ~800ms e o ícone vira check com o texto "Baixado!" (en: "Downloaded!"); depois de ~2s volta ao normal. A largura do botão não muda durante o efeito. Uma região `aria-live` anuncia "Download iniciado" (en: "Download started"). Só `transform` e `opacity` animam: a barra usa `scaleX()`, e bandeja, seta e check são três SVGs próprios (a seta e o check animam como elementos HTML, na GPU, sem repintar o botão). `will-change` vale só enquanto a classe `.is-downloading` existe, e o brilho do botão é fixo (a sombra não tem transição)
 - Com `prefers-reduced-motion`: sem animação, só troca o texto para "Baixado!"
 
 ---
@@ -401,6 +401,10 @@ Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` 
 - Imagens com `loading="eager"` (hero) e `loading="lazy"` (demais)
 - CSS com variáveis nativas — sem preprocessador
 - Animações com `requestAnimationFrame` e `IntersectionObserver`
+- **Animações contínuas pausadas quando não aparecem:** cada bloco da página (`main > section`, "Voltar ao topo" e rodapé) é observado por um `IntersectionObserver` (`initMotionPause` em `main.js`); fora da tela ele recebe `.is-offscreen` e todas as animações CSS dentro dele (pulsos, quiques, nuvens do topo, fluxo) ficam com `animation-play-state: paused`. Com a aba oculta (`visibilitychange`), `html.is-page-hidden` pausa tudo
+- **Loops de `requestAnimationFrame` só quando necessários:** o carrossel de certificações, que antes rodava o tempo todo (inclusive fora da tela), só anima com ele na tela e a aba visível; o fluxo do "Por trás deste site" para fora da tela e com a aba oculta (a simulação segura e continua ao voltar); o ponto da Trajetória só roda enquanto se move
+- **Pulsos só com `transform` e `opacity`:** a bolinha verde do selo do topo e do destaque de disponibilidade, os pontos do painel ao vivo, o ponto da Trajetória e o brilho do easter egg animavam `box-shadow` (repintura a cada quadro). Agora o anel ou brilho fica numa camada própria (pseudo-elemento) e só escala/esmaece, com o mesmo visual
+- Medição (Chrome com GPU, 1440px, clique no botão do currículo e rolagem logo em seguida, build de produção): os números de antes x depois estão em `.tmp/perf-curriculo/` (traces que abrem no painel Performance do DevTools)
 - Fontes via `font-display: swap`
 
 ---

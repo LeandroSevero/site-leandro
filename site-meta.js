@@ -868,6 +868,17 @@ const initFlow = () => {
   }, { threshold: 0.15 });
   io.observe(flow.root);
 
+  // Aba oculta: o loop de rAF do fluxo para e a simulação segura até a aba voltar
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (flow.simulating) holdSim(true);
+      stopLoop();
+    } else if (flow.visible) {
+      holdSim(false);
+      startLoop();
+    }
+  });
+
   term.run.addEventListener('click', () => simulate());
 
   const applyMotionPref = () => {
