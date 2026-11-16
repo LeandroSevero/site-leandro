@@ -3994,17 +3994,24 @@ main {
   background-color: #111827;
 }
 
-.flow-step:first-child .flow-tip {
-  left: 0;
-  transform: translate(0, -4px);
-  text-align: left;
-}
+/* Telas médias: o balão de Código e de Produção encosta na borda da etapa para não sair do quadro,
+   mas o texto segue centralizado como nas demais */
+@media (max-width: 1199px) {
+  .flow-step:first-child .flow-tip {
+    left: 0;
+    transform: translate(0, -4px);
+  }
 
-.flow-step:last-child .flow-tip {
-  left: auto;
-  right: 0;
-  transform: translate(0, -4px);
-  text-align: right;
+  .flow-step:last-child .flow-tip {
+    left: auto;
+    right: 0;
+    transform: translate(0, -4px);
+  }
+
+  .flow-step.is-tip:first-child .flow-tip,
+  .flow-step.is-tip:last-child .flow-tip {
+    transform: translate(0, 0);
+  }
 }
 
 .flow-step.is-tip .flow-tip,
@@ -4012,11 +4019,6 @@ main {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, 0);
-}
-
-.flow-step.is-tip:first-child .flow-tip,
-.flow-step.is-tip:last-child .flow-tip {
-  transform: translate(0, 0);
 }
 
 /* Laço de observabilidade */

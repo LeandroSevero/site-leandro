@@ -556,8 +556,26 @@ const fillTerminal = () => {
   setProgress(totalRows());
 };
 
+// Pausa da simulação enquanto a seção está fora da tela: as esperas seguram até ela voltar
+const sim = { held: null, release: null, heldAt: 0 };
+const holdSim = (on) => {
+  if (on && !sim.held) {
+    sim.heldAt = performance.now();
+    sim.held = new Promise((r) => { sim.release = r; });
+  } else if (!on && sim.held) {
+    const pausedMs = performance.now() - sim.heldAt;
+    // o anel retoma de onde parou
+    if (flow.sim) { flow.sim.loadedAt += pausedMs; flow.sim.endAt += pausedMs; }
+    sim.release();
+    sim.held = null;
+  }
+};
+
 const wait = (ms, token) => new Promise((resolve, reject) => {
-  setTimeout(() => (token === term.token ? resolve() : reject(new Error('cancelado'))), ms);
+  setTimeout(async () => {
+    while (sim.held && token === term.token) await sim.held;
+    if (token === term.token) resolve(); else reject(new Error('cancelado'));
+  }, ms);
 });
 
 const CHAR_MS = 13; // digitação
@@ -603,7 +621,9 @@ const finishRun = () => {
   if (document.activeElement === document.body) term.run.focus({ preventScroll: true });
 };
 
-const simulate = async () => {
+// auto: começou sozinha ao chegar na seção; o leitor de tela só ouve o "Publicação concluída" no fim
+const simulate = async (auto = false) => {
+  term.autoDone = true; // a automática roda uma vez por visita, e não depois de um clique
   term.token += 1;
   const token = term.token;
   term.run.setAttribute('aria-busy', 'true');
@@ -638,7 +658,7 @@ const simulate = async () => {
     for (const s of stages) {
       const isLoop = s.step === 'loop';
       setStage(isLoop ? t('site.loop') : t(`site.step.${s.step}`), s.stage);
-      announce(s.head);
+      if (!auto) announce(s.head);
       addRow('head', s.head);
       tick();
       // O anel da etapa carrega enquanto o terminal narra e completa no "✓"
@@ -812,19 +832,43 @@ const initFlow = () => {
     if (shown.size && Math.abs(window.scrollY - touchScrollY) > 12) clearTouch();
   }, { passive: true });
 
-  // Anima só quando a seção está visível
+  // Simulação automática: começa sozinha quando ~40% da seção está na tela (ou 40% da altura da tela,
+  // se a seção for maior que ela), uma vez por visita, depois que a rolagem para
+  const section = document.getElementById('sobre-o-site') || flow.root;
+  let sectionReady = false;
+  let autoTimer = 0;
+  const AUTO_QUIET_MS = 350;
+  const maybeAuto = () => {
+    clearTimeout(autoTimer);
+    if (term.autoDone || isReduced() || !sectionReady) return;
+    autoTimer = setTimeout(() => {
+      if (!term.autoDone && !isReduced() && sectionReady && flow.visible && !term.run.disabled) simulate(true);
+    }, AUTO_QUIET_MS);
+  };
+  // Rolagem em andamento (inclusive a de quem abre direto em /sobre-o-site) adia o início
+  window.addEventListener('scroll', () => { if (autoTimer) maybeAuto(); }, { passive: true });
+  new IntersectionObserver(([e]) => {
+    const base = Math.min(e.boundingClientRect.height, window.innerHeight);
+    sectionReady = e.isIntersecting && e.intersectionRect.height >= base * 0.4;
+    maybeAuto();
+  }, { threshold: Array.from({ length: 21 }, (_, i) => i / 20) }).observe(section);
+
+  // Anima só quando a seção está visível; fora da tela a simulação também pausa e continua ao voltar
   const io = new IntersectionObserver((entries) => {
     flow.visible = entries.some((e) => e.isIntersecting);
     if (flow.visible) {
+      holdSim(false);
       layoutFlow();
       startLoop();
-    } else if (!flow.simulating) {
+      maybeAuto();
+    } else {
+      if (flow.simulating) holdSim(true);
       stopLoop();
     }
   }, { threshold: 0.15 });
   io.observe(flow.root);
 
-  term.run.addEventListener('click', simulate);
+  term.run.addEventListener('click', () => simulate());
 
   const applyMotionPref = () => {
     if (isReduced()) {
