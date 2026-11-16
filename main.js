@@ -723,8 +723,8 @@ const initAccordion = () => {
 const initScrollReveal = () => {
   const selectors = [
     { sel: '.section-header', cls: 'reveal' },
-    { sel: '.about-text', cls: 'reveal-left' },
-    { sel: '.about-cards', cls: 'reveal-right' },
+    { sel: '.about-text', cls: 'reveal' },
+    { sel: '.about-cards', cls: 'reveal' },
     { sel: '.skill-card', cls: 'reveal-scale' },
     { sel: '.cert-featured', cls: 'reveal' },
     { sel: '.timeline-item', cls: 'reveal' },
@@ -752,7 +752,7 @@ const initScrollReveal = () => {
     el._revealTimer = setTimeout(() => { el.style.transition = ''; }, delay + ms + 50);
   };
 
-  const observer = new IntersectionObserver((entries) => {
+  const onReveal = (entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         runReveal(entry.target, Number(entry.target.dataset.revealDelay) || 0);
@@ -768,10 +768,13 @@ const initScrollReveal = () => {
         entry.target.classList.toggle('reveal-exit', !exitedBelow);
       }
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  };
+  const observer = new IntersectionObserver(onReveal, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  // "Quem sou eu" fica logo abaixo da dobra: título e cards começam a entrar assim que tocam a tela
+  const firstFold = new IntersectionObserver(onReveal, { threshold: 0 });
 
   document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
-    observer.observe(el);
+    (el.closest('#sobre') ? firstFold : observer).observe(el);
   });
 };
 

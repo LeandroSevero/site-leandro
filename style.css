@@ -383,8 +383,10 @@ main {
 }
 
 .hero {
-  /* Menos que a tela inteira: em 1440x900 o "01. Quem sou eu" já começa a aparecer na primeira tela */
-  min-height: calc(100vh - 11.5rem);
+  /* Ocupa exatamente a tela visível abaixo do cabeçalho fixo (4rem): o "01. Quem sou eu" fica logo abaixo
+     da dobra. svh usa a menor altura da tela no celular (com a barra do navegador), sem pular ao rolar. */
+  min-height: calc(100vh - 4rem);
+  min-height: calc(100svh - 4rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1423,13 +1425,22 @@ main {
 
 @media (max-width: 767px) {
   .hero {
-    padding-top: var(--space-10);
+    padding-top: var(--space-4);
     padding-bottom: var(--space-4);
     justify-content: flex-start;
   }
 
+  /* Conteúdo centralizado no espaço livre e "Explorar portfólio" perto da base; foto e vãos menores
+     para o topo caber na tela visível (390x844) */
   .hero-content {
-    margin-top: var(--space-4);
+    margin-block: auto;
+    gap: var(--space-6);
+  }
+
+  .image-wrapper,
+  .image-wrapper::after {
+    height: min(20rem, 34svh);
+    width: calc(min(20rem, 34svh) * 0.8);
   }
 
   .scroll-down {
@@ -1522,6 +1533,45 @@ main {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Segunda linha do card Localização: quebra normalmente, sem alargar o card */
+.contact-note {
+  margin-top: 0.125rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-fg-muted);
+  overflow-wrap: anywhere;
+}
+
+/* Destaque de disponibilidade abaixo do texto do Contato (bolinha verde como o selo do topo) */
+.section-header .contact-availability {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+  max-width: 40rem;
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.28);
+  border-radius: 12px;
+  background-color: rgba(var(--color-primary-rgb), 0.07);
+  color: var(--color-fg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.contact-availability::before {
+  content: '';
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+  transform: translateY(-1px);
+  animation: badge-pulse 2.5s ease-in-out infinite;
 }
 
 .footer {
@@ -2381,9 +2431,9 @@ main {
   padding-top: var(--space-20);
 }
 
-/* "Quem sou eu" logo depois do "Explorar portfólio": início da seção mais curto (só o vão vindo do topo muda) */
+/* "Quem sou eu" começa logo abaixo da dobra: qualquer rolagem já traz o "01." (só o vão vindo do topo muda) */
 #sobre {
-  padding-top: var(--space-12);
+  padding-top: var(--space-6);
 }
 
 .cv-download-btn {
@@ -3177,6 +3227,18 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .visit-gate { transition: none; }
   .visit-gate-icon { animation: none; }
+
+  .contact-availability::before { animation: none; }
+
+  /* Sem animação de entrada ao rolar: os elementos já ficam no lugar */
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 /* ==========================================================================

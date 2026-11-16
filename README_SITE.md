@@ -57,14 +57,14 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ### Navegação e Scroll
 - Scroll suave para seções com atualização da URL (History API)
 - Header com sombra progressiva ao rolar a página
-- Topo mais curto: o hero tem altura mínima de `100vh - 11.5rem`, o "Explorar portfólio" fica a 2rem da base e "Quem sou eu" começa com 3rem de respiro. Em 1440x900 o título "01. Quem sou eu" já aparece na primeira tela; em 390x844, depois de uma rolagem curta (~180px). O "Explorar portfólio" continua levando até "Quem sou eu"
+- Topo na dobra: o hero ocupa exatamente a tela visível abaixo do cabeçalho fixo (`min-height: calc(100svh - 4rem)`, com `100vh` de reserva), com o conteúdo centralizado e o "Explorar portfólio" perto da base. Sem rolar, o "01. Quem sou eu" fica fora da tela em 1440x900, 1920x1080, 768x1024 e 390x844; "Quem sou eu" começa logo abaixo da dobra (1.5rem de respiro), então qualquer rolagem já traz o "01." (com ~100px ele aparece inteiro). `svh` usa a menor altura da tela no celular, sem pular quando a barra do navegador some. No celular a foto fica com `min(20rem, 34svh)` de altura (proporção 4:5) e os vãos do topo são menores para tudo caber na tela visível. O "Explorar portfólio" continua levando até "Quem sou eu"
 - Vão entre o botão "Baixe o currículo do Leandro" e o "05." reduzido em ~43% (de 240px para 136px): só o fim da Trajetória (`#experiencia`, 1.5rem) e o início de "Sobre o site" (5rem) mudam; as demais seções seguem com o padding padrão
 - Deep linking por âncora (`#sobre`, `#skills`, etc.)
 - Botão "voltar ao topo"
 - Menu mobile com hambúrguer, fechamento ao clicar fora ou em link
 
 ### Animações e Interações
-- Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll
+- Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll. Em "Quem sou eu" o título, o texto e os cards entram com fade e leve subida assim que tocam a tela (observador próprio, sem margem); com `prefers-reduced-motion` nenhum elemento anima a entrada, só fica no lugar
   - Entrada escalonada (posição % 6 x 60ms) aplicada inline só enquanto o elemento entra (`opacity` e `transform`, 550ms; 500ms no `reveal-scale`) e removida ao terminar. Assim o atraso não fica preso no card e não atrasa o hover (antes, o 6º card de cada grupo, como Kubernetes, destacava 300ms depois dos outros)
 - Saída suave com movimento inverso coerente por tipo: `translateY` inverte direção, `translateX` inverte eixo, `scale` retrai levemente
 - Ao sair pela borda inferior, o elemento volta ao estado inicial (deslocado para baixo) em vez de usar a animação de saída, que o subiria de volta para a tela e criaria um loop entra/sai (elemento "tremendo" quando parado na borda)
@@ -162,6 +162,11 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Mapa de Localização
 - Card de localização com popup de mapa integrado (Google Maps iframe)
+- Abaixo de "Curitiba - PR, Brasil", uma segunda linha menor: "Aberto a remoto e realocação para a Europa" (en: "Open to remote work and relocation to Europe"), que quebra normalmente sem alargar o card
+
+### Disponibilidade (Contato)
+- Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades no Brasil e na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Brazil and Europe: remote at first, open to relocation."). Contraste AA nos dois temas; a bolinha não pulsa com menos movimento
+- A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade
 - Carregamento lazy do iframe
 
 ---
@@ -238,7 +243,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
 | 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
 | 06 | **Sobre o site** | "Por trás deste site": fluxo de entrega animado com simulação de deploy, painel ao vivo (status real, tempo de resposta, versão e data) e 5 pilares (no site aparece como "05.") |
-| 07 | **Contato** | E-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
+| 07 | **Contato** | Destaque de disponibilidade (Brasil e Europa), e-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
 
 ---
 
@@ -375,7 +380,7 @@ Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` 
 
 - **Build size total:** ~88KB JS + ~61KB CSS (gzip: ~30KB + ~11KB)
 - **Zero dependências de framework front-end**
-- Foto do hero e avatares do chat em **WebP**, no dobro do maior tamanho exibido (retina): hero 640×800 (proporção 4:5) com fundo, de corpo inteiro com a nuvem do Google Cloud ao fundo (~43KB, antes 577KB em SVG com PNG embutido; exibida em 20×25rem no desktop e 16×20rem no mobile), e avatares 128×128 com transparência (~3–5KB, antes até 356KB)
+- Foto do hero e avatares do chat em **WebP**, no dobro do maior tamanho exibido (retina): hero 640×800 (proporção 4:5) com fundo, de corpo inteiro com a nuvem do Google Cloud ao fundo (~43KB, antes 577KB em SVG com PNG embutido; exibida em 20×25rem no desktop e até 16×20rem no mobile, limitada a 34% da altura da tela), e avatares 128×128 com transparência (~3–5KB, antes até 356KB)
 - Foto do hero referenciada direto no HTML com `fetchpriority="high"`, para começar a baixar antes do JavaScript (melhor LCP)
 - Biblioteca **Lottie** (~298KB) carregada sob demanda ao abrir o modal de contato, e não mais em toda visita
 - Todas as imagens do site (logo, hero, avatar do chat) centralizadas em `src/assets/` — Vite gera hash automático no nome do arquivo (ex: `leandro-C8rK_Nfc.webp`), eliminando cache stale após deploy
