@@ -718,6 +718,16 @@ const initAccordion = () => {
         desc.removeAttribute('hidden');
       }
     });
+    // O card inteiro abre e fecha a descrição do cargo (o botão do título continua sendo o controle
+    // acessível por teclado). Cliques no próprio botão, em links ou ao selecionar texto não contam.
+    const card = btn.closest('.timeline-card');
+    if (!card) return;
+    card.classList.add('is-toggleable');
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.role-toggle, a, button')) return;
+      if (String(window.getSelection?.() || '').trim()) return;
+      btn.click();
+    });
   });
 };
 

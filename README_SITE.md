@@ -93,7 +93,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Seção de Experiência
 - Timeline vertical com 6 posições profissionais: Supervisor de DevOps, Analista DevOps, Analista de Infraestrutura de TI, Suporte de Helpdesk e Telecom, Analista de Telecom e Soldado (cargos com nível, em pt e en, iguais nas respostas do chat)
-- Acordeão expansível por cargo com descrição detalhada
+- Acordeão expansível por cargo com descrição detalhada: um clique (ou toque) em qualquer parte do card abre e fecha a descrição, não só no título (cursor de mão no card). O botão do título continua sendo o controle acessível por teclado (`aria-expanded`); cliques em links e seleção de texto não alternam o card
 - Tags de tecnologias por posição
 
 ### Seção "Sobre o site" (05.)
@@ -252,7 +252,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 02 | **Sobre** | 6 parágrafos sobre formação e atuação profissional, 3 cards informativos |
 | 03 | **Skills** | 12 tecnologias com ícone, categoria e descrição detalhada localizada |
 | 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
-| 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
+| 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis (clique no card inteiro) |
 | 06 | **Sobre o site** | "Por trás deste site": fluxo de entrega animado com simulação de deploy, painel ao vivo (status real, tempo de resposta, versão e data) e 5 pilares (no site aparece como "05.") |
 | 07 | **Contato** | Destaque de disponibilidade (Europa), e-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
 

@@ -2462,6 +2462,11 @@ main {
   flex-shrink: 0;
 }
 
+/* Trajetória: o card inteiro abre a descrição do cargo */
+.timeline-card.is-toggleable {
+  cursor: pointer;
+}
+
 /* Efeito de download: a seta desce para a bandeja, a barra preenche o botão (~800ms) e termina com check */
 .cv-download-btn {
   position: relative;
