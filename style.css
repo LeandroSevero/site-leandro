@@ -734,7 +734,6 @@ main {
   background: var(--color-glass);
 }
 
-.skill-card:hover,
 .skill-card.active {
   border-color: var(--skill-color, var(--color-primary));
   background-color: var(--skill-bg, rgba(29, 78, 216, 0.05));
@@ -742,13 +741,11 @@ main {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.skill-card:hover .skill-icon,
 .skill-card.active .skill-icon {
   background-color: var(--skill-bg-icon, rgba(29, 78, 216, 0.14));
   color: var(--skill-color, var(--color-primary));
 }
 
-.skill-card:hover .skill-name,
 .skill-card.active .skill-name {
   color: var(--skill-color, var(--color-primary));
 }
@@ -762,7 +759,7 @@ main {
   border-radius: var(--radius-md);
   background-color: var(--color-bg-secondary);
   color: var(--color-fg-muted);
-  transition: background-color 140ms ease, color 140ms ease;
+  transition: background-color 220ms ease, color 220ms ease;
 }
 
 .skill-icon img {
@@ -982,7 +979,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  animation: skill-fade-in 160ms ease; /* só na primeira exibição; as trocas não reiniciam a animação */
+  animation: skill-fade-in 260ms ease;
 }
 
 .skills-desc-name {
@@ -990,7 +987,7 @@ main {
   font-weight: 700;
   color: var(--color-fg);
   text-align: center;
-  transition: color 140ms ease;
+  transition: color 280ms ease;
 }
 
 .skills-desc-text {
@@ -3341,11 +3338,30 @@ main {
   pointer-events: none;
 }
 
-/* Tecnologias: hover ágil, transições de 140ms no card (cor, fundo, borda, movimento) e na sombra */
+/* Tecnologias: um único card destacado por vez. O destaque vem só da classe .active (trocada de forma
+   síncrona no mouseenter, em main.js); o :hover não destaca. Sem transição na saída (o card que perde
+   o destaque apaga na hora) e entrada curta de 120ms só no card que ganha o destaque, inclusive na sombra. */
 [data-theme] .skill-card,
 [data-theme] .skill-card::after,
+[data-theme] .skill-card .skill-icon,
 [data-theme] .skill-card .skill-name {
-  transition-duration: 140ms;
+  transition: none;
+}
+
+[data-theme] .skill-card.active {
+  transition: border-color 120ms ease, background-color 120ms ease, transform 120ms ease;
+}
+
+[data-theme] .skill-card.active::after {
+  transition: opacity 120ms ease;
+}
+
+[data-theme] .skill-card.active .skill-icon {
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+[data-theme] .skill-card.active .skill-name {
+  transition: color 120ms ease;
 }
 
 /* Tecnologias: os cards ficam a 8px uns dos outros; sombra menor (~5px nas laterais) */
@@ -3366,7 +3382,6 @@ main {
 }
 
 [data-theme] .card:hover::after,
-[data-theme] .skill-card:hover::after,
 [data-theme] .skill-card.active::after,
 [data-theme] .cert-item:hover::after,
 [data-theme] .cert-featured:hover::after,
@@ -3383,7 +3398,6 @@ main {
   background-color: var(--glass-bg-hover);
 }
 
-[data-theme] .skill-card:hover,
 [data-theme] .skill-card.active {
   background-color: var(--skill-bg, var(--glass-bg-hover));
   border-color: var(--skill-color, var(--color-primary));
@@ -3620,15 +3634,12 @@ main {
   --skill-text: var(--skill-text-dark, var(--skill-color));
 }
 
-[data-theme] .skill-card:hover .skill-name,
 [data-theme] .skill-card.active .skill-name {
   color: var(--skill-text, var(--color-primary));
 }
 
-/* Card de tecnologia agora recebe foco: mesmo destaque do hover */
-[data-theme] .skill-card:focus-visible {
-  border-color: var(--skill-color, var(--color-primary));
-}
+/* Card de tecnologia recebe foco por teclado: só o contorno de foco global (outline), sem pintar a borda,
+   para nunca parecer que há dois cards destacados; Enter/Espaço selecionam o card (.active) */
 
 /* --- Certificações: link "Ver credencial" --- */
 .cert-link {
@@ -4533,6 +4544,10 @@ main {
   .flow-progress-bar,
   [data-theme] .card::after,
   [data-theme] .skill-card::after,
+  [data-theme] .skill-card.active,
+  [data-theme] .skill-card.active::after,
+  [data-theme] .skill-card.active .skill-icon,
+  [data-theme] .skill-card.active .skill-name,
   [data-theme] .cert-item::after,
   [data-theme] .cert-featured::after,
   [data-theme] .timeline-card::after,
