@@ -440,6 +440,7 @@ const wait = (ms, token) => new Promise((resolve, reject) => {
 });
 
 const CHAR_MS = 13; // digitação
+const MIN_RUN_MS = 12800; // a simulação completa nunca termina antes de ~12,8s (faixa pedida: 12 a 15s)
 const SPIN_MS = 300; // linha "em execução" com spinner
 const typeText = async (span, text, token) => {
   for (const ch of text) {
@@ -513,6 +514,7 @@ const simulate = async () => {
   term.idle = false;
   let done = 0;
   const tick = () => { done += 1; setProgress(done); };
+  const startedAt = performance.now();
   setProgress(0);
   try {
     for (const s of script()) {
@@ -556,6 +558,8 @@ const simulate = async () => {
       }
       await wait(220, token);
     }
+    const remaining = MIN_RUN_MS - (performance.now() - startedAt);
+    if (remaining > 0) await wait(remaining, token);
     addRow('final', t('site.sim.final'));
     tick();
     setStage(t('site.sim.doneLabel'), t('site.stage.done'));
