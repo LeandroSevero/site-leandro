@@ -101,6 +101,7 @@ const fetchStatus = async () => {
     clearTimeout(timer);
     renderStatus();
     renderLatency(true);
+    if (isReduced() && term.body && !term.run?.disabled) fillTerminal();
   }
 };
 
@@ -283,7 +284,7 @@ const tick = (now) => {
           return false;
         }
         placePulse(p, flow.loop);
-        flow.loopLabel.classList.toggle('is-active', p.d > flow.loopLen * 0.35 && p.d < flow.loopLen * 0.65);
+        flow.loopLabel.classList.toggle('is-active', flow.simLoop || (p.d > flow.loopLen * 0.35 && p.d < flow.loopLen * 0.65));
       }
       return true;
     });
@@ -315,7 +316,7 @@ const applyStatic = () => {
   flow.nodes.forEach((n) => { clearTimeout(n._litTimer); n.classList.remove('is-active'); n.classList.add('is-done'); });
 };
 
-/* ---------- Simulação de deploy com mini terminal ---------- */
+/* ---------- Simulação de publicação com terminal narrado ---------- */
 
 // Destaque rápido em Produção e uma piscada verde no status do painel
 const celebrate = () => {
@@ -334,47 +335,140 @@ const celebrate = () => {
   }
 };
 
-const terminalLines = () => [
-  { text: t('site.term.start', { v: VERSION_LABEL }) },
-  { text: t('site.term.step', { s: t('site.term.validation') }), ok: t('site.term.ok'), step: 1 },
-  { text: t('site.term.step', { s: t('site.term.staging') }), ok: t('site.term.ok'), step: 2 },
-  { text: t('site.term.step', { s: t('site.term.approval') }), ok: t('site.term.ok'), step: 3 },
-  { text: t('site.term.step', { s: t('site.term.production') }), ok: t('site.term.live'), step: 4 },
-  { text: t('site.term.monitoring'), loop: true },
-];
+// Roteiro: 5 etapas do pipeline + observabilidade. A linha final da observabilidade usa dados reais.
+const script = () => {
+  const v = VERSION_LABEL;
+  const stages = [0, 1, 2, 3, 4].map((i) => ({
+    step: i,
+    head: `[${i + 1}/5] ${t(`site.step.${i}`)}`,
+    stage: t(`site.stage.${i}`),
+    lines: [1, 2, 3].map((n) => t(`site.sim.${i}.${n}`, { v })).filter(Boolean),
+    ok: t(`site.sim.${i}.ok`, { v }),
+  }));
+  stages.push({
+    step: 'loop',
+    head: `[∞] ${t('site.loop')}`,
+    stage: t('site.stage.loop'),
+    lines: [t('site.sim.loop.1'), t('site.sim.loop.2')],
+    ok: null, // preenchida com o status real
+  });
+  return stages;
+};
 
-const term = { body: null, run: null, runText: null, token: 0 };
+// Linha final da observabilidade a partir do status real (/api/status) e do tempo medido no navegador
+const statusLine = () => {
+  if (live.state === 'operational' || live.state === 'degraded') {
+    const label = t(`site.sim.status.${live.state}`);
+    return { text: live.latency != null ? `${label} · ${t('site.sim.responded', { n: live.latency })}` : label, kind: live.state === 'operational' ? 'ok' : 'warn' };
+  }
+  return { text: t('site.sim.status.unavailable'), kind: 'warn' };
+};
+
+const term = { body: null, run: null, runText: null, bar: null, stageEl: null, announceEl: null, token: 0 };
+
+const totalRows = () => script().reduce((n, s) => n + 2 + s.lines.length, 0) + 1; // cabeçalho + linhas + ok, e a final
+
+const setProgress = (done) => {
+  const pct = Math.min(100, Math.round((done / totalRows()) * 100));
+  term.bar.style.width = `${pct}%`;
+};
+
+const setStage = (name, text) => {
+  term.stageEl.textContent = '';
+  if (name) {
+    const b = document.createElement('strong');
+    b.textContent = `${name}: `;
+    term.stageEl.append(b);
+  }
+  term.stageEl.append(text);
+};
+
+// Anúncio para leitores de tela: só cabeçalhos das etapas e o resultado final
+const announce = (text) => { term.announceEl.textContent = text; };
+
+const scrollTerminal = () => { term.body.scrollTop = term.body.scrollHeight; };
+
+const addRow = (kind, text = '') => {
+  const row = document.createElement('div');
+  row.className = `flow-term-row flow-term-${kind}`;
+  if (kind === 'cmd') {
+    const prompt = document.createElement('span');
+    prompt.className = 'flow-term-prompt';
+    prompt.textContent = '> ';
+    row.append(prompt);
+  } else if (kind === 'ok' || kind === 'warn') {
+    const mark = document.createElement('span');
+    mark.className = 'flow-term-mark';
+    mark.textContent = kind === 'ok' ? '✓ ' : '! ';
+    row.append(mark);
+  }
+  const txt = document.createElement('span');
+  txt.textContent = text;
+  row.append(txt);
+  term.body.append(row);
+  scrollTerminal();
+  return txt;
+};
 
 // Estado ocioso: uma linha discreta convidando a simular
 const idleTerminal = () => {
   term.body.textContent = '';
-  const row = document.createElement('span');
-  row.className = 'flow-term-idle';
-  row.textContent = `> ${t('site.term.idle')}`;
-  term.body.append(row);
+  const row = addRow('idle', `> ${t('site.term.idle')}`);
+  row.parentElement.classList.add('flow-term-idle');
+  setStage('', t('site.stage.idle'));
+  setProgress(0);
   term.idle = true;
 };
 
+// Tudo preenchido de uma vez (movimento reduzido ou troca de idioma depois de simular)
 const fillTerminal = () => {
   term.idle = false;
-  term.body.textContent = terminalLines().map((l) => `> ${l.text}${l.ok ? ` ${l.ok}` : ''}`).join('\n');
+  term.body.textContent = '';
+  for (const s of script()) {
+    addRow('head', s.head);
+    s.lines.forEach((l) => addRow('cmd', l));
+    if (s.ok) addRow('ok', s.ok);
+    else { const st = statusLine(); addRow(st.kind, st.text); }
+  }
+  addRow('final', t('site.sim.final'));
+  setStage(t('site.sim.doneLabel'), t('site.stage.done'));
+  setProgress(totalRows());
 };
 
 const wait = (ms, token) => new Promise((resolve, reject) => {
   setTimeout(() => (token === term.token ? resolve() : reject(new Error('cancelado'))), ms);
 });
 
+const CHAR_MS = 13; // digitação
+const SPIN_MS = 300; // linha "em execução" com spinner
 const typeText = async (span, text, token) => {
   for (const ch of text) {
     span.textContent += ch;
-    await wait(22, token);
+    await wait(CHAR_MS, token);
   }
 };
 
-// Envia um pulso de Código até a etapa alvo e resolve quando ele chega.
+const spin = async (span, token) => {
+  const s = document.createElement('span');
+  s.className = 'flow-spinner';
+  s.setAttribute('aria-hidden', 'true');
+  span.after(s);
+  scrollTerminal();
+  try {
+    await wait(SPIN_MS, token);
+  } finally {
+    s.remove();
+  }
+};
+
+// Envia um pulso da etapa anterior até a etapa alvo; a etapa acende quando o pulso chega.
 const pulseTo = (stepIndex, token) => new Promise((resolve) => {
   if (!flow.running) startLoop();
-  const pulse = { kind: 'track', d: flow.stepAt[Math.max(0, stepIndex - 1)] || 0, el: makePulse('track'), lit: Math.max(-1, stepIndex - 1), speed: 1.6 };
+  const from = flow.stepAt[Math.max(0, stepIndex - 1)] || 0;
+  const dist = (flow.stepAt[stepIndex] || 0) - from;
+  // chega em ~0,45s, qualquer que seja a distância entre as etapas (desktop ou celular)
+  const speed = Math.max(1.6, dist / (PULSE_SPEED * 450));
+  const pulse = { kind: 'track', d: from, el: makePulse('track'), lit: Math.max(-1, stepIndex - 1), speed };
   pulse.onStep = (i) => {
     if (pulse.dead || token !== term.token) return;
     flow.nodes[i].classList.add('is-active');
@@ -387,6 +481,14 @@ const pulseTo = (stepIndex, token) => new Promise((resolve) => {
   flow.pulses.push(pulse);
 });
 
+const finishRun = () => {
+  term.run.disabled = false;
+  term.run.removeAttribute('aria-busy');
+  term.ran = true;
+  term.runText.textContent = t('site.runAgain');
+  if (document.activeElement === document.body) term.run.focus({ preventScroll: true });
+};
+
 const simulate = async () => {
   term.token += 1;
   const token = term.token;
@@ -395,11 +497,12 @@ const simulate = async () => {
   term.run.disabled = true;
 
   if (isReduced()) {
+    await fetchStatus();
+    if (token !== term.token) return;
     fillTerminal();
     applyStatic();
-    term.run.disabled = false;
-    term.run.removeAttribute('aria-busy');
-    term.runText.textContent = t('site.run');
+    announce(t('site.sim.final'));
+    finishRun();
     return;
   }
 
@@ -408,51 +511,65 @@ const simulate = async () => {
   clearSteps();
   term.body.textContent = '';
   term.idle = false;
+  let done = 0;
+  const tick = () => { done += 1; setProgress(done); };
+  setProgress(0);
   try {
-    for (const line of terminalLines()) {
-      const row = document.createElement('span');
-      row.className = 'flow-term-line';
-      term.body.append(row);
-      const prompt = document.createElement('span');
-      prompt.className = 'flow-term-prompt';
-      prompt.textContent = '> ';
-      const txt = document.createElement('span');
-      row.append(prompt, txt);
-      if (line.step === undefined && !line.loop) {
+    for (const s of script()) {
+      const isLoop = s.step === 'loop';
+      setStage(isLoop ? t('site.loop') : t(`site.step.${s.step}`), s.stage);
+      announce(s.head);
+      addRow('head', s.head);
+      tick();
+      // O pulso avança junto com a narração; a etapa acende quando ele chega
+      if (isLoop) {
+        flow.simLoop = true; // o selo fica aceso durante toda a narração da observabilidade
+        flow.loopLabel.classList.add('is-active');
+        // percorre o laço de Produção de volta a Código em ~2,6s, junto com a narração
+        flow.pulses.push({ kind: 'loop', d: 0, el: makePulse('loop'), speed: Math.max(1, flow.loopLen / (PULSE_SPEED * 2600)) });
+      } else if (s.step === 0) {
         flow.nodes[0].classList.add('is-active');
-        await typeText(txt, line.text, token);
-        flow.nodes[0].classList.remove('is-active');
-        flow.nodes[0].classList.add('is-done');
-      } else if (line.step !== undefined) {
-        await typeText(txt, line.text, token);
-        await pulseTo(line.step, token);
-        await wait(350, token);
-        const ok = document.createElement('span');
-        ok.className = line.step === 4 ? 'flow-term-live' : 'flow-term-ok';
-        ok.textContent = ` ${line.ok}`;
-        row.append(ok);
-        flow.nodes[line.step].classList.remove('is-active');
-        flow.nodes[line.step].classList.add('is-done');
       } else {
-        await typeText(txt, line.text, token);
-        flow.pulses.push({ kind: 'loop', d: 0, el: makePulse('loop'), speed: 1.4 });
-        celebrate();
+        pulseTo(s.step, token);
       }
-      term.body.append('\n');
-      await wait(180, token);
+      for (const line of s.lines) {
+        const span = addRow('cmd');
+        await typeText(span, line, token);
+        await spin(span, token);
+        tick();
+      }
+      let okText = s.ok;
+      let kind = 'ok';
+      if (isLoop) {
+        await fetchStatus(); // status e tempo de resposta reais, também atualizam o painel
+        if (token !== term.token) return;
+        ({ text: okText, kind } = statusLine());
+      }
+      addRow(kind, okText);
+      tick();
+      if (isLoop) {
+        flow.simLoop = false;
+        flow.loopLabel.classList.remove('is-active');
+      } else {
+        flow.nodes[s.step].classList.remove('is-active');
+        flow.nodes[s.step].classList.add('is-done');
+      }
+      await wait(220, token);
     }
-    await wait(2200, token);
+    addRow('final', t('site.sim.final'));
+    tick();
+    setStage(t('site.sim.doneLabel'), t('site.stage.done'));
+    announce(t('site.sim.final'));
+    celebrate();
+    await wait(1600, token);
   } catch {
+    flow.simLoop = false;
     return; // simulação reiniciada ou interrompida
   }
   flow.simulating = false;
   flow.sinceSpawn = 0;
   flow.nodes.forEach((n) => n.classList.remove('is-done'));
-  term.run.disabled = false;
-  term.run.removeAttribute('aria-busy');
-  term.ran = true;
-  term.runText.textContent = t('site.runAgain');
-  if (document.activeElement === document.body) term.run.focus({ preventScroll: true });
+  finishRun();
 };
 
 /* ---------- Inicialização do fluxo ---------- */
@@ -469,6 +586,9 @@ const initFlow = () => {
   term.body = document.getElementById('flow-terminal-body');
   term.run = document.getElementById('flow-run');
   term.runText = document.getElementById('flow-run-text');
+  term.bar = document.getElementById('flow-progress-bar');
+  term.stageEl = document.getElementById('flow-stage');
+  term.announceEl = document.getElementById('flow-announce');
 
   layoutFlow();
   let resizeTimer = 0;
@@ -566,6 +686,7 @@ const initFlow = () => {
     if (!term.run.disabled) {
       // Sem simulação em andamento: reescreve o terminal no novo idioma
       if (isReduced() || term.ran) fillTerminal(); else idleTerminal();
+      announce('');
       term.runText.textContent = t(term.ran && !isReduced() ? 'site.runAgain' : 'site.run');
     }
     requestAnimationFrame(layoutFlow);

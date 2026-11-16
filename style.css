@@ -3639,6 +3639,7 @@ main {
   --term-fg: #e2e8f0;
   --term-muted: #9fb0c8;
   --term-ok: #4ade80;
+  --term-warn: #fbbf24;
   --term-prompt: #7cc4ff;
   --status-ok: #15803d;
   --status-warn: #b45309;
@@ -3653,6 +3654,7 @@ main {
   --term-fg: #e6edf7;
   --term-muted: #a3b1c6;
   --term-ok: #4ade80;
+  --term-warn: #fbbf24;
   --term-prompt: #4fd1c5;
   --status-ok: #22c55e;
   --status-warn: #f59e0b;
@@ -4117,13 +4119,33 @@ main {
 }
 
 .flow-terminal {
+  position: relative;
+  display: flex;
   flex: 1;
-  min-height: 210px;
+  flex-direction: column;
+  min-width: 0;
   overflow: hidden;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   background-color: var(--term-bg);
   box-shadow: var(--glass-shadow);
+}
+
+/* Barra de progresso fina no topo do terminal (0 a 100%) */
+.flow-progress {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.flow-progress-bar {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--term-prompt), var(--term-ok));
+  box-shadow: 0 0 10px var(--term-prompt);
+  transition: width 0.35s ease;
 }
 
 .flow-terminal-bar {
@@ -4140,16 +4162,94 @@ main {
   background-color: rgba(255, 255, 255, 0.18);
 }
 
-.flow-terminal-body {
+/* Linha de destaque com a etapa atual */
+.flow-stage {
+  min-height: calc(1.45em + 1.25rem); /* altura fixa: a troca de etapa não mexe no layout */
   margin: 0;
-  padding: 1rem;
-  min-height: 9.5em;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.03);
+  color: var(--term-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.flow-stage strong {
+  color: var(--term-prompt);
+  font-weight: 700;
+}
+
+.flow-terminal-body {
+  flex: none; /* altura fixa: o terminal rola por dentro e nunca empurra a página */
+  height: 252px;
+  margin: 0;
+  padding: 0.875rem 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* rola o terminal, nunca a página */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   color: var(--term-fg);
   font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.6;
+}
+
+.flow-terminal-body:focus-visible {
+  outline-offset: -3px;
+}
+
+.flow-term-row {
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.flow-term-head {
+  margin-top: 0.5rem;
+  color: var(--term-prompt);
+  font-weight: 700;
+}
+
+.flow-term-head:first-child {
+  margin-top: 0;
+}
+
+.flow-term-cmd {
+  padding-left: 1.25em;
+}
+
+.flow-term-ok,
+.flow-term-warn {
+  padding-left: 1.25em;
+  font-weight: 700;
+}
+
+.flow-term-ok { color: var(--term-ok); }
+.flow-term-warn { color: var(--term-warn); }
+
+.flow-term-final {
+  margin-top: 0.625rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.16);
+  color: var(--term-ok);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.35);
+}
+
+/* Spinner simples na linha em execução */
+.flow-spinner {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 0.5em;
+  vertical-align: -0.05em;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--term-prompt);
+  border-radius: 50%;
+  animation: flow-spin 0.7s linear infinite;
+}
+
+@keyframes flow-spin {
+  to { transform: rotate(360deg); }
 }
 
 .flow-term-idle::after {
@@ -4165,11 +4265,33 @@ main {
 
 .flow-term-prompt { color: var(--term-prompt); }
 .flow-term-idle { color: var(--term-muted); }
-.flow-term-ok { color: var(--term-ok); font-weight: 700; }
-.flow-term-live { color: var(--term-ok); font-weight: 700; text-shadow: 0 0 10px rgba(74, 222, 128, 0.45); }
 
 @keyframes term-caret {
   50% { opacity: 0; }
+}
+
+/* Texto só para leitores de tela (anúncios da simulação) */
+.flow-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 767px) {
+  .flow-stage {
+    min-height: calc(2.9em + 1.25rem); /* até 2 linhas no celular */
+  }
+
+  .flow-terminal-body {
+    height: 236px;
+    font-size: 0.8125rem;
+  }
 }
 
 /* Painel ao vivo: somente dados reais */
@@ -4360,6 +4482,7 @@ main {
   .live-status[data-state] .live-status-dot,
   .live-beacon,
   .flow-term-idle::after,
+  .flow-spinner,
   .flow-node.is-active .flow-dot::after,
   .flow-node.is-celebrate .flow-dot,
   .live-status.is-flash {
@@ -4373,7 +4496,8 @@ main {
   .flow-loop-label svg,
   .pillar,
   .pillar-icon svg,
-  .flow-run {
+  .flow-run,
+  .flow-progress-bar {
     transition: none;
   }
 

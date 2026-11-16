@@ -99,16 +99,20 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
   - Pilares: a elevação e o ícone animado só reagem ao hover em dispositivos com mouse (`@media (hover: hover)`); no toque o card volta ao estado normal
   - `IntersectionObserver`: só anima com a seção visível
   - SVG com `role="img"`, `<title>` e `<desc>` traduzidos
-- **Simular deploy:** botão que roda uma execução guiada: as etapas acendem uma a uma, sincronizadas com um mini terminal (`role="log"`, `aria-live="polite"`) que digita "iniciando entrega vX.Y.Z", "validação ... ok", "homologação ... ok", "aprovação ... ok", "produção ... no ar" e "monitoramento ativo" (versão do `package.json`). Ao terminar, Produção ganha um destaque rápido (brilho e escala sutil) e o status do painel pisca uma vez em verde. Depois vira "Simular de novo"; em repouso o terminal mostra "pronto para simular uma entrega"
+- **Simular publicação** ("Simulate release"): execução guiada de 12 a 15s com terminal narrado. Cada etapa mostra um cabeçalho "[n/5] Etapa" (cor primária), 2 ou 3 linhas digitadas explicando o que acontece (com spinner na linha em execução) e uma linha "✓" em verde; a observabilidade fecha com "[∞] Observabilidade" e uma linha com o status real de `/api/status` e o tempo de resposta medido no navegador (ou "status indisponível no momento", sem quebrar), atualizando também o painel ao vivo. Textos genéricos, sem nomes de ferramentas, com a versão do `package.json`
+  - Sincronia visual: a etapa do pipeline acende enquanto o terminal narra aquela etapa (o pulso chega em ~0,45s, no desktop ou no celular) e é concluída junto com o "✓"; o selo "Observabilidade" fica aceso enquanto o pulso percorre o laço. No topo do terminal ficam uma barra de progresso fina (0 a 100%) e uma linha de destaque com a etapa atual e uma frase curta (ex.: "Validação: a nova versão é construída e verificada antes de seguir")
+  - Final: "Publicação concluída · 5 etapas · 0 falhas", destaque rápido em Produção e uma piscada verde no status do painel. O botão vira "Simulando..." (desabilitado) e depois "Simular de novo"
+  - O terminal tem altura fixa e rola sozinho para a última linha, sem rolar a página; é focável por teclado para leitura
+  - Acessibilidade: o terminal não é região viva; uma região `aria-live="polite"` separada (oculta visualmente) anuncia só os cabeçalhos das etapas e o resultado final, não cada caractere. Em repouso o terminal mostra "pronto para simular uma publicação"
 - **Painel ao vivo (somente dados reais):** status de `/api/status` (verde pulsando "Todos os sistemas operando", âmbar "Instabilidade detectada", cinza "Status indisponível" se a chamada falhar, sem quebrar a página), tempo de resposta medido no navegador com `performance.now()` ("respondeu em 182 ms", com contagem animada), versão e data da última atualização (data do deploy). Atualiza a cada 5 min. Sem uptime nem métricas inventadas
 - **5 pilares** (cards com leve elevação e ícone animado no hover, sem logos): Entrega contínua, Ambientes isolados, Observabilidade 24/7, Segurança em camadas e Acessível e rápido
-- **`prefers-reduced-motion`:** fluxo estático com todas as etapas concluídas, terminal já preenchido, sem pulsos, rastro, anel, destaque final, piscada do status, contagem, cursor piscando ou elevação
+- **`prefers-reduced-motion`:** fluxo estático com todas as etapas concluídas, terminal já preenchido de uma vez (sem digitação nem spinner, barra em 100%, status real na linha da observabilidade), sem pulsos, rastro, anel, destaque final, piscada do status, contagem, cursor piscando ou elevação
 - **Acessibilidade:** contraste AA medido nos dois temas, foco visível, alvos de toque de 44px e sem rolagem lateral em 390px
 - Implementação: `site-meta.js` (fluxo, simulação, painel e rodapé), estilos no bloco "Seção Sobre o site" do `style.css`, traduções em `i18n.js` (chaves `site.*`, incluindo `site.sub.*` das linhas secundárias, `nav.site` e `footer.updated`)
 
 ### Rodapé: versão e data da atualização
-- Linha "v2.3.0 · Atualizado em DD/MM/AAAA" ("Updated on MM/DD/YYYY" em inglês), sem commit e sem link externo
-- Versão lida do `package.json`; a data é gravada no build da plataforma de deploy (variável `VERCEL` presente), injetada pelo Vite (`define` no `vite.config.js`: `__APP_VERSION__` e `__BUILD_DATE__`). Em build local mostra "v2.3.0 · dev"
+- Linha "vX.Y.Z · Atualizado em DD/MM/AAAA" (ex.: "v2.3.1 · Atualizado em ...") ("Updated on MM/DD/YYYY" em inglês), sem commit e sem link externo
+- Versão lida do `package.json`; a data é gravada no build da plataforma de deploy (variável `VERCEL` presente), injetada pelo Vite (`define` no `vite.config.js`: `__APP_VERSION__` e `__BUILD_DATE__`). Em build local mostra "vX.Y.Z · dev"
 - A cada release, a versão do `package.json` é atualizada junto com a tag (regra no `AGENTS.md`)
 
 ### Formulário de Contato (Modal)

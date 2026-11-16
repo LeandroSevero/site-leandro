@@ -681,13 +681,16 @@
             <div class="flow-console-head">
               <button type="button" class="flow-run" id="flow-run">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
-                <span id="flow-run-text" data-i18n="site.run">Simular deploy</span>
+                <span id="flow-run-text" data-i18n="site.run">Simular publicação</span>
               </button>
             </div>
-            <div class="flow-terminal" role="log" aria-live="polite" data-i18n-aria="site.terminal.aria" aria-label="Terminal da simulação de deploy">
+            <div class="flow-terminal" role="region" data-i18n-aria="site.terminal.aria" aria-label="Terminal da simulação de publicação">
+              <div class="flow-progress" aria-hidden="true"><span class="flow-progress-bar" id="flow-progress-bar"></span></div>
               <div class="flow-terminal-bar" aria-hidden="true"><span></span><span></span><span></span></div>
-              <pre class="flow-terminal-body" id="flow-terminal-body"></pre>
+              <p class="flow-stage" id="flow-stage">Pipeline pronto: aguardando uma nova publicação</p>
+              <div class="flow-terminal-body" id="flow-terminal-body" tabindex="0" data-i18n-aria="site.terminal.log" aria-label="Registro da simulação"></div>
             </div>
+            <p class="flow-sr" id="flow-announce" aria-live="polite" aria-atomic="true"></p>
           </div>
 
           <section class="live-panel" aria-labelledby="live-title">
