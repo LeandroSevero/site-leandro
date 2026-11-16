@@ -175,7 +175,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Foco visível, área de toque mínima de 44px, contraste AA nos dois temas e sem rolagem lateral em 390px
 
 ### Download do currículo
-- O botão "Baixe o currículo do Leandro" baixa direto, sem abrir o PDF em aba: atributo `download="Curriculo-Leandro-Severo.pdf"` no link (também no link do chat) e `Content-Disposition: attachment; filename="Curriculo-Leandro-Severo.pdf"` para `/Curriculo-Leandro.pdf` no `vercel.json` (testing e produção)
+- O botão "Baixe o currículo do Leandro" baixa direto, sem abrir o PDF em aba: o PDF fica em `/Curriculo-Leandro-Severo.pdf`, com atributo `download="Curriculo-Leandro-Severo.pdf"` no link (também no link do chat) e `Content-Disposition: attachment; filename="Curriculo-Leandro-Severo.pdf"` no `vercel.json` (testing e produção). O caminho antigo `/Curriculo-Leandro.pdf` redireciona (307) para o novo, para links antigos continuarem funcionando. O arquivo mudou de nome porque, no caminho antigo, a Vercel seguia entregando o PDF com os cabeçalhos de uma publicação anterior (`inline`), ignorando a regra nova
 - Efeito de download (CSS + `cta.js`, só visual: o download começa no próprio clique): a seta desce para dentro da bandeja, uma barra de progresso preenche o botão em ~800ms e o ícone vira check com o texto "Baixado!" (en: "Downloaded!"); depois de ~2s volta ao normal. A largura do botão não muda durante o efeito. Uma região `aria-live` anuncia "Download iniciado" (en: "Download started")
 - Com `prefers-reduced-motion`: sem animação, só troca o texto para "Baixado!"
 
@@ -444,12 +444,13 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 {
   "buildCommand": "npm run build",
   "installCommand": "rm -rf node_modules && npm ci",
+  "redirects": [{ "source": "/Curriculo-Leandro.pdf", "destination": "/Curriculo-Leandro-Severo.pdf", "permanent": false }],
   "rewrites": [
     { "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)", "destination": "/" },
     { "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)/", "destination": "/" }
   ],
   "headers": [
-    { "source": "/Curriculo-Leandro.pdf",
+    { "source": "/Curriculo-Leandro-Severo.pdf",
       "headers": [{ "key": "Content-Disposition", "value": "attachment; filename=\"Curriculo-Leandro-Severo.pdf\"" }] },
     { "source": "/(.*)", "has": [{ "type": "host", "value": "testing.leandrosevero.com.br" }],
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }
@@ -458,7 +459,7 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 }
 ```
 
-Só os caminhos das seções (usados pela History API ao navegar pelo menu) são reescritos para `index.html`. Arquivos estáticos, `/api/*`, `/Curriculo-Leandro.pdf`, `/robots.txt`, `/sitemap.xml` e os assets são servidos normalmente, e qualquer outro endereço recebe `public/404.html` com status **404**. Em homologação, todas as respostas levam `X-Robots-Tag: noindex, nofollow`. O currículo (`/Curriculo-Leandro.pdf`) é servido com `Content-Disposition: attachment`, em testing e em produção, para baixar em vez de abrir no navegador.
+Só os caminhos das seções (usados pela History API ao navegar pelo menu) são reescritos para `index.html`. Arquivos estáticos, `/api/*`, `/Curriculo-Leandro-Severo.pdf`, `/robots.txt`, `/sitemap.xml` e os assets são servidos normalmente, e qualquer outro endereço recebe `public/404.html` com status **404**. Em homologação, todas as respostas levam `X-Robots-Tag: noindex, nofollow`. O currículo (`/Curriculo-Leandro-Severo.pdf`; o caminho antigo `/Curriculo-Leandro.pdf` redireciona para ele) é servido com `Content-Disposition: attachment`, em testing e em produção, para baixar em vez de abrir no navegador.
 
 ### Ambientes
 

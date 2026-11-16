@@ -1,6 +1,13 @@
 {
   "installCommand": "rm -rf node_modules && npm ci",
   "buildCommand": "npm run build",
+  "redirects": [
+    {
+      "source": "/Curriculo-Leandro.pdf",
+      "destination": "/Curriculo-Leandro-Severo.pdf",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)",
@@ -13,7 +20,7 @@
   ],
   "headers": [
     {
-      "source": "/Curriculo-Leandro.pdf",
+      "source": "/Curriculo-Leandro-Severo.pdf",
       "headers": [
         {
           "key": "Content-Disposition",
