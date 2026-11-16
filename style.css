@@ -383,7 +383,8 @@ main {
 }
 
 .hero {
-  min-height: 100vh;
+  /* Menos que a tela inteira: em 1440x900 o "01. Quem sou eu" já começa a aparecer na primeira tela */
+  min-height: calc(100vh - 11.5rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -556,7 +557,7 @@ main {
 
 .scroll-down {
   position: absolute;
-  bottom: var(--space-20);
+  bottom: var(--space-8);
   left: 50%;
   transform: translateX(-50%);
   color: var(--color-fg-muted);
@@ -1423,7 +1424,7 @@ main {
 @media (max-width: 767px) {
   .hero {
     padding-top: var(--space-10);
-    padding-bottom: var(--space-10);
+    padding-bottom: var(--space-4);
     justify-content: flex-start;
   }
 
@@ -1436,7 +1437,7 @@ main {
     bottom: auto;
     left: auto;
     transform: none;
-    margin-top: var(--space-8);
+    margin-top: var(--space-4);
     animation: bounce-mobile 2s infinite;
   }
 }
@@ -2368,7 +2369,21 @@ main {
   display: flex;
   justify-content: center;
   margin-top: var(--space-10);
-  padding-bottom: var(--space-4);
+}
+
+/* O botão do currículo fecha a Trajetória: fim da seção mais curto, para o vão até "05." ficar
+   proporcional ao das outras seções (só o fim desta seção muda; o padding padrão das demais segue igual) */
+#experiencia {
+  padding-bottom: var(--space-6);
+}
+
+#sobre-o-site {
+  padding-top: var(--space-20);
+}
+
+/* "Quem sou eu" logo depois do "Explorar portfólio": início da seção mais curto (só o vão vindo do topo muda) */
+#sobre {
+  padding-top: var(--space-12);
 }
 
 .cv-download-btn {
@@ -3833,7 +3848,44 @@ main {
   transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Anel que se expande ao redor da etapa ativa */
+/* Anel de carregamento: preenche a borda da etapa a partir do lado por onde o pulso chega
+   (esquerda no desktop, em cima no celular). O progresso vem do JS (stroke-dashoffset de 100 a 0). */
+.flow-ring {
+  position: absolute;
+  inset: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transform: rotate(180deg);
+  transition: opacity 0.35s ease;
+}
+
+.flow-ring circle {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 3;
+}
+
+.flow-ring-base {
+  opacity: 0.18;
+}
+
+.flow-ring-arc {
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  filter: drop-shadow(0 0 3px var(--color-primary)) drop-shadow(0 0 8px var(--flow-glow));
+  transition: stroke-dashoffset 0.12s linear;
+}
+
+.flow-node.is-loading .flow-ring {
+  opacity: 1;
+  transition-duration: 0.15s;
+}
+
+/* Toque de luz que se expande quando o laço volta a Código */
 .flow-dot::after {
   content: '';
   position: absolute;
@@ -3844,8 +3896,8 @@ main {
   pointer-events: none;
 }
 
-.flow-node.is-active .flow-dot::after {
-  animation: flow-ring 1s ease-out;
+.flow-node.is-ping .flow-dot::after {
+  animation: flow-ring 0.9s ease-out;
 }
 
 @keyframes flow-ring {
@@ -3873,7 +3925,7 @@ main {
   letter-spacing: 0.02em;
 }
 
-.flow-node.is-active .flow-sub,
+.flow-node.is-loading .flow-sub,
 .flow-node.is-done .flow-sub {
   color: var(--color-primary);
 }
@@ -3889,22 +3941,22 @@ main {
   100% { transform: scale(1); box-shadow: 0 0 0 22px rgba(var(--color-primary-rgb), 0), 0 0 0 transparent; }
 }
 
-.flow-node.is-active .flow-dot,
+/* Fundo opaco também nos estados acesos: nada da trilha aparece por dentro do círculo */
+.flow-node.is-loading .flow-dot,
 .flow-node.is-done .flow-dot {
   border-color: var(--color-primary);
-  background-color: rgba(var(--color-primary-rgb), 0.12);
+  background-color: color-mix(in srgb, var(--color-primary) 12%, var(--flow-node-bg));
 }
 
-.flow-node.is-active .flow-dot {
-  box-shadow: 0 0 0 7px rgba(var(--color-primary-rgb), 0.16), 0 0 34px var(--flow-glow);
+.flow-node.is-loading .flow-dot {
+  box-shadow: 0 0 30px var(--flow-glow);
+}
+
+.flow-node.is-loading .flow-icon {
   transform: scale(1.08);
 }
 
-.flow-node.is-active .flow-icon {
-  transform: scale(1.08);
-}
-
-.flow-node:is(.is-active, .is-done) .flow-check {
+.flow-node.is-done .flow-check {
   opacity: 1;
   transform: scale(1);
 }
@@ -4027,7 +4079,7 @@ main {
     grid-column: 2;
     grid-row: 1;
     grid-template-columns: 1fr;
-    gap: var(--space-5);
+    gap: var(--space-8); /* trilha visível entre as bordas dos círculos */
   }
 
   .flow-step {
@@ -4060,6 +4112,14 @@ main {
 
   .flow-sub {
     display: none;
+  }
+
+  .flow-ring {
+    transform: rotate(-90deg);
+  }
+
+  .flow-step:last-child .flow-node.is-done .flow-sub {
+    display: block;
   }
 
   .flow-tip,
@@ -4527,7 +4587,7 @@ main {
   .live-beacon,
   .flow-term-idle::after,
   .flow-spinner,
-  .flow-node.is-active .flow-dot::after,
+  .flow-node.is-ping .flow-dot::after,
   .flow-node.is-celebrate .flow-dot,
   .live-status.is-flash {
     animation: none;
@@ -4535,6 +4595,8 @@ main {
 
   .flow-dot,
   .flow-check,
+  .flow-ring,
+  .flow-ring-arc,
   .flow-tip,
   .flow-loop-label,
   .flow-loop-label svg,
