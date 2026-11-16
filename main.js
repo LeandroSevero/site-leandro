@@ -2,6 +2,7 @@ import { dictionaries } from './i18n.js';
 import { initContactModal } from './contact-modal.js';
 import { initVisitGate } from './visit-gate.js';
 import { initSiteMeta } from './site-meta.js';
+import { initCta } from './cta.js';
 import {
   logoDark,
   logoLight,
@@ -1060,6 +1061,7 @@ const init = () => {
   initContactModal();
   initScrollTop();
   initSiteMeta();
+  initCta();
   initAzureEasterEgg();
   handleDeepLink();
 };

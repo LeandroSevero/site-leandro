@@ -13,6 +13,15 @@
   ],
   "headers": [
     {
+      "source": "/Curriculo-Leandro.pdf",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Curriculo-Leandro-Severo.pdf\""
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "has": [
         {

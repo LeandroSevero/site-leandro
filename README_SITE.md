@@ -58,7 +58,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Scroll suave para seções com atualização da URL (History API)
 - Header com sombra progressiva ao rolar a página
 - Topo na dobra: o hero ocupa exatamente a tela visível abaixo do cabeçalho fixo (`min-height: calc(100svh - 4rem)`, com `100vh` de reserva), com o conteúdo centralizado e o "Explorar portfólio" perto da base. Sem rolar, o "01. Quem sou eu" fica fora da tela em 1440x900, 1920x1080, 768x1024 e 390x844; "Quem sou eu" começa logo abaixo da dobra (1.5rem de respiro), então qualquer rolagem já traz o "01." (com ~100px ele aparece inteiro). `svh` usa a menor altura da tela no celular, sem pular quando a barra do navegador some. No celular a foto fica com `min(20rem, 34svh)` de altura (proporção 4:5) e os vãos do topo são menores para tudo caber na tela visível. O "Explorar portfólio" continua levando até "Quem sou eu"
-- Vão entre o botão "Baixe o currículo do Leandro" e o "05." reduzido em ~43% (de 240px para 136px): só o fim da Trajetória (`#experiencia`, 1.5rem) e o início de "Sobre o site" (5rem) mudam; as demais seções seguem com o padding padrão
+- Botão "Baixe o currículo do Leandro" no meio do caminho entre o último card da Trajetória ("Soldado") e o "05.": 5rem acima (margem do botão) e 5rem abaixo (fim de `#experiencia` zerado + 5rem do início de "Sobre o site"), iguais em 1440 e 390px. As demais seções seguem com o padding padrão
 - Deep linking por âncora (`#sobre`, `#skills`, etc.)
 - Botão "voltar ao topo"
 - Menu mobile com hambúrguer, fechamento ao clicar fora ou em link
@@ -162,11 +162,22 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Mapa de Localização
 - Card de localização com popup de mapa integrado (Google Maps iframe)
+- Carregamento lazy do iframe
 
 ### Disponibilidade (Contato)
 - Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Europe: remote at first, open to relocation."). Largura automática até o limite do container: em uma linha no desktop e no tablet (1440, 1024 e 768px) e com quebra natural em telas menores (2 a 3 linhas em 390px), com a bolinha centralizada na primeira linha. Contraste AA nos dois temas; a bolinha não pulsa com menos movimento. Os cards de contato não mudaram (o card Localização mostra só "Curitiba - PR, Brasil")
-- A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade
-- Carregamento lazy do iframe
+- Logo abaixo do destaque, o botão "Tem uma oferta na Europa? Fale comigo no WhatsApp" (en: "Have an offer in Europe? Message me on WhatsApp"), no estilo dos botões secundários, com ícone genérico de balão de conversa (não o logotipo do WhatsApp)
+- A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade e avisa que oportunidades na Europa podem ser tratadas direto pelo WhatsApp (sem mostrar o número)
+
+### WhatsApp (oportunidades na Europa)
+- O número não aparece legível no HTML nem no JS: fica codificado em `cta.js` e o link `https://wa.me/<número>?text=...` é montado só no clique, com a mensagem pré-preenchida no idioma atual (pt: "Olá Leandro, vi seu site e tenho uma oportunidade na Europa para você."; en: "Hi Leandro, I saw your website and I have an opportunity in Europe for you."). Abre em nova aba com `noopener,noreferrer`; nada é enviado automaticamente
+- Dois pontos de entrada (`[data-whatsapp]`): o botão da seção Contato e, no modal de contato, a caixa "Tenho uma oportunidade na Europa" (en: "I have an opportunity in Europe"), que ao ser marcada revela com animação suave (grid 0fr -> 1fr) o botão "Falar direto no WhatsApp" (en: "Chat on WhatsApp"). Desmarcada, o botão fica `inert` e fora do foco. O formulário continua funcionando igual, marcado ou não (a caixa não entra no envio e é desmarcada no reset)
+- Foco visível, área de toque mínima de 44px, contraste AA nos dois temas e sem rolagem lateral em 390px
+
+### Download do currículo
+- O botão "Baixe o currículo do Leandro" baixa direto, sem abrir o PDF em aba: atributo `download="Curriculo-Leandro-Severo.pdf"` no link (também no link do chat) e `Content-Disposition: attachment; filename="Curriculo-Leandro-Severo.pdf"` para `/Curriculo-Leandro.pdf` no `vercel.json` (testing e produção)
+- Efeito de download (CSS + `cta.js`, só visual: o download começa no próprio clique): a seta desce para dentro da bandeja, uma barra de progresso preenche o botão em ~800ms e o ícone vira check com o texto "Baixado!" (en: "Downloaded!"); depois de ~2s volta ao normal. A largura do botão não muda durante o efeito. Uma região `aria-live` anuncia "Download iniciado" (en: "Download started")
+- Com `prefers-reduced-motion`: sem animação, só troca o texto para "Baixado!"
 
 ---
 
@@ -181,10 +192,11 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── contact-modal.js             # Modal de contato: validação, estados, Turnstile
 ├── visit-gate.js                # Verificação de primeira visita (Turnstile + cookie)
 ├── site-meta.js                 # Seção "Sobre o site" (fluxo animado, simular deploy, painel ao vivo) e versão no rodapé
+├── cta.js                       # Download do currículo (efeito e anúncio) e links do WhatsApp montados no clique
 ├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
 ├── style.css                    # Estilos globais com CSS custom properties e camada Liquid Glass (~3500 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
-├── vercel.json                  # Configuração de deploy (rewrites SPA + cron diário de /api/health)
+├── vercel.json                  # Configuração de deploy (rewrites SPA, cabeçalhos, cron diário de /api/health)
 ├── .env.example                 # Variáveis para uso local (chaves de TESTE do Turnstile)
 ├── .github/workflows/health.yml # Alerta semanal: checa /api/health em produção e homologação
 ├── package.json                 # Dependências e scripts
@@ -437,6 +449,8 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
     { "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)/", "destination": "/" }
   ],
   "headers": [
+    { "source": "/Curriculo-Leandro.pdf",
+      "headers": [{ "key": "Content-Disposition", "value": "attachment; filename=\"Curriculo-Leandro-Severo.pdf\"" }] },
     { "source": "/(.*)", "has": [{ "type": "host", "value": "testing.leandrosevero.com.br" }],
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }
   ],
@@ -444,7 +458,7 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 }
 ```
 
-Só os caminhos das seções (usados pela History API ao navegar pelo menu) são reescritos para `index.html`. Arquivos estáticos, `/api/*`, `/Curriculo-Leandro.pdf`, `/robots.txt`, `/sitemap.xml` e os assets são servidos normalmente, e qualquer outro endereço recebe `public/404.html` com status **404**. Em homologação, todas as respostas levam `X-Robots-Tag: noindex, nofollow`.
+Só os caminhos das seções (usados pela History API ao navegar pelo menu) são reescritos para `index.html`. Arquivos estáticos, `/api/*`, `/Curriculo-Leandro.pdf`, `/robots.txt`, `/sitemap.xml` e os assets são servidos normalmente, e qualquer outro endereço recebe `public/404.html` com status **404**. Em homologação, todas as respostas levam `X-Robots-Tag: noindex, nofollow`. O currículo (`/Curriculo-Leandro.pdf`) é servido com `Content-Disposition: attachment`, em testing e em produção, para baixar em vez de abrir no navegador.
 
 ### Ambientes
 

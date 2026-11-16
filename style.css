@@ -2408,16 +2408,17 @@ main {
   border-color: var(--color-fg-muted);
 }
 
+/* O botão do currículo fica no meio do caminho entre o último card da Trajetória e o "05.":
+   5rem acima (margem) e 5rem abaixo (o fim desta seção é zerado; o início de "Sobre o site" tem 5rem).
+   Só o fim desta seção muda; o padding padrão das demais segue igual */
 .cv-download-wrap {
   display: flex;
   justify-content: center;
-  margin-top: var(--space-10);
+  margin-top: var(--space-20);
 }
 
-/* O botão do currículo fecha a Trajetória: fim da seção mais curto, para o vão até "05." ficar
-   proporcional ao das outras seções (só o fim desta seção muda; o padding padrão das demais segue igual) */
 #experiencia {
-  padding-bottom: var(--space-6);
+  padding-bottom: 0;
 }
 
 #sobre-o-site {
@@ -2459,6 +2460,154 @@ main {
 
 .cv-download-btn svg {
   flex-shrink: 0;
+}
+
+/* Efeito de download: a seta desce para a bandeja, a barra preenche o botão (~800ms) e termina com check */
+.cv-download-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  justify-content: center;
+}
+
+.cv-progress {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: rgba(255, 255, 255, 0.26);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+.cv-download-btn.is-downloading .cv-progress {
+  animation: cv-fill 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.cv-download-btn.is-done .cv-progress {
+  transform: scaleX(1);
+  opacity: 0;
+  transition: opacity 0.6s ease 0.2s;
+}
+
+.cv-arrow {
+  transform-box: view-box;
+}
+
+.cv-download-btn.is-downloading .cv-arrow {
+  animation: cv-arrow-drop 0.4s ease-in 2;
+}
+
+.cv-check {
+  opacity: 0;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.cv-download-btn.is-done .cv-arrow {
+  opacity: 0;
+}
+
+.cv-download-btn.is-done .cv-check {
+  opacity: 1;
+  animation: cv-check-draw 0.35s ease-out forwards;
+}
+
+@keyframes cv-fill {
+  to { transform: scaleX(1); }
+}
+
+/* A seta desce e some dentro da bandeja, depois reaparece no alto */
+@keyframes cv-arrow-drop {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(7px); opacity: 0; }
+  71% { transform: translateY(-6px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes cv-check-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* WhatsApp para oportunidades na Europa: botão secundário com área de toque de 44px */
+.whatsapp-btn {
+  display: inline-flex;
+  justify-content: center;
+  min-height: 44px;
+  max-width: 100%;
+  text-align: center;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.whatsapp-btn svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.whatsapp-btn:focus-visible,
+.contact-form-check input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* Na seção Contato fica logo abaixo do destaque de disponibilidade, com a largura do próprio texto */
+.section-header .whatsapp-btn {
+  display: flex;
+  width: fit-content;
+  margin-top: var(--space-4);
+}
+
+/* Modal: caixa "Tenho uma oportunidade na Europa" e o botão que aparece ao marcar */
+.contact-form-europe {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  align-self: flex-start;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  cursor: pointer;
+}
+
+.contact-form-check input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.contact-form-whatsapp {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.3s ease, opacity 0.3s ease;
+}
+
+.contact-form-whatsapp.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.contact-form-whatsapp-inner {
+  min-height: 0;
+  overflow: hidden;
+  /* espaço para o anel de foco não ser cortado */
+  padding: 4px;
+  margin: -4px;
+}
+
+.contact-form-whatsapp .whatsapp-btn {
+  width: 100%;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .chat-cv-link {
@@ -3222,6 +3371,22 @@ main {
   .visit-gate-icon { animation: none; }
 
   .contact-availability::before { animation: none; }
+
+  .cv-download-btn .cv-progress,
+  .cv-download-btn .cv-arrow,
+  .cv-download-btn .cv-check,
+  .contact-form-whatsapp {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .cv-download-btn.is-done .cv-progress {
+    opacity: 0;
+  }
+
+  .cv-download-btn.is-done .cv-check {
+    stroke-dashoffset: 0;
+  }
 
   /* Sem animação de entrada ao rolar: os elementos já ficam no lugar */
   .reveal,
