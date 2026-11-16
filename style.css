@@ -2408,13 +2408,13 @@ main {
   border-color: var(--color-fg-muted);
 }
 
-/* O botão do currículo fica no meio do caminho entre o último card da Trajetória e o "05.":
-   5rem acima (margem) e 5rem abaixo (o fim desta seção é zerado; o início de "Sobre o site" tem 5rem).
-   Só o fim desta seção muda; o padding padrão das demais segue igual */
+/* O botão do currículo fica no meio do caminho entre o card "Soldado" e o TEXTO "05.": 81px acima e
+   81px abaixo (o fim desta seção é zerado; o início de "Sobre o site" tem 5rem - 1px, e a linha do "05."
+   soma 2px acima do texto). Só o fim desta seção muda; o padding padrão das demais segue igual */
 .cv-download-wrap {
   display: flex;
   justify-content: center;
-  margin-top: var(--space-20);
+  margin-top: calc(var(--space-20) + 1px);
 }
 
 #experiencia {
@@ -2422,7 +2422,7 @@ main {
 }
 
 #sobre-o-site {
-  padding-top: var(--space-20);
+  padding-top: calc(var(--space-20) - 1px);
 }
 
 /* "Quem sou eu" começa logo abaixo da dobra: qualquer rolagem já traz o "01." (só o vão vindo do topo muda) */
