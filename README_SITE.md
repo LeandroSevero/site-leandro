@@ -36,7 +36,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ## Funcionalidades
 
 ### Tema Claro / Escuro
-- Alternância entre modo claro e escuro com um clique
+- Alternância entre modo claro e escuro com um clique. O novo tema "surge" num círculo que nasce no botão de tema e se expande até cobrir a tela (~500ms, View Transitions API: `document.startViewTransition` + `clip-path` animado no `::view-transition-new(root)`, sem o crossfade padrão). Sem View Transitions, um crossfade de cores de ~300ms vale só durante a troca (classe temporária `.theme-fade`, removida em seguida, sem transições globais permanentes). Com `prefers-reduced-motion` a troca é instantânea. As imagens do outro tema (logo e avatares do chat) são pré-carregadas quando o navegador fica ocioso, para trocarem junto na revelação. Sem flash, sem salto de layout e nada fica repintando depois da troca
 - Preferência persistida no `localStorage`
 - Troca automática de logo e avatar do chat conforme o tema (a foto do hero é a mesma nos dois temas)
 - Efeito **Liquid Glass** (somente CSS) nos dois temas: superfícies translúcidas, brilho especular no topo (`inset box-shadow`) e reflexo em gradiente. Com desfoque do fundo (`backdrop-filter: blur() saturate()`): header, menu mobile, rodapé, botões (LinkedIn, Instagram, Contato, idioma, menu, tema), seletores, modal de contato e chat flutuante. Os cards de conteúdo (Quem sou eu, Tecnologias, Certificações, Experiência, Contato e o fluxo, o painel e os pilares do "Sobre o site") usam o mesmo vidro **sem** `backdrop-filter` (fundo translúcido + gradiente + brilho na borda superior), o que evita manchas de sombra na GPU ao passar o mouse. Os botões "Explorar portfólio" e "Voltar ao topo" ficam sem vidro e têm o mesmo visual: seta + rótulo em caixa alta, cor suave e animação de quique
@@ -58,7 +58,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Scroll suave para seções com atualização da URL (History API)
 - Header com sombra progressiva ao rolar a página
 - Topo na dobra: o hero ocupa exatamente a tela visível abaixo do cabeçalho fixo (`min-height: calc(100svh - 4rem)`, com `100vh` de reserva), com o conteúdo centralizado e o "Explorar portfólio" perto da base. Sem rolar, o "01. Quem sou eu" fica fora da tela em 1440x900, 1920x1080, 768x1024 e 390x844; "Quem sou eu" começa logo abaixo da dobra (1.5rem de respiro), então qualquer rolagem já traz o "01." (com ~100px ele aparece inteiro). `svh` usa a menor altura da tela no celular, sem pular quando a barra do navegador some. No celular a foto fica com `min(20rem, 34svh)` de altura (proporção 4:5) e os vãos do topo são menores para tudo caber na tela visível. O "Explorar portfólio" continua levando até "Quem sou eu"
-- Vão entre o botão "Baixe o currículo do Leandro" e o "05." reduzido em ~43% (de 240px para 136px): só o fim da Trajetória (`#experiencia`, 1.5rem) e o início de "Sobre o site" (5rem) mudam; as demais seções seguem com o padding padrão
+- Botão "Baixe o currículo do Leandro" no meio do caminho entre o card "Soldado" e o texto "05.": 81px acima (margem do botão, `5rem + 1px`) e 81px abaixo até o texto (fim de `#experiencia` zerado + `5rem - 1px` no início de "Sobre o site" + 2px da linha do "05."), iguais em 1440, 1920 e 390px com os elementos já visíveis. Antes de o card e o "05." entrarem na tela, a animação de entrada os mantém 32px mais baixos, então uma medição nesse momento dá ~48px acima e ~113px abaixo. As demais seções seguem com o padding padrão
 - Deep linking por âncora (`#sobre`, `#skills`, etc.)
 - Botão "voltar ao topo"
 - Menu mobile com hambúrguer, fechamento ao clicar fora ou em link
@@ -93,7 +93,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Seção de Experiência
 - Timeline vertical com 6 posições profissionais: Supervisor de DevOps, Analista DevOps, Analista de Infraestrutura de TI, Suporte de Helpdesk e Telecom, Analista de Telecom e Soldado (cargos com nível, em pt e en, iguais nas respostas do chat)
-- Acordeão expansível por cargo com descrição detalhada
+- Acordeão expansível por cargo com descrição detalhada: um clique (ou toque) em qualquer parte do card abre e fecha a descrição, não só no título (cursor de mão no card). O botão do título continua sendo o controle acessível por teclado (`aria-expanded`); cliques em links e seleção de texto não alternam o card
 - Tags de tecnologias por posição
 
 ### Seção "Sobre o site" (05.)
@@ -103,16 +103,17 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
   - **Borda a borda:** a trilha de 3px é feita de segmentos que vão da borda de uma etapa à borda da seguinte, e nada da trilha ou do pulso passa por dentro dos círculos (o fundo das etapas é opaco também quando acesas). O pulso de luz (gradiente radial na cor primária, com rastro que se dissipa) percorre o segmento via `requestAnimationFrame`, para ao encostar na borda e o rastro se recolhe nela
   - **Anel de carregamento:** ao receber o pulso, a etapa mostra um anel SVG (`.flow-ring`, `pathLength` 100 e `stroke-dashoffset` controlado pelo JS) que preenche a borda em ~700ms com brilho da cor primária, começando pelo lado de entrada (esquerda no desktop, em cima no celular). Ao completar aparece o check e um novo pulso sai pela borda oposta rumo à próxima etapa
   - Em Produção o anel completa, a etapa mostra "no ar" e o pulso segue pelo laço de Observabilidade (sai pela direita de Produção no desktop, por baixo no celular, passa pelo selo e entra pela borda de Código, à esquerda no desktop e por cima no celular), com um toque de luz em Código fechando o ciclo. As etapas concluídas ficam à mostra por ~1s e o ciclo recomeça. Trechos curtos (celular) têm duração mínima de ~0,4s para o pulso ser visto. JS/CSS puro, sem bibliotecas
-  - Tooltip genérico (`role="tooltip"` + `aria-describedby`) sem estado fixo, controlado por JS (classe `.is-tip`): no mouse aparece no `mouseenter` e some no `mouseleave`; no teclado aparece no `focus` e some no `blur` (Esc fecha); no toque um toque mostra e ele some ao tocar fora, ao rolar a página ou depois de ~3s. Enquanto um tooltip está aberto o fluxo pausa e volta a rodar quando ele fecha. Clique ou toque não deixa o botão focado nem guarda estado "ativo/selecionado". O texto do balão é centralizado em todas as etapas; em telas médias (até 1199px) o balão de Código e o de Produção encostam na borda da etapa para não sair do quadro, e no celular todos ficam alinhados à esquerda, ao lado da etapa
+  - Tooltip genérico (`role="tooltip"` + `aria-describedby`) sem estado fixo, controlado por JS (classe `.is-tip`): no mouse aparece no `mouseenter` e some no `mouseleave`; no teclado aparece no `focus` e some no `blur` (Esc fecha); no toque um toque mostra e ele some ao tocar fora, ao rolar a página ou depois de ~3s. O tooltip nunca pausa o fluxo, o pulso nem a simulação: tudo segue rodando atrás do balão (as únicas pausas são seção fora da tela, aba oculta e menos movimento). Clique ou toque não deixa o botão focado nem guarda estado "ativo/selecionado". O texto do balão é centralizado em todas as etapas; em telas médias (até 1199px) o balão de Código e o de Produção encostam na borda da etapa para não sair do quadro, e no celular todos ficam alinhados à esquerda, ao lado da etapa
   - Pilares: a elevação e o ícone animado só reagem ao hover em dispositivos com mouse (`@media (hover: hover)`); no toque o card volta ao estado normal
-  - `IntersectionObserver`: só anima com a seção visível; se a seção sai da tela no meio de uma simulação, ela pausa (as esperas do terminal e o anel seguram) e continua de onde parou ao voltar
+  - `IntersectionObserver`: só anima com a seção visível; se a seção sai da tela (ou a aba fica oculta) no meio de uma simulação ou da espera em Observabilidade, tudo pausa: cada espera do terminal congela o tempo que falta, o anel e o pulso param, e ao voltar continuam de onde pararam
   - SVG com `role="img"`, `<title>` e `<desc>` traduzidos
 - **Simular publicação** ("Simulate release"): execução guiada de 12 a 15s com terminal narrado. Cada etapa mostra um cabeçalho "[n/5] Etapa" (cor primária), 2 ou 3 linhas digitadas explicando o que acontece (com spinner na linha em execução) e uma linha "✓" em verde; a observabilidade fecha com "[∞] Observabilidade" e uma linha com o status real de `/api/status` e o tempo de resposta medido no navegador (ou "status indisponível no momento", sem quebrar), atualizando também o painel ao vivo. Textos genéricos, sem nomes de ferramentas, com a versão do `package.json`
-  - **Início automático:** quando ~40% da seção "Por trás deste site" está na tela (ou 40% da altura da tela, se a seção for maior que ela), a simulação começa sozinha como se o botão tivesse sido clicado, depois que a rolagem para (~350ms sem rolar, o que cobre também quem abre direto em `/sobre-o-site`). Roda uma vez por carregamento da página: rolar para fora e voltar não reinicia, e um clique antes disso cancela o automático. O "Simular de novo" continua disponível. Durante a simulação o fluxo contínuo fica parado (um pulso por vez) e volta ao terminar. Com menos movimento não há início automático: o terminal já aparece preenchido e as etapas concluídas
-  - Sincronia visual: no "✓" de uma etapa o anel completa, aparece o check e um pulso sai pela borda rumo à próxima (chega em ~0,45s, no desktop ou no celular); o anel da próxima carrega enquanto o terminal narra aquela etapa (progresso estimado pela digitação, parando em 95%) e só completa no "✓" dela. No "✓" de Produção o pulso percorre o laço até Código em ~2,6s, e o selo "Observabilidade" fica aceso durante a narração da observabilidade. Se o fluxo estiver pausado por um tooltip, a chegada do pulso é entregue no "✓" para a narração nunca travar. No topo do terminal ficam uma barra de progresso fina (0 a 100%) e uma linha de destaque com a etapa atual e uma frase curta (ex.: "Validação: a nova versão é construída e verificada antes de seguir")
+  - **Início automático:** quando ~40% da seção "Por trás deste site" está na tela (ou 40% da altura da tela, se a seção for maior que ela), a simulação começa sozinha como se o botão tivesse sido clicado, depois que a rolagem para (~350ms sem rolar, o que cobre também quem abre direto em `/sobre-o-site`). O início automático acontece uma vez por carregamento da página (um clique antes disso o substitui); a partir daí a simulação segue em ciclo enquanto a seção estiver visível. Durante a simulação o fluxo contínuo fica parado (um pulso por vez). Com menos movimento não há início automático nem ciclo: o terminal já aparece preenchido e as etapas concluídas
+  - **Ciclo terminando em Observabilidade:** ao fim de cada simulação o pulso sai de Produção pelo laço e para na borda do selo "Observabilidade" (o trecho do laço até o selo é calculado no layout, em `loopIn`/`loopOut`). O selo entra em "monitorando" (`.is-monitoring`: brilho respirando numa camada própria, só `transform` e `opacity`) e a última linha do terminal vira "> monitorando... aguardando eventos" (en: "> monitoring... waiting for events") com o cursor piscando. O botão fica "Simular de novo" durante a espera. Depois de ~4s o pulso sai pela outra borda do selo até a borda de Código, que dá um toque de luz, e uma nova simulação começa sozinha (terminal limpo, narração do início). Um clique em "Simular de novo" durante a espera começa a nova simulação na hora. Fora da tela ou com a aba oculta a espera pausa e retoma com o tempo que faltava. O foco só volta ao botão depois de uma simulação iniciada por clique (os ciclos automáticos não mexem no foco)
+  - Sincronia visual: no "✓" de uma etapa o anel completa, aparece o check e um pulso sai pela borda rumo à próxima (chega em ~0,45s, no desktop ou no celular); o anel da próxima carrega enquanto o terminal narra aquela etapa (progresso estimado pela digitação, parando em 95%) e só completa no "✓" dela. No "✓" de Produção o pulso percorre o laço até a borda do selo "Observabilidade", que fica aceso durante a narração da observabilidade. Se o pulso ainda não tiver encostado (troca de layout, por exemplo), a chegada é entregue no "✓" para a narração nunca travar. No topo do terminal ficam uma barra de progresso fina (0 a 100%) e uma linha de destaque com a etapa atual e uma frase curta (ex.: "Validação: a nova versão é construída e verificada antes de seguir")
   - Final: "Publicação concluída · 5 etapas · 0 falhas", destaque rápido em Produção e uma piscada verde no status do painel. O botão vira "Simulando..." (desabilitado) e depois "Simular de novo"
   - O terminal tem altura fixa e rola sozinho para a última linha, sem rolar a página; é focável por teclado para leitura
-  - Acessibilidade: o terminal não é região viva; uma região `aria-live="polite"` separada (oculta visualmente) anuncia só os cabeçalhos das etapas e o resultado final, não cada caractere; na simulação automática anuncia apenas "Publicação concluída" no fim. Em repouso o terminal mostra "pronto para simular uma publicação"
+  - Acessibilidade: o terminal não é região viva; uma região `aria-live="polite"` separada (oculta visualmente) anuncia só os cabeçalhos das etapas e o resultado final, não cada caractere. "Publicação concluída" é anunciado só na primeira execução (a automática, que não anuncia as etapas) e nas iniciadas por clique (que anunciam as etapas); os recomeços automáticos do ciclo não anunciam nada. Com menos movimento, o terminal estático termina na linha de monitoramento e o selo fica em "monitorando", sem animação. Em repouso o terminal mostra "pronto para simular uma publicação"
 - **Painel ao vivo (somente dados reais):** status de `/api/status` (verde pulsando "Todos os sistemas operando", âmbar "Instabilidade detectada", cinza "Status indisponível" se a chamada falhar, sem quebrar a página), tempo de resposta medido no navegador com `performance.now()` ("respondeu em 182 ms", com contagem animada), versão e data da última atualização (data do deploy). Atualiza a cada 5 min. Sem uptime nem métricas inventadas
 - **5 pilares** (cards com leve elevação e ícone animado no hover, sem logos): Entrega contínua, Ambientes isolados, Observabilidade 24/7, Segurança em camadas e Acessível e rápido
 - **`prefers-reduced-motion`:** fluxo estático com todas as etapas concluídas, terminal já preenchido de uma vez (sem digitação nem spinner, barra em 100%, status real na linha da observabilidade), sem pulsos, rastro, anel de carregamento, destaque final, piscada do status, contagem, cursor piscando ou elevação
@@ -162,11 +163,22 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Mapa de Localização
 - Card de localização com popup de mapa integrado (Google Maps iframe)
+- Carregamento lazy do iframe
 
 ### Disponibilidade (Contato)
 - Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Europe: remote at first, open to relocation."). Largura automática até o limite do container: em uma linha no desktop e no tablet (1440, 1024 e 768px) e com quebra natural em telas menores (2 a 3 linhas em 390px), com a bolinha centralizada na primeira linha. Contraste AA nos dois temas; a bolinha não pulsa com menos movimento. Os cards de contato não mudaram (o card Localização mostra só "Curitiba - PR, Brasil")
-- A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade
-- Carregamento lazy do iframe
+- Logo abaixo do destaque, o botão "Tem uma oferta na Europa? Fale comigo no WhatsApp" (en: "Have an offer in Europe? Message me on WhatsApp"), no estilo dos botões secundários, com ícone genérico de balão de conversa (não o logotipo do WhatsApp)
+- A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade e avisa que oportunidades na Europa podem ser tratadas direto pelo WhatsApp (sem mostrar o número)
+
+### WhatsApp (oportunidades na Europa)
+- O número não aparece legível no HTML nem no JS: fica codificado em `cta.js` e o link `https://wa.me/<número>?text=...` é montado só no clique, com a mensagem pré-preenchida no idioma atual (pt: "Olá Leandro, vi seu site e tenho uma oportunidade na Europa para você."; en: "Hi Leandro, I saw your website and I have an opportunity in Europe for you."). Abre em nova aba com `noopener,noreferrer`; nada é enviado automaticamente
+- Dois pontos de entrada (`[data-whatsapp]`): o botão da seção Contato e, no modal de contato, a caixa "Tenho uma oportunidade na Europa" (en: "I have an opportunity in Europe"), que ao ser marcada revela com animação suave (grid 0fr -> 1fr) o botão "Falar direto no WhatsApp" (en: "Chat on WhatsApp"). Desmarcada, o botão fica `inert` e fora do foco. O formulário continua funcionando igual, marcado ou não (a caixa não entra no envio e é desmarcada no reset)
+- Foco visível, área de toque mínima de 44px, contraste AA nos dois temas e sem rolagem lateral em 390px
+
+### Download do currículo
+- O botão "Baixe o currículo do Leandro" baixa direto, sem abrir o PDF em aba: o PDF fica em `/Curriculo-Leandro-Severo.pdf`, com atributo `download="Curriculo-Leandro-Severo.pdf"` no link (também no link do chat) e `Content-Disposition: attachment; filename="Curriculo-Leandro-Severo.pdf"` no `vercel.json` (testing e produção). O caminho antigo `/Curriculo-Leandro.pdf` redireciona (307) para o novo, para links antigos continuarem funcionando. O arquivo mudou de nome porque, no caminho antigo, a Vercel seguia entregando o PDF com os cabeçalhos de uma publicação anterior (`inline`), ignorando a regra nova
+- Efeito de download (CSS + `cta.js`, só visual: o download começa no próprio clique): a seta desce para dentro da bandeja, uma barra de progresso preenche o botão em ~800ms e o ícone vira check com o texto "Baixado!" (en: "Downloaded!"); depois de ~2s volta ao normal. A largura do botão não muda durante o efeito. Uma região `aria-live` anuncia "Download iniciado" (en: "Download started"). Só `transform` e `opacity` animam: a barra usa `scaleX()`, e bandeja, seta e check são três SVGs próprios (a seta e o check animam como elementos HTML, na GPU, sem repintar o botão). `will-change` vale só enquanto a classe `.is-downloading` existe, e o brilho do botão é fixo (a sombra não tem transição)
+- Com `prefers-reduced-motion`: sem animação, só troca o texto para "Baixado!"
 
 ---
 
@@ -181,10 +193,11 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ├── contact-modal.js             # Modal de contato: validação, estados, Turnstile
 ├── visit-gate.js                # Verificação de primeira visita (Turnstile + cookie)
 ├── site-meta.js                 # Seção "Sobre o site" (fluxo animado, simular deploy, painel ao vivo) e versão no rodapé
+├── cta.js                       # Download do currículo (efeito e anúncio) e links do WhatsApp montados no clique
 ├── turnstile.js                 # Carregamento compartilhado do script e tema do Turnstile
 ├── style.css                    # Estilos globais com CSS custom properties e camada Liquid Glass (~3500 linhas)
 ├── vite.config.js               # Configuração do Vite (SPA fallback)
-├── vercel.json                  # Configuração de deploy (rewrites SPA + cron diário de /api/health)
+├── vercel.json                  # Configuração de deploy (rewrites SPA, cabeçalhos, cron diário de /api/health)
 ├── .env.example                 # Variáveis para uso local (chaves de TESTE do Turnstile)
 ├── .github/workflows/health.yml # Alerta semanal: checa /api/health em produção e homologação
 ├── package.json                 # Dependências e scripts
@@ -240,7 +253,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 02 | **Sobre** | 6 parágrafos sobre formação e atuação profissional, 3 cards informativos |
 | 03 | **Skills** | 12 tecnologias com ícone, categoria e descrição detalhada localizada |
 | 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
-| 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
+| 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis (clique no card inteiro) |
 | 06 | **Sobre o site** | "Por trás deste site": fluxo de entrega animado com simulação de deploy, painel ao vivo (status real, tempo de resposta, versão e data) e 5 pilares (no site aparece como "05.") |
 | 07 | **Contato** | Destaque de disponibilidade (Europa), e-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
 
@@ -389,6 +402,10 @@ Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` 
 - Imagens com `loading="eager"` (hero) e `loading="lazy"` (demais)
 - CSS com variáveis nativas — sem preprocessador
 - Animações com `requestAnimationFrame` e `IntersectionObserver`
+- **Animações contínuas pausadas quando não aparecem:** cada bloco da página (`main > section`, "Voltar ao topo" e rodapé) é observado por um `IntersectionObserver` (`initMotionPause` em `main.js`); fora da tela ele recebe `.is-offscreen` e todas as animações CSS dentro dele (pulsos, quiques, nuvens do topo, fluxo) ficam com `animation-play-state: paused`. Com a aba oculta (`visibilitychange`), `html.is-page-hidden` pausa tudo
+- **Loops de `requestAnimationFrame` só quando necessários:** o carrossel de certificações, que antes rodava o tempo todo (inclusive fora da tela), só anima com ele na tela e a aba visível; o fluxo do "Por trás deste site" para fora da tela e com a aba oculta (a simulação segura e continua ao voltar); o ponto da Trajetória só roda enquanto se move
+- **Pulsos só com `transform` e `opacity`:** a bolinha verde do selo do topo e do destaque de disponibilidade, os pontos do painel ao vivo, o ponto da Trajetória e o brilho do easter egg animavam `box-shadow` (repintura a cada quadro). Agora o anel ou brilho fica numa camada própria (pseudo-elemento) e só escala/esmaece, com o mesmo visual
+- Medição (Chrome com GPU, 1440px, clique no botão do currículo e rolagem logo em seguida, build de produção): os números de antes x depois estão em `.tmp/perf-curriculo/` (traces que abrem no painel Performance do DevTools)
 - Fontes via `font-display: swap`
 
 ---
@@ -432,11 +449,14 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 {
   "buildCommand": "npm run build",
   "installCommand": "rm -rf node_modules && npm ci",
+  "redirects": [{ "source": "/Curriculo-Leandro.pdf", "destination": "/Curriculo-Leandro-Severo.pdf", "permanent": false }],
   "rewrites": [
     { "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)", "destination": "/" },
     { "source": "/:secao(sobre|skills|certificados|experiencia|sobre-o-site|contato)/", "destination": "/" }
   ],
   "headers": [
+    { "source": "/Curriculo-Leandro-Severo.pdf",
+      "headers": [{ "key": "Content-Disposition", "value": "attachment; filename=\"Curriculo-Leandro-Severo.pdf\"" }] },
     { "source": "/(.*)", "has": [{ "type": "host", "value": "testing.leandrosevero.com.br" }],
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }
   ],
@@ -444,7 +464,7 @@ O projeto é hospedado na **Vercel** com as seguintes configurações:
 }
 ```
 
-Só os caminhos das seções (usados pela History API ao navegar pelo menu) são reescritos para `index.html`. Arquivos estáticos, `/api/*`, `/Curriculo-Leandro.pdf`, `/robots.txt`, `/sitemap.xml` e os assets são servidos normalmente, e qualquer outro endereço recebe `public/404.html` com status **404**. Em homologação, todas as respostas levam `X-Robots-Tag: noindex, nofollow`.
+Só os caminhos das seções (usados pela History API ao navegar pelo menu) são reescritos para `index.html`. Arquivos estáticos, `/api/*`, `/Curriculo-Leandro-Severo.pdf`, `/robots.txt`, `/sitemap.xml` e os assets são servidos normalmente, e qualquer outro endereço recebe `public/404.html` com status **404**. Em homologação, todas as respostas levam `X-Robots-Tag: noindex, nofollow`. O currículo (`/Curriculo-Leandro-Severo.pdf`; o caminho antigo `/Curriculo-Leandro.pdf` redireciona para ele) é servido com `Content-Disposition: attachment`, em testing e em produção, para baixar em vez de abrir no navegador.
 
 ### Ambientes
 

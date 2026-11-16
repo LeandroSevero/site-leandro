@@ -129,6 +129,7 @@ const MIN_HOP_MS = 420; // duração mínima de um pulso entre duas etapas
 const LOAD_MS = 700; // carregamento do anel de cada etapa no fluxo contínuo
 const LOOP_MS = 3000; // tempo do laço de Produção de volta a Código no fluxo contínuo
 const CYCLE_GAP_MS = 1100; // etapas concluídas ficam à mostra antes de um novo ciclo
+const MONITOR_MS = 4000; // a simulação para em Observabilidade ("monitorando") antes de recomeçar sozinha
 const RING_VIEW = 80; // viewBox do anel
 const RING_R = 37; // raio do anel no viewBox
 const RING_STROKE = 3;
@@ -136,7 +137,7 @@ const RING_STROKE = 3;
 const flow = {
   root: null, svg: null, track: null, loop: null, pulseLayer: null,
   nodes: [], arcs: [], loopLabel: null,
-  segs: [], loopLen: 0, edgeR: 0,
+  segs: [], loopLen: 0, edgeR: 0, loopIn: 0, loopOut: 0,
   pulses: [], visible: false, paused: false, running: false,
   raf: 0, last: 0, simulating: false, vertical: false,
   // ciclo contínuo: 'gap' (pausa entre ciclos), 'load' (anel carregando), 'travel' (pulso na trilha)
@@ -205,6 +206,23 @@ const layoutFlow = () => {
   }
   loop.setAttribute('d', d);
   flow.loopLen = loop.getTotalLength();
+
+  // Onde o laço encosta no selo "Observabilidade" (entrada e saída), para a simulação parar na borda dele
+  const lx0 = lbl.left - base.left - 4;
+  const lx1 = lbl.right - base.left + 4;
+  const ly0 = lbl.top - base.top - 4;
+  const ly1 = lbl.bottom - base.top + 4;
+  let dIn = -1;
+  let dOut = -1;
+  for (let k = 0; k <= flow.loopLen; k += 2) {
+    const q = loop.getPointAtLength(k);
+    if (q.x >= lx0 && q.x <= lx1 && q.y >= ly0 && q.y <= ly1) {
+      if (dIn < 0) dIn = k;
+      dOut = k;
+    }
+  }
+  flow.loopIn = dIn > 0 ? dIn : flow.loopLen / 2;
+  flow.loopOut = dOut > 0 ? dOut : flow.loopLen / 2;
 };
 
 const TRAIL_DOTS = 12; // círculos do rastro
@@ -248,15 +266,17 @@ const pointOn = (p, d) => {
     const t = p.len ? k / p.len : 1;
     return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
   }
-  return flow.loop.getPointAtLength(k);
+  return flow.loop.getPointAtLength((p.from || 0) + k);
 };
 
-// kind 'track' (segmento i, da etapa i para a i+1) ou 'loop'; onArrive roda quando o pulso encosta na borda
-const spawnPulse = (kind, i, durMs, onArrive) => {
+// kind 'track' (segmento i, da etapa i para a i+1) ou 'loop'; onArrive roda quando o pulso encosta na borda.
+// range [de, até] limita o pulso a um trecho do laço (da borda de Produção ao selo, ou do selo a Código).
+const spawnPulse = (kind, i, durMs, onArrive, range = null) => {
   const seg = kind === 'track' ? flow.segs[i] : null;
-  const len = seg ? seg.len : flow.loopLen;
+  const from = range ? range[0] : 0;
+  const len = seg ? seg.len : (range ? range[1] - range[0] : flow.loopLen);
   const speed = durMs ? Math.max(0.2, len / (PULSE_SPEED * durMs)) : 1;
-  const p = { kind, seg, len, d: 0, speed, arrived: false, onArrive };
+  const p = { kind, seg, from, len, d: 0, speed, arrived: false, onArrive, part: !!range };
   p.el = makePulseEl(kind, pointOn(p, 0));
   flow.pulses.push(p);
   return p;
@@ -266,7 +286,7 @@ const arrive = (p) => {
   if (p.arrived) return;
   p.arrived = true;
   p.d = Math.max(p.d, p.len); // chegada entregue antes da hora (pausa ou troca de layout): o pulso fica na borda
-  if (p.kind === 'loop' && !flow.simLoop) flow.loopLabel.classList.remove('is-active');
+  if (p.kind === 'loop' && !p.part && !flow.simLoop) flow.loopLabel.classList.remove('is-active');
   p.onArrive?.();
 };
 
@@ -386,22 +406,20 @@ const simTick = (now) => {
 const tick = (now) => {
   const dt = Math.min(64, now - (flow.last || now));
   flow.last = now;
-  if (!flow.paused) {
-    if (flow.simulating) simTick(now); else cycleTick(dt);
-    flow.pulses = flow.pulses.filter((p) => {
-      p.d += PULSE_SPEED * dt * (p.arrived ? Math.max(1, p.speed) : p.speed); // o rastro some no mesmo tempo em qualquer trecho
-      if (!p.arrived && p.d >= p.len) arrive(p);
-      if (p.d >= p.len + ABSORB) {
-        p.el.remove();
-        return false;
-      }
-      placePulse(p);
-      if (p.kind === 'loop' && !p.arrived) {
-        flow.loopLabel.classList.toggle('is-active', flow.simLoop || (p.d > p.len * 0.3 && p.d < p.len * 0.7));
-      }
-      return true;
-    });
-  }
+  if (flow.simulating) simTick(now); else cycleTick(dt);
+  flow.pulses = flow.pulses.filter((p) => {
+    p.d += PULSE_SPEED * dt * (p.arrived ? Math.max(1, p.speed) : p.speed); // o rastro some no mesmo tempo em qualquer trecho
+    if (!p.arrived && p.d >= p.len) arrive(p);
+    if (p.d >= p.len + ABSORB) {
+      p.el.remove();
+      return false;
+    }
+    placePulse(p);
+    if (p.kind === 'loop' && !p.arrived && !p.part) {
+      flow.loopLabel.classList.toggle('is-active', flow.simLoop || (p.d > p.len * 0.3 && p.d < p.len * 0.7));
+    }
+    return true;
+  });
   flow.raf = requestAnimationFrame(tick);
 };
 
@@ -424,6 +442,9 @@ const resetPulses = (settle = false) => {
   if (!flow.simLoop) flow.loopLabel.classList.remove('is-active');
   if (settle) pending.forEach(arrive);
 };
+
+// Observabilidade "monitorando": brilho respirando ao redor do selo enquanto a simulação espera
+const setMonitoring = (on) => flow.loopLabel.classList.toggle('is-monitoring', on);
 
 // Estado estático para quem prefere menos movimento: todas as etapas concluídas, sem pulso nem anel.
 const applyStatic = () => {
@@ -531,6 +552,13 @@ const addRow = (kind, text = '') => {
   return txt;
 };
 
+// Última linha enquanto a simulação espera em Observabilidade, com o cursor piscando
+const monitorRow = () => {
+  const row = addRow('idle', `> ${t('site.term.monitor')}`);
+  row.parentElement.classList.add('flow-term-idle', 'flow-term-monitor');
+  return row;
+};
+
 // Estado ocioso: uma linha discreta convidando a simular
 const idleTerminal = () => {
   term.body.textContent = '';
@@ -552,30 +580,39 @@ const fillTerminal = () => {
     else { const st = statusLine(); addRow(st.kind, st.text); }
   }
   addRow('final', t('site.sim.final'));
+  monitorRow();
   setStage(t('site.sim.doneLabel'), t('site.stage.done'));
   setProgress(totalRows());
+  setMonitoring(true);
 };
 
-// Pausa da simulação enquanto a seção está fora da tela: as esperas seguram até ela voltar
-const sim = { held: null, release: null, heldAt: 0 };
+// Pausa da simulação enquanto a seção está fora da tela ou a aba oculta: cada espera congela o tempo que
+// falta e continua de onde parou ao voltar (inclusive os ~4s em Observabilidade)
+const sim = { held: false, heldAt: 0, waiters: new Set() };
 const holdSim = (on) => {
   if (on && !sim.held) {
+    sim.held = true;
     sim.heldAt = performance.now();
-    sim.held = new Promise((r) => { sim.release = r; });
+    sim.waiters.forEach((w) => w.pause());
   } else if (!on && sim.held) {
+    sim.held = false;
     const pausedMs = performance.now() - sim.heldAt;
     // o anel retoma de onde parou
     if (flow.sim) { flow.sim.loadedAt += pausedMs; flow.sim.endAt += pausedMs; }
-    sim.release();
-    sim.held = null;
+    sim.waiters.forEach((w) => w.run());
   }
 };
 
 const wait = (ms, token) => new Promise((resolve, reject) => {
-  setTimeout(async () => {
-    while (sim.held && token === term.token) await sim.held;
+  const w = { left: ms, start: 0, timer: 0 };
+  const done = () => {
+    sim.waiters.delete(w);
     if (token === term.token) resolve(); else reject(new Error('cancelado'));
-  }, ms);
+  };
+  w.run = () => { w.start = performance.now(); w.timer = setTimeout(done, w.left); };
+  w.pause = () => { clearTimeout(w.timer); w.left = Math.max(0, w.left - (performance.now() - w.start)); };
+  sim.waiters.add(w);
+  if (!sim.held) w.run();
 });
 
 const CHAR_MS = 13; // digitação
@@ -603,7 +640,7 @@ const spin = async (span, token) => {
 
 // Estimativa da narração de uma etapa (digitação + spinners), para o anel avançar junto com o terminal
 const narrationMs = (st) => st.lines.reduce((n, l) => n + l.length * CHAR_MS * 1.2 + SPIN_MS, 0);
-const LOOP_SIM_MS = 2600; // o laço de Produção a Código acompanha a narração da observabilidade
+const LOOP_SIM_MS = 2600; // laço inteiro (Produção -> Observabilidade -> Código) na simulação
 const HOP_MS = 450; // pulso de uma etapa à seguinte durante a simulação
 
 // O anel da etapa começa a carregar quando o pulso encosta na borda dela
@@ -613,30 +650,34 @@ const simLoad = (i, endAt) => {
   beginLoad(i);
 };
 
-const finishRun = () => {
+// refocus: só depois de um clique no botão (o foco volta para ele); nos ciclos automáticos o foco não é tocado
+const finishRun = (refocus = false) => {
   term.run.disabled = false;
   term.run.removeAttribute('aria-busy');
   term.ran = true;
   term.runText.textContent = t('site.runAgain');
-  if (document.activeElement === document.body) term.run.focus({ preventScroll: true });
+  if (refocus && document.activeElement === document.body) term.run.focus({ preventScroll: true });
 };
 
-// auto: começou sozinha ao chegar na seção; o leitor de tela só ouve o "Publicação concluída" no fim
-const simulate = async (auto = false) => {
-  term.autoDone = true; // a automática roda uma vez por visita, e não depois de um clique
+// mode: 'auto' (primeira, ao chegar na seção: o leitor de tela só ouve o "Publicação concluída" no fim),
+// 'manual' (clique no botão: anuncia as etapas e o fim) ou 'cycle' (recomeço automático: não anuncia nada)
+const simulate = async (mode = 'manual') => {
+  term.autoDone = true; // o início automático acontece uma vez; depois o ciclo segue sozinho
   term.token += 1;
   const token = term.token;
   term.run.setAttribute('aria-busy', 'true');
   term.runText.textContent = t('site.running');
   term.run.disabled = true;
+  setMonitoring(false);
 
   if (isReduced()) {
+    // Sem ciclo: uma execução completa estática, terminando em Observabilidade
     await fetchStatus();
     if (token !== term.token) return;
     fillTerminal();
     applyStatic();
     announce(t('site.sim.final'));
-    finishRun();
+    finishRun(mode === 'manual');
     return;
   }
 
@@ -658,7 +699,7 @@ const simulate = async (auto = false) => {
     for (const s of stages) {
       const isLoop = s.step === 'loop';
       setStage(isLoop ? t('site.loop') : t(`site.step.${s.step}`), s.stage);
-      if (!auto) announce(s.head);
+      if (mode === 'manual') announce(s.head);
       addRow('head', s.head);
       tick();
       // O anel da etapa carrega enquanto o terminal narra e completa no "✓"
@@ -702,8 +743,8 @@ const simulate = async (auto = false) => {
             if (target === term.token) simLoad(next, stageEnd ?? performance.now() + narrationMs(stages[next]));
           });
         } else {
-          // Produção no ar: o pulso segue pelo laço de Observabilidade até a borda de Código
-          incoming = spawnPulse('loop', 0, LOOP_SIM_MS, () => { if (target === term.token) ping(0); });
+          // Produção no ar: o pulso segue pelo laço e para na borda do selo "Observabilidade"
+          incoming = spawnPulse('loop', 0, LOOP_SIM_MS * (flow.loopIn / flow.loopLen), null, [0, flow.loopIn]);
         }
       }
       await wait(220, token);
@@ -713,17 +754,28 @@ const simulate = async (auto = false) => {
     addRow('final', t('site.sim.final'));
     tick();
     setStage(t('site.sim.doneLabel'), t('site.stage.done'));
-    announce(t('site.sim.final'));
+    if (mode !== 'cycle') announce(t('site.sim.final'));
     celebrate();
-    await wait(1600, token);
+
+    // Observabilidade monitorando: o botão já permite simular de novo; a espera segura fora da tela
+    if (incoming && !incoming.arrived) arrive(incoming);
+    monitorRow();
+    setMonitoring(true);
+    finishRun(mode === 'manual');
+    await wait(MONITOR_MS, token);
+
+    // O pulso sai do selo até a borda de Código e uma nova simulação começa sozinha
+    setMonitoring(false);
+    await new Promise((resolve) => {
+      spawnPulse('loop', 0, LOOP_SIM_MS * ((flow.loopLen - flow.loopOut) / flow.loopLen), resolve, [flow.loopOut, flow.loopLen]);
+    });
+    if (token !== term.token) return;
+    ping(0);
   } catch {
-    flow.simLoop = false;
+    if (token === term.token) flow.simLoop = false;
     return; // simulação reiniciada ou interrompida
   }
-  flow.simulating = false;
-  flow.sim = null;
-  restartCycle(0); // as etapas concluídas ficam à mostra um instante e o ciclo contínuo recomeça
-  finishRun();
+  simulate('cycle');
 };
 
 /* ---------- Inicialização do fluxo ---------- */
@@ -779,7 +831,8 @@ const initFlow = () => {
   window.addEventListener('resize', relayout);
   if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(flow.root);
 
-  // Tooltip e pausa sem estado fixo: mouse (enter/leave), teclado (focus/blur) e toque (some sozinho).
+  // Tooltip sem estado fixo: mouse (enter/leave), teclado (focus/blur) e toque (some sozinho).
+  // O fluxo e a simulação NUNCA pausam por causa do tooltip: seguem rodando atrás dele.
   // Clique não seleciona nada: o botão não guarda foco nem classe de "ativo".
   const pausers = [...flow.nodes, flow.loopLabel];
   const TOUCH_TIP_MS = 3000;
@@ -792,8 +845,6 @@ const initFlow = () => {
     if (on) reasons.add(reason); else reasons.delete(reason);
     if (reasons.size) shown.set(el, reasons); else shown.delete(el);
     holderOf(el).classList.toggle('is-tip', reasons.size > 0);
-    flow.paused = shown.size > 0;
-    flow.root.classList.toggle('is-paused', flow.paused);
   };
   const clearTouch = () => {
     clearTimeout(touchTimer);
@@ -842,7 +893,7 @@ const initFlow = () => {
     clearTimeout(autoTimer);
     if (term.autoDone || isReduced() || !sectionReady) return;
     autoTimer = setTimeout(() => {
-      if (!term.autoDone && !isReduced() && sectionReady && flow.visible && !term.run.disabled) simulate(true);
+      if (!term.autoDone && !isReduced() && sectionReady && flow.visible && !term.run.disabled) simulate('auto');
     }, AUTO_QUIET_MS);
   };
   // Rolagem em andamento (inclusive a de quem abre direto em /sobre-o-site) adia o início
@@ -868,6 +919,17 @@ const initFlow = () => {
   }, { threshold: 0.15 });
   io.observe(flow.root);
 
+  // Aba oculta: o loop de rAF do fluxo para e a simulação segura até a aba voltar
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (flow.simulating) holdSim(true);
+      stopLoop();
+    } else if (flow.visible) {
+      holdSim(false);
+      startLoop();
+    }
+  });
+
   term.run.addEventListener('click', () => simulate());
 
   const applyMotionPref = () => {
@@ -875,6 +937,7 @@ const initFlow = () => {
       applyStatic();
       fillTerminal();
     } else {
+      setMonitoring(false);
       clearSteps();
       restartCycle(CYCLE_GAP_MS - 400);
       idleTerminal();

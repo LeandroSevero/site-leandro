@@ -79,7 +79,7 @@ const TOPICS = {
       ],
     },
     contact: {
-      message: 'Ótimo! O Leandro está aberto a novos desafios, oportunidades e colaborações. Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação. Escolha o canal que preferir: 🤝',
+      message: 'Ótimo! O Leandro está aberto a novos desafios, oportunidades e colaborações. Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação. Oportunidades na Europa podem ser tratadas direto pelo WhatsApp. Escolha o canal que preferir: 🤝',
       options: [
         { label: '💼 LinkedIn', next: 'contact', type: 'link', url: 'https://www.linkedin.com/in/leandrosevero' },
         { label: '📧 Enviar e-mail', next: 'contact', type: 'open-contact-modal' },
@@ -178,7 +178,7 @@ const TOPICS = {
       ],
     },
     contact: {
-      message: "Great! Leandro is open to new challenges, opportunities and collaborations. Open to opportunities in Europe: remote at first, open to relocation. Pick your preferred channel: 🤝",
+      message: "Great! Leandro is open to new challenges, opportunities and collaborations. Open to opportunities in Europe: remote at first, open to relocation. Opportunities in Europe can be discussed directly on WhatsApp. Pick your preferred channel: 🤝",
       options: [
         { label: '💼 LinkedIn', next: 'contact', type: 'link', url: 'https://www.linkedin.com/in/leandrosevero' },
         { label: '📧 Send an email', next: 'contact', type: 'open-contact-modal' },
@@ -388,7 +388,7 @@ const addCvDownloadBubble = () => {
     </div>
     <div class="chat-bubble-text">
       ${msgs.text}
-      <a href="/Curriculo-Leandro.pdf" download="Curriculo-Leandro.pdf" class="chat-cv-link">
+      <a href="/Curriculo-Leandro-Severo.pdf" download="Curriculo-Leandro-Severo.pdf" class="chat-cv-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         ${msgs.label}
       </a>
