@@ -63,6 +63,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Animações e Interações
 - Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll
+  - Entrada escalonada (posição % 6 x 60ms) aplicada inline só enquanto o elemento entra (`opacity` e `transform`, 550ms; 500ms no `reveal-scale`) e removida ao terminar. Assim o atraso não fica preso no card e não atrasa o hover (antes, o 6º card de cada grupo, como Kubernetes, destacava 300ms depois dos outros)
 - Saída suave com movimento inverso coerente por tipo: `translateY` inverte direção, `translateX` inverte eixo, `scale` retrai levemente
 - Ao sair pela borda inferior, o elemento volta ao estado inicial (deslocado para baixo) em vez de usar a animação de saída, que o subiria de volta para a tela e criaria um loop entra/sai (elemento "tremendo" quando parado na borda)
 - Animação de typewriter no badge do hero
@@ -73,6 +74,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - **Desktop:** grid de cards com painel lateral de descrição localizada; o card é selecionado ao passar o mouse ou pelo teclado (Tab + Enter/Espaço, com `role="button"` e `aria-pressed`)
   - Um único card destacado por vez: o destaque visual (borda, fundo, elevação, ícone, nome e sombra `::after`) vem só da classe `.active`, trocada de forma síncrona no `mouseenter` (ou Enter/Espaço); o `:hover` não destaca. O card que perde o destaque apaga na hora (sem transição na saída) e só o que ganha tem entrada de 120ms. O foco por teclado mostra apenas o contorno de foco, sem pintar a borda
   - Painel de descrição (`setDescPanel` em `main.js`): troca o texto com fade de 260ms (mesmo comportamento da produção)
+  - Todos os cards destacam no mesmo tempo (~120ms): o atraso escalonado da animação de entrada vale só durante a entrada (ver o scroll reveal em Animações)
 - **Mobile:** carrossel com navegação por botões, dots indicadores e auto-play (4,5s)
 - Cores e ícones individuais por tecnologia (`color` em `SKILL_DATA`); no tema claro, o nome da tecnologia usa um tom mais escuro da mesma cor (`textLight`) e, no escuro, Azure/Azure DevOps/AD, Microsoft 365 e Kubernetes usam um tom mais claro (`textDark`), para atingir 4.5:1 — ícone, borda e destaque seguem com a cor da marca
 - Descrições traduzidas para pt-BR e en

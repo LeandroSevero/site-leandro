@@ -732,19 +732,34 @@ const initScrollReveal = () => {
     { sel: '.card', cls: 'reveal' },
   ];
 
+  // O atraso escalonado (posição % 6 x 60ms) vale SÓ para a animação de entrada. Antes ele ficava fixo no
+  // style do elemento e atrasava também o hover (ex.: o 6º card das Tecnologias, Kubernetes, demorava
+  // 300ms a mais para destacar). Agora a transição de entrada é aplicada inline durante a entrada e
+  // removida ao terminar, devolvendo ao CSS as transições de hover, sem atraso.
+  const REVEAL_MS = { reveal: 550, 'reveal-left': 550, 'reveal-right': 550, 'reveal-scale': 500 };
   selectors.forEach(({ sel, cls }) => {
     document.querySelectorAll(sel).forEach((el, i) => {
       el.classList.add(cls);
-      el.style.transitionDelay = `${(i % 6) * 60}ms`;
+      el.dataset.revealDelay = String((i % 6) * 60);
+      el.dataset.revealMs = String(REVEAL_MS[cls]);
     });
   });
+
+  const runReveal = (el, delay) => {
+    const ms = Number(el.dataset.revealMs) || 550;
+    clearTimeout(el._revealTimer);
+    el.style.transition = `opacity ${ms}ms ease ${delay}ms, transform ${ms}ms ease ${delay}ms`;
+    el._revealTimer = setTimeout(() => { el.style.transition = ''; }, delay + ms + 50);
+  };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
+        runReveal(entry.target, Number(entry.target.dataset.revealDelay) || 0);
         entry.target.classList.add('visible');
         entry.target.classList.remove('reveal-exit');
       } else {
+        runReveal(entry.target, 0);
         entry.target.classList.remove('visible');
         // Saindo por baixo, volta ao estado inicial (deslocado para baixo, para fora da tela).
         // Usar reveal-exit aqui subiria o elemento de volta para a área visível e criaria
