@@ -39,7 +39,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Alternância entre modo claro e escuro com um clique
 - Preferência persistida no `localStorage`
 - Troca automática de logo e avatar do chat conforme o tema (a foto do hero é a mesma nos dois temas)
-- Efeito **Liquid Glass** (somente CSS) nos dois temas: superfícies translúcidas com `backdrop-filter: blur() saturate()`, brilho especular no topo (`inset box-shadow`) e reflexo em gradiente. Aplicado em header, menu mobile, rodapé, botões (LinkedIn, Instagram, Contato, idioma, menu, tema). Os botões "Explorar portfólio" e "Voltar ao topo" ficam sem vidro e têm o mesmo visual: seta + rótulo em caixa alta, cor suave e animação de quique, cards (Sobre, Tecnologias, Certificações, Experiência, Contato), modal de contato e chat flutuante
+- Efeito **Liquid Glass** (somente CSS) nos dois temas: superfícies translúcidas, brilho especular no topo (`inset box-shadow`) e reflexo em gradiente. Com desfoque do fundo (`backdrop-filter: blur() saturate()`): header, menu mobile, rodapé, botões (LinkedIn, Instagram, Contato, idioma, menu, tema), seletores, modal de contato e chat flutuante. Os cards de conteúdo (Quem sou eu, Tecnologias, Certificações, Experiência, Contato e o fluxo, o painel e os pilares do "Sobre o site") usam o mesmo vidro **sem** `backdrop-filter` (fundo translúcido + gradiente + brilho na borda superior), o que evita manchas de sombra na GPU ao passar o mouse. Os botões "Explorar portfólio" e "Voltar ao topo" ficam sem vidro e têm o mesmo visual: seta + rótulo em caixa alta, cor suave e animação de quique
 - No tema claro, o fundo ganhou manchas suaves em gradiente radial para o vidro ter o que refratar
 
 ### Internacionalização (i18n)
@@ -324,7 +324,7 @@ Tokens definidos no bloco "Liquid Glass" no fim do `style.css`. As regras usam o
 
 | Token CSS | Modo Claro | Modo Escuro | Uso |
 |---|---|---|---|
-| `--glass-blur` | `blur(16px) saturate(170%)` | `blur(18px) saturate(160%)` | `backdrop-filter` de todas as superfícies de vidro |
+| `--glass-blur` | `blur(16px) saturate(170%)` | `blur(18px) saturate(160%)` | `backdrop-filter` das barras, botões, seletores, modal e chat (os cards de conteúdo não usam desfoque) |
 | `--glass-bg` | `rgba(255,255,255,0.55)` | `rgba(255,255,255,0.055)` | Fundo de cards, botões secundários e controles |
 | `--glass-bg-hover` | `rgba(255,255,255,0.7)` | `rgba(255,255,255,0.085)` | Fundo no hover |
 | `--glass-bg-strong` | `rgba(255,255,255,0.82)` | `rgba(8,12,26,0.74)` | Modal de contato e painel do chat (mais opaco para leitura) |
@@ -334,10 +334,12 @@ Tokens definidos no bloco "Liquid Glass" no fim do `style.css`. As regras usam o
 | `--glass-border-control` | `rgba(26,95,168,0.18)` | `rgba(255,255,255,0.13)` | Borda de botões pequenos e campos do formulário (no claro, a borda branca sumiria sobre o fundo) |
 | `--glass-sheen` | gradiente branco 55% → 0 | gradiente branco 9% → 0 | Reflexo diagonal (`background-image`) |
 | `--glass-highlight` | `inset` branco 90% | `inset` branco 12% | Brilho especular na borda superior |
-| `--glass-shadow` / `--glass-shadow-hover` | sombra azulada suave | sombra preta + brilho teal | Profundidade em repouso / hover |
-| `--glass-shadow-hover-tight` | `0 6px 16px -6px` azulada | `0 6px 16px -6px` preta + brilho teal | Hover dos cards Sobre, certificações (destaque e carrossel), Experiência e contato: cabe no espaço entre cards (12-32px) e não escurece os vizinhos de vidro |
+| `--glass-shadow` / `--glass-shadow-hover` | sombra azulada suave | sombra preta + brilho teal | Profundidade em repouso (o box-shadow dos cards não muda no hover) / `--glass-shadow-hover` ficou sem uso nos cards |
+| `--glass-shadow-hover-tight` | `0 6px 16px -6px` azulada | `0 6px 16px -6px` preta + brilho teal | Sombra de hover dos cards (Sobre, certificações, Experiência, contato e pilares), num `::after` que só muda de `opacity`: cabe no espaço entre cards (12-32px). Nas Tecnologias (8px entre cards) a sombra do `::after` é menor (~5px nas laterais) e também aparece no card selecionado |
 | `--glass-solid` | `#f7fafd` | `#0b1020` | Fundo sólido usado nos fallbacks |
 | `--glass-bg-tinted` | `rgba(255,255,255,0.55)` | `rgba(4,6,15,0.45)` | Fundo dos cards de certificação em destaque (no escuro, mais denso para o texto suave passar de 4.5:1) |
+
+**Hover dos cards sem artefatos de GPU:** antes, a sombra de hover era animada no `box-shadow` (com `transition: all`) e os cards vizinhos tinham `backdrop-filter`, que reamostrava a sombra e o movimento do card a cada quadro e deixava manchas em outros cards (Experiência, "Quem sou eu") e uma "coluna" de sombra nas Tecnologias. Agora os cards de conteúdo não têm `backdrop-filter`, a transição é só de `border-color`, `background-color` e `transform`, e a sombra de hover fica num `::after` (`position: absolute; inset: -1px; border-radius: inherit; pointer-events: none`) com transição só de `opacity`. Com `prefers-reduced-motion`, o `::after` aparece sem transição.
 
 Os botões com cor primária (LinkedIn, baixar currículo, botão do chat) mantêm a cor sólida e recebem um gradiente de brilho com `inset box-shadow`, sem perder contraste do texto.
 

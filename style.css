@@ -660,8 +660,6 @@ main {
 
 [data-theme="dark"] .card {
   background: var(--color-glass2);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
   border-color: var(--color-border);
 }
 
@@ -734,8 +732,6 @@ main {
 
 [data-theme="dark"] .skill-card {
   background: var(--color-glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
 }
 
 .skill-card:hover,
@@ -840,8 +836,6 @@ main {
 
 [data-theme="dark"] .skills-carousel-slide {
   background: var(--color-glass2);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
 }
 
 .skills-carousel-slide .skill-icon {
@@ -926,8 +920,6 @@ main {
 
 [data-theme="dark"] .skills-carousel-desc {
   background: var(--color-glass2);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
 }
 
 .skills-carousel-desc-header {
@@ -1028,8 +1020,6 @@ main {
 
 [data-theme="dark"] .cert-featured {
   background: linear-gradient(135deg, rgba(79, 209, 197, 0.08) 0%, rgba(79, 209, 197, 0.02) 100%);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
   border-color: rgba(79, 209, 197, 0.35);
 }
 
@@ -1126,8 +1116,6 @@ main {
 
 [data-theme="dark"] .cert-item {
   background: var(--color-glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
 }
 
 .cert-item:hover {
@@ -1275,8 +1263,6 @@ main {
 
 [data-theme="dark"] .timeline-card {
   background: var(--color-glass2);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
 }
 
 .timeline-card:hover {
@@ -1389,8 +1375,6 @@ main {
 
 [data-theme="dark"] .contact-card {
   background: var(--color-glass2);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
 }
 
 .contact-card:hover {
@@ -3281,10 +3265,20 @@ main {
 [data-theme] .contact-card {
   background-color: var(--glass-bg);
   background-image: var(--glass-sheen);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border-color: var(--glass-border);
   box-shadow: var(--glass-highlight), var(--glass-shadow);
+}
+
+/* Desfoque do fundo só nos controles (botões e seletores). Os cards de conteúdo ficaram sem
+   backdrop-filter: com a GPU, cards vizinhos com desfoque reamostravam a sombra e o movimento
+   do card em hover a cada quadro e mostravam manchas. O vidro dos cards vem do fundo translúcido,
+   do gradiente (--glass-sheen) e do brilho na borda superior (--glass-highlight). */
+[data-theme] .btn-secondary,
+[data-theme] .lang-toggle,
+[data-theme] .menu-toggle,
+[data-theme] .skills-carousel-btn {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 /* Controles pequenos: sombra externa mais discreta */
@@ -3302,8 +3296,6 @@ main {
   background-image:
     var(--glass-sheen),
     linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.1) 0%, rgba(var(--color-primary-rgb), 0.02) 100%);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border-color: rgba(var(--color-primary-rgb), 0.35);
   box-shadow: var(--glass-highlight), var(--glass-shadow);
 }
@@ -3320,22 +3312,60 @@ main {
   border-color: var(--glass-border-hover);
 }
 
-[data-theme] .card:hover,
-[data-theme] .cert-item:hover,
-[data-theme] .cert-featured:hover,
-[data-theme] .timeline-card:hover,
-[data-theme] .contact-card:hover {
-  box-shadow: var(--glass-highlight), var(--glass-shadow-hover);
+/* Sombra de hover num ::after, com transição só de opacity (o box-shadow não é mais animado).
+   No hover o box-shadow do card continua igual ao de repouso (anula as sombras de hover antigas). */
+[data-theme] .card,
+[data-theme] .skill-card,
+[data-theme] .cert-item,
+[data-theme] .cert-featured,
+[data-theme] .timeline-card,
+[data-theme] .contact-card {
+  position: relative;
+  transition: border-color var(--transition), background-color var(--transition), transform var(--transition);
 }
 
-/* Sobre, certificações (destaque e carrossel), experiência e contato ficam a 12-32px uns dos outros:
-   a sombra grande invadia os vizinhos (que são de vidro e escureciam). Usa a sombra compacta. */
+[data-theme] .card::after,
+[data-theme] .skill-card::after,
+[data-theme] .cert-item::after,
+[data-theme] .cert-featured::after,
+[data-theme] .timeline-card::after,
+[data-theme] .contact-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  /* compacta: cabe no espaço entre cards (~10px nas laterais, 16px abaixo, 4px acima) */
+  box-shadow: var(--glass-shadow-hover-tight);
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+/* Tecnologias: os cards ficam a 8px uns dos outros; sombra menor (~5px nas laterais) */
+[data-theme] .skill-card::after {
+  box-shadow: 0 5px 12px -7px rgba(26, 95, 168, 0.3);
+}
+
+[data-theme="dark"] .skill-card::after {
+  box-shadow: 0 5px 12px -7px rgba(0, 0, 0, 0.7), 0 0 10px -6px rgba(79, 209, 197, 0.22);
+}
+
 [data-theme] .card:hover,
+[data-theme] .cert-item:hover,
 [data-theme] .cert-featured:hover,
 [data-theme] .timeline-card:hover,
-[data-theme] .cert-item:hover,
 [data-theme] .contact-card:hover {
-  box-shadow: var(--glass-highlight), var(--glass-shadow-hover-tight);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+}
+
+[data-theme] .card:hover::after,
+[data-theme] .skill-card:hover::after,
+[data-theme] .skill-card.active::after,
+[data-theme] .cert-item:hover::after,
+[data-theme] .cert-featured:hover::after,
+[data-theme] .timeline-card:hover::after,
+[data-theme] .contact-card:hover::after {
+  opacity: 1;
 }
 
 [data-theme] .cert-featured:hover {
@@ -3350,7 +3380,7 @@ main {
 [data-theme] .skill-card.active {
   background-color: var(--skill-bg, var(--glass-bg-hover));
   border-color: var(--skill-color, var(--color-primary));
-  box-shadow: var(--glass-highlight), var(--glass-shadow-hover);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
 }
 
 /* "Voltar ao topo" com o mesmo visual do "Explorar portfólio":
@@ -3674,8 +3704,6 @@ main {
   border-radius: var(--radius-lg);
   background-color: var(--glass-bg);
   background-image: var(--glass-sheen);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: var(--glass-highlight), var(--glass-shadow);
 }
 
@@ -4301,8 +4329,6 @@ main {
   border-radius: var(--radius-lg);
   background-color: var(--glass-bg);
   background-image: var(--glass-sheen);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: var(--glass-highlight), var(--glass-shadow);
 }
 
@@ -4497,7 +4523,13 @@ main {
   .pillar,
   .pillar-icon svg,
   .flow-run,
-  .flow-progress-bar {
+  .flow-progress-bar,
+  [data-theme] .card::after,
+  [data-theme] .skill-card::after,
+  [data-theme] .cert-item::after,
+  [data-theme] .cert-featured::after,
+  [data-theme] .timeline-card::after,
+  [data-theme] .contact-card::after {
     transition: none;
   }
 
