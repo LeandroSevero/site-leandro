@@ -79,7 +79,7 @@ const TOPICS = {
       ],
     },
     contact: {
-      message: 'Ótimo! O Leandro está aberto a novos desafios, oportunidades e colaborações. Escolha o canal que preferir: 🤝',
+      message: 'Ótimo! O Leandro está aberto a novos desafios, oportunidades e colaborações. Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação. Escolha o canal que preferir: 🤝',
       options: [
         { label: '💼 LinkedIn', next: 'contact', type: 'link', url: 'https://www.linkedin.com/in/leandrosevero' },
         { label: '📧 Enviar e-mail', next: 'contact', type: 'open-contact-modal' },
@@ -178,7 +178,7 @@ const TOPICS = {
       ],
     },
     contact: {
-      message: "Great! Leandro is open to new challenges, opportunities and collaborations. Pick your preferred channel: 🤝",
+      message: "Great! Leandro is open to new challenges, opportunities and collaborations. Open to opportunities in Europe: remote at first, open to relocation. Pick your preferred channel: 🤝",
       options: [
         { label: '💼 LinkedIn', next: 'contact', type: 'link', url: 'https://www.linkedin.com/in/leandrosevero' },
         { label: '📧 Send an email', next: 'contact', type: 'open-contact-modal' },

@@ -723,8 +723,8 @@ const initAccordion = () => {
 const initScrollReveal = () => {
   const selectors = [
     { sel: '.section-header', cls: 'reveal' },
-    { sel: '.about-text', cls: 'reveal-left' },
-    { sel: '.about-cards', cls: 'reveal-right' },
+    { sel: '.about-text', cls: 'reveal' },
+    { sel: '.about-cards', cls: 'reveal' },
     { sel: '.skill-card', cls: 'reveal-scale' },
     { sel: '.cert-featured', cls: 'reveal' },
     { sel: '.timeline-item', cls: 'reveal' },
@@ -732,19 +732,34 @@ const initScrollReveal = () => {
     { sel: '.card', cls: 'reveal' },
   ];
 
+  // O atraso escalonado (posição % 6 x 60ms) vale SÓ para a animação de entrada. Antes ele ficava fixo no
+  // style do elemento e atrasava também o hover (ex.: o 6º card das Tecnologias, Kubernetes, demorava
+  // 300ms a mais para destacar). Agora a transição de entrada é aplicada inline durante a entrada e
+  // removida ao terminar, devolvendo ao CSS as transições de hover, sem atraso.
+  const REVEAL_MS = { reveal: 550, 'reveal-left': 550, 'reveal-right': 550, 'reveal-scale': 500 };
   selectors.forEach(({ sel, cls }) => {
     document.querySelectorAll(sel).forEach((el, i) => {
       el.classList.add(cls);
-      el.style.transitionDelay = `${(i % 6) * 60}ms`;
+      el.dataset.revealDelay = String((i % 6) * 60);
+      el.dataset.revealMs = String(REVEAL_MS[cls]);
     });
   });
 
-  const observer = new IntersectionObserver((entries) => {
+  const runReveal = (el, delay) => {
+    const ms = Number(el.dataset.revealMs) || 550;
+    clearTimeout(el._revealTimer);
+    el.style.transition = `opacity ${ms}ms ease ${delay}ms, transform ${ms}ms ease ${delay}ms`;
+    el._revealTimer = setTimeout(() => { el.style.transition = ''; }, delay + ms + 50);
+  };
+
+  const onReveal = (entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
+        runReveal(entry.target, Number(entry.target.dataset.revealDelay) || 0);
         entry.target.classList.add('visible');
         entry.target.classList.remove('reveal-exit');
       } else {
+        runReveal(entry.target, 0);
         entry.target.classList.remove('visible');
         // Saindo por baixo, volta ao estado inicial (deslocado para baixo, para fora da tela).
         // Usar reveal-exit aqui subiria o elemento de volta para a área visível e criaria
@@ -753,10 +768,13 @@ const initScrollReveal = () => {
         entry.target.classList.toggle('reveal-exit', !exitedBelow);
       }
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  };
+  const observer = new IntersectionObserver(onReveal, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  // "Quem sou eu" fica logo abaixo da dobra: título e cards começam a entrar assim que tocam a tela
+  const firstFold = new IntersectionObserver(onReveal, { threshold: 0 });
 
   document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
-    observer.observe(el);
+    (el.closest('#sobre') ? firstFold : observer).observe(el);
   });
 };
 

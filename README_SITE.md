@@ -39,7 +39,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Alternância entre modo claro e escuro com um clique
 - Preferência persistida no `localStorage`
 - Troca automática de logo e avatar do chat conforme o tema (a foto do hero é a mesma nos dois temas)
-- Efeito **Liquid Glass** (somente CSS) nos dois temas: superfícies translúcidas com `backdrop-filter: blur() saturate()`, brilho especular no topo (`inset box-shadow`) e reflexo em gradiente. Aplicado em header, menu mobile, rodapé, botões (LinkedIn, Instagram, Contato, idioma, menu, tema). Os botões "Explorar portfólio" e "Voltar ao topo" ficam sem vidro e têm o mesmo visual: seta + rótulo em caixa alta, cor suave e animação de quique, cards (Sobre, Tecnologias, Certificações, Experiência, Contato), modal de contato e chat flutuante
+- Efeito **Liquid Glass** (somente CSS) nos dois temas: superfícies translúcidas, brilho especular no topo (`inset box-shadow`) e reflexo em gradiente. Com desfoque do fundo (`backdrop-filter: blur() saturate()`): header, menu mobile, rodapé, botões (LinkedIn, Instagram, Contato, idioma, menu, tema), seletores, modal de contato e chat flutuante. Os cards de conteúdo (Quem sou eu, Tecnologias, Certificações, Experiência, Contato e o fluxo, o painel e os pilares do "Sobre o site") usam o mesmo vidro **sem** `backdrop-filter` (fundo translúcido + gradiente + brilho na borda superior), o que evita manchas de sombra na GPU ao passar o mouse. Os botões "Explorar portfólio" e "Voltar ao topo" ficam sem vidro e têm o mesmo visual: seta + rótulo em caixa alta, cor suave e animação de quique
 - No tema claro, o fundo ganhou manchas suaves em gradiente radial para o vidro ter o que refratar
 
 ### Internacionalização (i18n)
@@ -57,12 +57,15 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ### Navegação e Scroll
 - Scroll suave para seções com atualização da URL (History API)
 - Header com sombra progressiva ao rolar a página
+- Topo na dobra: o hero ocupa exatamente a tela visível abaixo do cabeçalho fixo (`min-height: calc(100svh - 4rem)`, com `100vh` de reserva), com o conteúdo centralizado e o "Explorar portfólio" perto da base. Sem rolar, o "01. Quem sou eu" fica fora da tela em 1440x900, 1920x1080, 768x1024 e 390x844; "Quem sou eu" começa logo abaixo da dobra (1.5rem de respiro), então qualquer rolagem já traz o "01." (com ~100px ele aparece inteiro). `svh` usa a menor altura da tela no celular, sem pular quando a barra do navegador some. No celular a foto fica com `min(20rem, 34svh)` de altura (proporção 4:5) e os vãos do topo são menores para tudo caber na tela visível. O "Explorar portfólio" continua levando até "Quem sou eu"
+- Vão entre o botão "Baixe o currículo do Leandro" e o "05." reduzido em ~43% (de 240px para 136px): só o fim da Trajetória (`#experiencia`, 1.5rem) e o início de "Sobre o site" (5rem) mudam; as demais seções seguem com o padding padrão
 - Deep linking por âncora (`#sobre`, `#skills`, etc.)
 - Botão "voltar ao topo"
 - Menu mobile com hambúrguer, fechamento ao clicar fora ou em link
 
 ### Animações e Interações
-- Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll
+- Scroll reveal bidirecional com `IntersectionObserver` (fade, slide, scale) — elementos animam ao entrar e ao sair da viewport, e reaplicam a animação a cada passagem pelo scroll. Em "Quem sou eu" o título, o texto e os cards entram com fade e leve subida assim que tocam a tela (observador próprio, sem margem); com `prefers-reduced-motion` nenhum elemento anima a entrada, só fica no lugar
+  - Entrada escalonada (posição % 6 x 60ms) aplicada inline só enquanto o elemento entra (`opacity` e `transform`, 550ms; 500ms no `reveal-scale`) e removida ao terminar. Assim o atraso não fica preso no card e não atrasa o hover (antes, o 6º card de cada grupo, como Kubernetes, destacava 300ms depois dos outros)
 - Saída suave com movimento inverso coerente por tipo: `translateY` inverte direção, `translateX` inverte eixo, `scale` retrai levemente
 - Ao sair pela borda inferior, o elemento volta ao estado inicial (deslocado para baixo) em vez de usar a animação de saída, que o subiria de volta para a tela e criaria um loop entra/sai (elemento "tremendo" quando parado na borda)
 - Animação de typewriter no badge do hero
@@ -71,6 +74,9 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Seção de Skills
 - **Desktop:** grid de cards com painel lateral de descrição localizada; o card é selecionado ao passar o mouse ou pelo teclado (Tab + Enter/Espaço, com `role="button"` e `aria-pressed`)
+  - Um único card destacado por vez: o destaque visual (borda, fundo, elevação, ícone, nome e sombra `::after`) vem só da classe `.active`, trocada de forma síncrona no `mouseenter` (ou Enter/Espaço); o `:hover` não destaca. O card que perde o destaque apaga na hora (sem transição na saída) e só o que ganha tem entrada de 120ms. O foco por teclado mostra apenas o contorno de foco, sem pintar a borda
+  - Painel de descrição (`setDescPanel` em `main.js`): troca o texto com fade de 260ms (mesmo comportamento da produção)
+  - Todos os cards destacam no mesmo tempo (~120ms): o atraso escalonado da animação de entrada vale só durante a entrada (ver o scroll reveal em Animações)
 - **Mobile:** carrossel com navegação por botões, dots indicadores e auto-play (4,5s)
 - Cores e ícones individuais por tecnologia (`color` em `SKILL_DATA`); no tema claro, o nome da tecnologia usa um tom mais escuro da mesma cor (`textLight`) e, no escuro, Azure/Azure DevOps/AD, Microsoft 365 e Kubernetes usam um tom mais claro (`textDark`), para atingir 4.5:1 — ícone, borda e destaque seguem com a cor da marca
 - Descrições traduzidas para pt-BR e en
@@ -93,21 +99,29 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ### Seção "Sobre o site" (05.)
 - Item "Sobre o site" / "About this site" no menu (desktop e mobile) e rota `/sobre-o-site`. Título "Por trás deste site" / "Behind this site" e subtítulo "Um site pessoal operado como um produto em produção."
 - **Tom proposital:** os textos dizem o que existe (entrega contínua, ambientes isolados, monitoramento contínuo, alertas automáticos, segurança em camadas), nunca como. Nenhum nome de ferramenta ou fornecedor, branch, agendamento ou endpoint aparece na seção, nos tooltips, na descrição do SVG ou no rodapé (pt e en)
-- **Fluxo animado:** 5 etapas (Código > Validação > Homologação > Aprovação > Produção) como `<button>` reais sobre uma trilha SVG inline. No desktop cada etapa tem 64px, um ícone SVG simples (código, escudo, frasco, carimbo, foguete) e uma linha secundária curta (versionado, verificado, testado, aprovado, no ar); no celular ficam com 56px, sem a linha secundária. O card do fluxo centraliza o conteúdo na vertical, mais o laço "Observabilidade" voltando de Produção para Código (abaixo das etapas no desktop; na vertical, à esquerda, abaixo de 768px). A trilha é recalculada a partir da posição das etapas (resize e `ResizeObserver`)
-  - Pulsos de luz (gradiente radial na cor primária) percorrem uma trilha de 3px via `requestAnimationFrame` + `getPointAtLength`, deixando um rastro luminoso que se dissipa (círculos com opacidade decrescente). Cada etapa ativa ganha brilho e um anel que se expande, e recebe um selo de check; ao chegar em Produção, o pulso percorre o laço de volta até Código (acendendo o selo "Observabilidade") e fecha o ciclo antes do próximo. JS/CSS puro, sem bibliotecas
-  - Hover ou foco numa etapa pausa o fluxo e mostra um tooltip genérico (`role="tooltip"` + `aria-describedby`); Esc tira o foco
-  - `IntersectionObserver`: só anima com a seção visível
+- **Fluxo animado:** 5 etapas (Código > Validação > Homologação > Aprovação > Produção) como `<button>` reais sobre uma trilha SVG inline. No desktop cada etapa tem 64px, um ícone SVG simples (código, escudo, frasco, carimbo, foguete) e uma linha secundária curta (versionado, verificado, testado, aprovado, no ar); no celular ficam com 56px e 2rem entre elas, sem a linha secundária (só o "no ar" de Produção aparece quando ela conclui). O card do fluxo centraliza o conteúdo na vertical, mais o laço "Observabilidade" voltando de Produção para Código (abaixo das etapas no desktop; na vertical, à esquerda, abaixo de 768px). A trilha é recalculada a partir da posição das etapas (resize e `ResizeObserver`)
+  - **Borda a borda:** a trilha de 3px é feita de segmentos que vão da borda de uma etapa à borda da seguinte, e nada da trilha ou do pulso passa por dentro dos círculos (o fundo das etapas é opaco também quando acesas). O pulso de luz (gradiente radial na cor primária, com rastro que se dissipa) percorre o segmento via `requestAnimationFrame`, para ao encostar na borda e o rastro se recolhe nela
+  - **Anel de carregamento:** ao receber o pulso, a etapa mostra um anel SVG (`.flow-ring`, `pathLength` 100 e `stroke-dashoffset` controlado pelo JS) que preenche a borda em ~700ms com brilho da cor primária, começando pelo lado de entrada (esquerda no desktop, em cima no celular). Ao completar aparece o check e um novo pulso sai pela borda oposta rumo à próxima etapa
+  - Em Produção o anel completa, a etapa mostra "no ar" e o pulso segue pelo laço de Observabilidade (sai pela direita de Produção no desktop, por baixo no celular, passa pelo selo e entra pela borda de Código, à esquerda no desktop e por cima no celular), com um toque de luz em Código fechando o ciclo. As etapas concluídas ficam à mostra por ~1s e o ciclo recomeça. Trechos curtos (celular) têm duração mínima de ~0,4s para o pulso ser visto. JS/CSS puro, sem bibliotecas
+  - Tooltip genérico (`role="tooltip"` + `aria-describedby`) sem estado fixo, controlado por JS (classe `.is-tip`): no mouse aparece no `mouseenter` e some no `mouseleave`; no teclado aparece no `focus` e some no `blur` (Esc fecha); no toque um toque mostra e ele some ao tocar fora, ao rolar a página ou depois de ~3s. Enquanto um tooltip está aberto o fluxo pausa e volta a rodar quando ele fecha. Clique ou toque não deixa o botão focado nem guarda estado "ativo/selecionado". O texto do balão é centralizado em todas as etapas; em telas médias (até 1199px) o balão de Código e o de Produção encostam na borda da etapa para não sair do quadro, e no celular todos ficam alinhados à esquerda, ao lado da etapa
+  - Pilares: a elevação e o ícone animado só reagem ao hover em dispositivos com mouse (`@media (hover: hover)`); no toque o card volta ao estado normal
+  - `IntersectionObserver`: só anima com a seção visível; se a seção sai da tela no meio de uma simulação, ela pausa (as esperas do terminal e o anel seguram) e continua de onde parou ao voltar
   - SVG com `role="img"`, `<title>` e `<desc>` traduzidos
-- **Simular deploy:** botão que roda uma execução guiada: as etapas acendem uma a uma, sincronizadas com um mini terminal (`role="log"`, `aria-live="polite"`) que digita "iniciando entrega vX.Y.Z", "validação ... ok", "homologação ... ok", "aprovação ... ok", "produção ... no ar" e "monitoramento ativo" (versão do `package.json`). Ao terminar, Produção ganha um destaque rápido (brilho e escala sutil) e o status do painel pisca uma vez em verde. Depois vira "Simular de novo"; em repouso o terminal mostra "pronto para simular uma entrega"
+- **Simular publicação** ("Simulate release"): execução guiada de 12 a 15s com terminal narrado. Cada etapa mostra um cabeçalho "[n/5] Etapa" (cor primária), 2 ou 3 linhas digitadas explicando o que acontece (com spinner na linha em execução) e uma linha "✓" em verde; a observabilidade fecha com "[∞] Observabilidade" e uma linha com o status real de `/api/status` e o tempo de resposta medido no navegador (ou "status indisponível no momento", sem quebrar), atualizando também o painel ao vivo. Textos genéricos, sem nomes de ferramentas, com a versão do `package.json`
+  - **Início automático:** quando ~40% da seção "Por trás deste site" está na tela (ou 40% da altura da tela, se a seção for maior que ela), a simulação começa sozinha como se o botão tivesse sido clicado, depois que a rolagem para (~350ms sem rolar, o que cobre também quem abre direto em `/sobre-o-site`). Roda uma vez por carregamento da página: rolar para fora e voltar não reinicia, e um clique antes disso cancela o automático. O "Simular de novo" continua disponível. Durante a simulação o fluxo contínuo fica parado (um pulso por vez) e volta ao terminar. Com menos movimento não há início automático: o terminal já aparece preenchido e as etapas concluídas
+  - Sincronia visual: no "✓" de uma etapa o anel completa, aparece o check e um pulso sai pela borda rumo à próxima (chega em ~0,45s, no desktop ou no celular); o anel da próxima carrega enquanto o terminal narra aquela etapa (progresso estimado pela digitação, parando em 95%) e só completa no "✓" dela. No "✓" de Produção o pulso percorre o laço até Código em ~2,6s, e o selo "Observabilidade" fica aceso durante a narração da observabilidade. Se o fluxo estiver pausado por um tooltip, a chegada do pulso é entregue no "✓" para a narração nunca travar. No topo do terminal ficam uma barra de progresso fina (0 a 100%) e uma linha de destaque com a etapa atual e uma frase curta (ex.: "Validação: a nova versão é construída e verificada antes de seguir")
+  - Final: "Publicação concluída · 5 etapas · 0 falhas", destaque rápido em Produção e uma piscada verde no status do painel. O botão vira "Simulando..." (desabilitado) e depois "Simular de novo"
+  - O terminal tem altura fixa e rola sozinho para a última linha, sem rolar a página; é focável por teclado para leitura
+  - Acessibilidade: o terminal não é região viva; uma região `aria-live="polite"` separada (oculta visualmente) anuncia só os cabeçalhos das etapas e o resultado final, não cada caractere; na simulação automática anuncia apenas "Publicação concluída" no fim. Em repouso o terminal mostra "pronto para simular uma publicação"
 - **Painel ao vivo (somente dados reais):** status de `/api/status` (verde pulsando "Todos os sistemas operando", âmbar "Instabilidade detectada", cinza "Status indisponível" se a chamada falhar, sem quebrar a página), tempo de resposta medido no navegador com `performance.now()` ("respondeu em 182 ms", com contagem animada), versão e data da última atualização (data do deploy). Atualiza a cada 5 min. Sem uptime nem métricas inventadas
 - **5 pilares** (cards com leve elevação e ícone animado no hover, sem logos): Entrega contínua, Ambientes isolados, Observabilidade 24/7, Segurança em camadas e Acessível e rápido
-- **`prefers-reduced-motion`:** fluxo estático com todas as etapas concluídas, terminal já preenchido, sem pulsos, rastro, anel, destaque final, piscada do status, contagem, cursor piscando ou elevação
+- **`prefers-reduced-motion`:** fluxo estático com todas as etapas concluídas, terminal já preenchido de uma vez (sem digitação nem spinner, barra em 100%, status real na linha da observabilidade), sem pulsos, rastro, anel de carregamento, destaque final, piscada do status, contagem, cursor piscando ou elevação
 - **Acessibilidade:** contraste AA medido nos dois temas, foco visível, alvos de toque de 44px e sem rolagem lateral em 390px
 - Implementação: `site-meta.js` (fluxo, simulação, painel e rodapé), estilos no bloco "Seção Sobre o site" do `style.css`, traduções em `i18n.js` (chaves `site.*`, incluindo `site.sub.*` das linhas secundárias, `nav.site` e `footer.updated`)
 
 ### Rodapé: versão e data da atualização
-- Linha "v2.3.0 · Atualizado em DD/MM/AAAA" ("Updated on MM/DD/YYYY" em inglês), sem commit e sem link externo
-- Versão lida do `package.json`; a data é gravada no build da plataforma de deploy (variável `VERCEL` presente), injetada pelo Vite (`define` no `vite.config.js`: `__APP_VERSION__` e `__BUILD_DATE__`). Em build local mostra "v2.3.0 · dev"
+- Linha "vX.Y.Z · Atualizado em DD/MM/AAAA" (ex.: "v2.3.1 · Atualizado em ...") ("Updated on MM/DD/YYYY" em inglês), sem commit e sem link externo
+- Versão lida do `package.json`; a data é gravada no build da plataforma de deploy (variável `VERCEL` presente), injetada pelo Vite (`define` no `vite.config.js`: `__APP_VERSION__` e `__BUILD_DATE__`). Em build local mostra "vX.Y.Z · dev"
 - A cada release, a versão do `package.json` é atualizada junto com a tag (regra no `AGENTS.md`)
 
 ### Formulário de Contato (Modal)
@@ -148,6 +162,10 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Mapa de Localização
 - Card de localização com popup de mapa integrado (Google Maps iframe)
+
+### Disponibilidade (Contato)
+- Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Europe: remote at first, open to relocation."). Largura automática até o limite do container: em uma linha no desktop e no tablet (1440, 1024 e 768px) e com quebra natural em telas menores (2 a 3 linhas em 390px), com a bolinha centralizada na primeira linha. Contraste AA nos dois temas; a bolinha não pulsa com menos movimento. Os cards de contato não mudaram (o card Localização mostra só "Curitiba - PR, Brasil")
+- A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade
 - Carregamento lazy do iframe
 
 ---
@@ -224,7 +242,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 | 04 | **Certificados** | 3 em destaque + carrossel com 9 certificações e cursos, do mais recente para o mais antigo |
 | 05 | **Experiência** | Timeline com 6 posições profissionais expandíveis |
 | 06 | **Sobre o site** | "Por trás deste site": fluxo de entrega animado com simulação de deploy, painel ao vivo (status real, tempo de resposta, versão e data) e 5 pilares (no site aparece como "05.") |
-| 07 | **Contato** | E-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
+| 07 | **Contato** | Destaque de disponibilidade (Europa), e-mail, LinkedIn, Instagram, localização com mapa e formulário modal (no site aparece como "06.") |
 
 ---
 
@@ -319,7 +337,7 @@ Tokens definidos no bloco "Liquid Glass" no fim do `style.css`. As regras usam o
 
 | Token CSS | Modo Claro | Modo Escuro | Uso |
 |---|---|---|---|
-| `--glass-blur` | `blur(16px) saturate(170%)` | `blur(18px) saturate(160%)` | `backdrop-filter` de todas as superfícies de vidro |
+| `--glass-blur` | `blur(16px) saturate(170%)` | `blur(18px) saturate(160%)` | `backdrop-filter` das barras, botões, seletores, modal e chat (os cards de conteúdo não usam desfoque) |
 | `--glass-bg` | `rgba(255,255,255,0.55)` | `rgba(255,255,255,0.055)` | Fundo de cards, botões secundários e controles |
 | `--glass-bg-hover` | `rgba(255,255,255,0.7)` | `rgba(255,255,255,0.085)` | Fundo no hover |
 | `--glass-bg-strong` | `rgba(255,255,255,0.82)` | `rgba(8,12,26,0.74)` | Modal de contato e painel do chat (mais opaco para leitura) |
@@ -329,10 +347,12 @@ Tokens definidos no bloco "Liquid Glass" no fim do `style.css`. As regras usam o
 | `--glass-border-control` | `rgba(26,95,168,0.18)` | `rgba(255,255,255,0.13)` | Borda de botões pequenos e campos do formulário (no claro, a borda branca sumiria sobre o fundo) |
 | `--glass-sheen` | gradiente branco 55% → 0 | gradiente branco 9% → 0 | Reflexo diagonal (`background-image`) |
 | `--glass-highlight` | `inset` branco 90% | `inset` branco 12% | Brilho especular na borda superior |
-| `--glass-shadow` / `--glass-shadow-hover` | sombra azulada suave | sombra preta + brilho teal | Profundidade em repouso / hover |
-| `--glass-shadow-hover-tight` | `0 6px 16px -6px` azulada | `0 6px 16px -6px` preta + brilho teal | Hover dos cards Sobre, certificações (destaque e carrossel), Experiência e contato: cabe no espaço entre cards (12-32px) e não escurece os vizinhos de vidro |
+| `--glass-shadow` / `--glass-shadow-hover` | sombra azulada suave | sombra preta + brilho teal | Profundidade em repouso (o box-shadow dos cards não muda no hover) / `--glass-shadow-hover` ficou sem uso nos cards |
+| `--glass-shadow-hover-tight` | `0 6px 16px -6px` azulada | `0 6px 16px -6px` preta + brilho teal | Sombra de hover dos cards (Sobre, certificações, Experiência, contato e pilares), num `::after` que só muda de `opacity`: cabe no espaço entre cards (12-32px). Nas Tecnologias (8px entre cards) a sombra do `::after` é menor (~5px nas laterais) e também aparece no card selecionado |
 | `--glass-solid` | `#f7fafd` | `#0b1020` | Fundo sólido usado nos fallbacks |
 | `--glass-bg-tinted` | `rgba(255,255,255,0.55)` | `rgba(4,6,15,0.45)` | Fundo dos cards de certificação em destaque (no escuro, mais denso para o texto suave passar de 4.5:1) |
+
+**Hover dos cards sem artefatos de GPU:** antes, a sombra de hover era animada no `box-shadow` (com `transition: all`) e os cards vizinhos tinham `backdrop-filter`, que reamostrava a sombra e o movimento do card a cada quadro e deixava manchas em outros cards (Experiência, "Quem sou eu") e uma "coluna" de sombra nas Tecnologias. Agora os cards de conteúdo não têm `backdrop-filter`, a transição é só de `border-color`, `background-color` e `transform`, e a sombra de hover fica num `::after` (`position: absolute; inset: -1px; border-radius: inherit; pointer-events: none`) com transição só de `opacity`. Com `prefers-reduced-motion`, o `::after` aparece sem transição.
 
 Os botões com cor primária (LinkedIn, baixar currículo, botão do chat) mantêm a cor sólida e recebem um gradiente de brilho com `inset box-shadow`, sem perder contraste do texto.
 
@@ -359,7 +379,7 @@ Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` 
 
 - **Build size total:** ~88KB JS + ~61KB CSS (gzip: ~30KB + ~11KB)
 - **Zero dependências de framework front-end**
-- Foto do hero e avatares do chat em **WebP**, no dobro do maior tamanho exibido (retina): hero 640×800 (proporção 4:5) com fundo, de corpo inteiro com a nuvem do Google Cloud ao fundo (~43KB, antes 577KB em SVG com PNG embutido; exibida em 20×25rem no desktop e 16×20rem no mobile), e avatares 128×128 com transparência (~3–5KB, antes até 356KB)
+- Foto do hero e avatares do chat em **WebP**, no dobro do maior tamanho exibido (retina): hero 640×800 (proporção 4:5) com fundo, de corpo inteiro com a nuvem do Google Cloud ao fundo (~43KB, antes 577KB em SVG com PNG embutido; exibida em 20×25rem no desktop e até 16×20rem no mobile, limitada a 34% da altura da tela), e avatares 128×128 com transparência (~3–5KB, antes até 356KB)
 - Foto do hero referenciada direto no HTML com `fetchpriority="high"`, para começar a baixar antes do JavaScript (melhor LCP)
 - Biblioteca **Lottie** (~298KB) carregada sob demanda ao abrir o modal de contato, e não mais em toda visita
 - Todas as imagens do site (logo, hero, avatar do chat) centralizadas em `src/assets/` — Vite gera hash automático no nome do arquivo (ex: `leandro-C8rK_Nfc.webp`), eliminando cache stale após deploy
