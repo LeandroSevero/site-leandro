@@ -762,7 +762,7 @@ main {
   border-radius: var(--radius-md);
   background-color: var(--color-bg-secondary);
   color: var(--color-fg-muted);
-  transition: background-color 220ms ease, color 220ms ease;
+  transition: background-color 140ms ease, color 140ms ease;
 }
 
 .skill-icon img {
@@ -982,7 +982,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  animation: skill-fade-in 260ms ease;
+  animation: skill-fade-in 160ms ease; /* só na primeira exibição; as trocas não reiniciam a animação */
 }
 
 .skills-desc-name {
@@ -990,7 +990,7 @@ main {
   font-weight: 700;
   color: var(--color-fg);
   text-align: center;
-  transition: color 280ms ease;
+  transition: color 140ms ease;
 }
 
 .skills-desc-text {
@@ -3339,6 +3339,13 @@ main {
   opacity: 0;
   transition: opacity var(--transition);
   pointer-events: none;
+}
+
+/* Tecnologias: hover ágil, transições de 140ms no card (cor, fundo, borda, movimento) e na sombra */
+[data-theme] .skill-card,
+[data-theme] .skill-card::after,
+[data-theme] .skill-card .skill-name {
+  transition-duration: 140ms;
 }
 
 /* Tecnologias: os cards ficam a 8px uns dos outros; sombra menor (~5px nas laterais) */

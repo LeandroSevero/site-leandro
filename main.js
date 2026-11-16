@@ -449,17 +449,32 @@ const initCertIcons = () => {
 };
 
 
-const setDescPanel = (key) => {
-  const data = SKILL_DATA[key];
-  if (!data) return;
+/* Painel de descrição das Tecnologias (desktop).
+   - Hovers rápidos são agrupados: o painel atualiza no próximo quadro (requestAnimationFrame)
+     e mostra só o último card sob o mouse.
+   - Se a skill já está no painel, não faz nada.
+   - Troca sem apagar para zero: texto trocado direto + leve realce de opacidade (0.6 -> 1 em 120ms)
+     pela Web Animations API, sem reiniciar a animação do container e sem forçar layout.
+   - Com prefers-reduced-motion, troca direta, sem fade. */
+const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let shownSkillKey = null;
+let pendingSkillKey = null;
+let descFrame = 0;
+let descFade = null;
 
-  currentSkillKey = key;
+const renderDescPanel = () => {
+  descFrame = 0;
+  const key = pendingSkillKey;
+  const data = SKILL_DATA[key];
+  if (!data || key === shownSkillKey) return;
 
   const nameEl = document.getElementById('skills-desc-name');
   const textEl = document.getElementById('skills-desc-text');
   const content = document.getElementById('skills-desc-content');
-
   if (!content) return;
+
+  shownSkillKey = key;
+  currentSkillKey = key;
 
   if (nameEl) {
     nameEl.textContent = data.name;
@@ -469,19 +484,23 @@ const setDescPanel = (key) => {
     else nameEl.style.removeProperty('--skill-text-dark');
     nameEl.style.color = 'var(--skill-text)';
   }
+  if (textEl) textEl.textContent = getSkillDesc(key);
 
-  if (textEl) {
-    textEl.style.opacity = '0';
-    requestAnimationFrame(() => {
-      textEl.textContent = getSkillDesc(key);
-      textEl.style.transition = 'opacity 260ms ease';
-      textEl.style.opacity = '1';
-    });
+  if (descFade) descFade.cancel();
+  descFade = reducedMotionQuery.matches || !content.animate
+    ? null
+    : content.animate([{ opacity: 0.6 }, { opacity: 1 }], { duration: 120, easing: 'ease-out' });
+};
+
+const setDescPanel = (key, { immediate = false } = {}) => {
+  if (!SKILL_DATA[key]) return;
+  pendingSkillKey = key;
+  if (immediate) {
+    cancelAnimationFrame(descFrame);
+    renderDescPanel();
+    return;
   }
-
-  content.style.animation = 'none';
-  content.offsetHeight;
-  content.style.animation = 'skill-fade-in 260ms ease';
+  if (!descFrame) descFrame = requestAnimationFrame(renderDescPanel);
 };
 
 const initSkillsInteraction = () => {
@@ -500,8 +519,11 @@ const initSkillsInteraction = () => {
     }
     if (key === 'azure-devops') defaultCard = card;
 
+    // Destaque do card imediato; o painel acompanha no próximo quadro (ver setDescPanel)
     const activate = () => {
+      if (card.classList.contains('active') && pendingSkillKey === key) return; // mesma skill: nada a fazer
       cards.forEach(c => {
+        if (c === card) return;
         c.classList.remove('active');
         c.setAttribute('aria-pressed', 'false');
       });
@@ -526,7 +548,7 @@ const initSkillsInteraction = () => {
   if (defaultCard) {
     defaultCard.classList.add('active');
     defaultCard.setAttribute('aria-pressed', 'true');
-    setDescPanel('azure-devops');
+    setDescPanel('azure-devops', { immediate: true });
   }
 };
 

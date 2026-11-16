@@ -71,6 +71,8 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Seção de Skills
 - **Desktop:** grid de cards com painel lateral de descrição localizada; o card é selecionado ao passar o mouse ou pelo teclado (Tab + Enter/Espaço, com `role="button"` e `aria-pressed`)
+  - Hover ágil (`setDescPanel` em `main.js`): o destaque do card (classe `active`) é imediato; o painel atualiza no próximo quadro (`requestAnimationFrame`), agrupando hovers rápidos e mostrando só o último card sob o mouse; se a skill já está no painel, nada é refeito. A troca não apaga o texto: muda direto, com um realce de opacidade de 0,6 para 1 em 120ms (Web Animations API), sem reiniciar a animação do container e sem forçar layout. Com `prefers-reduced-motion`, troca direta, sem fade
+  - Transições de 140ms no card (cor, fundo, borda, movimento, sombra `::after`), no ícone, no nome e no título do painel
 - **Mobile:** carrossel com navegação por botões, dots indicadores e auto-play (4,5s)
 - Cores e ícones individuais por tecnologia (`color` em `SKILL_DATA`); no tema claro, o nome da tecnologia usa um tom mais escuro da mesma cor (`textLight`) e, no escuro, Azure/Azure DevOps/AD, Microsoft 365 e Kubernetes usam um tom mais claro (`textDark`), para atingir 4.5:1 — ícone, borda e destaque seguem com a cor da marca
 - Descrições traduzidas para pt-BR e en
