@@ -162,10 +162,9 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 
 ### Mapa de Localização
 - Card de localização com popup de mapa integrado (Google Maps iframe)
-- Abaixo de "Curitiba - PR, Brasil", uma segunda linha menor: "Aberto a remoto e realocação para a Europa" (en: "Open to remote work and relocation to Europe"), que quebra normalmente sem alargar o card
 
 ### Disponibilidade (Contato)
-- Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Europe: remote at first, open to relocation."). Contraste AA nos dois temas; a bolinha não pulsa com menos movimento
+- Abaixo do texto "Estou aberto a novas oportunidades..." fica um destaque (`.contact-availability`, caixa translúcida na cor primária com a bolinha verde do selo do topo): "Disponível para oportunidades na Europa: inicialmente remoto, com interesse em realocação." (en: "Open to opportunities in Europe: remote at first, open to relocation."). Largura automática até o limite do container: em uma linha no desktop e no tablet (1440, 1024 e 768px) e com quebra natural em telas menores (2 a 3 linhas em 390px), com a bolinha centralizada na primeira linha. Contraste AA nos dois temas; a bolinha não pulsa com menos movimento. Os cards de contato não mudaram (o card Localização mostra só "Curitiba - PR, Brasil")
 - A resposta de contato do chat (pt e en) traz o mesmo texto de disponibilidade
 - Carregamento lazy do iframe
 

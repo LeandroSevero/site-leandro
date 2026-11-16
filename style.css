@@ -1535,21 +1535,13 @@ main {
   white-space: nowrap;
 }
 
-/* Segunda linha do card Localização: quebra normalmente, sem alargar o card */
-.contact-note {
-  margin-top: 0.125rem;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--color-fg-muted);
-  overflow-wrap: anywhere;
-}
-
-/* Destaque de disponibilidade abaixo do texto do Contato (bolinha verde como o selo do topo) */
+/* Destaque de disponibilidade abaixo do texto do Contato (bolinha verde como o selo do topo).
+   Largura automática até o limite do container: uma linha no desktop, quebra natural em telas menores */
 .section-header .contact-availability {
   display: inline-flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.6em;
-  max-width: 40rem;
+  max-width: 100%;
   margin-top: var(--space-4);
   padding: var(--space-3) var(--space-4);
   border: 1px solid rgba(var(--color-primary-rgb), 0.28);
@@ -1570,7 +1562,8 @@ main {
   border-radius: 50%;
   background-color: #22c55e;
   box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
-  transform: translateY(-1px);
+  /* centralizada na primeira linha (altura de linha 1.5em) */
+  margin-top: calc((1.5em - 8px) / 2);
   animation: badge-pulse 2.5s ease-in-out infinite;
 }
 
