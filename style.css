@@ -2521,6 +2521,14 @@ main {
   flex-shrink: 0;
 }
 
+/* Recomeço da simulação: o visual é zerado num quadro só, sem transições de saída */
+.is-resetting,
+.is-resetting *,
+.is-resetting *::before,
+.is-resetting *::after {
+  transition: none !important;
+}
+
 /* Troca de tema: o novo tema surge num círculo que nasce do botão (View Transitions + clip-path no JS).
    Sem o crossfade padrão: a imagem antiga fica parada embaixo e a nova cresce por cima */
 ::view-transition-old(root),
