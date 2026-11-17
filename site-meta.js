@@ -342,11 +342,25 @@ const ping = (i) => {
   node._pingTimer = setTimeout(() => node.classList.remove('is-ping'), 900);
 };
 
-const clearSteps = () => flow.nodes.forEach((n, i) => {
-  clearTimeout(n._pingTimer);
-  n.classList.remove('is-loading', 'is-done', 'is-ping');
+const clearSteps = (keepPing = false) => flow.nodes.forEach((n, i) => {
+  if (!keepPing) {
+    clearTimeout(n._pingTimer);
+    n.classList.remove('is-ping');
+  }
+  n.classList.remove('is-loading', 'is-done');
   setRing(i, 0);
 });
+
+// Zera o visual de uma vez, sem transições: etapas apagadas e sem check, anéis vazios, barra em 0 e
+// selo sem destaque já no mesmo quadro (as transições de saída faziam tudo "desandar" por ~300ms,
+// parecendo que a nova execução começava pela metade e voltava ao início)
+const snapReset = (fn) => {
+  const blocks = [flow.root, term.bar?.closest('.flow-terminal') || term.bar?.parentElement].filter(Boolean);
+  blocks.forEach((b) => b.classList.add('is-resetting'));
+  fn();
+  void flow.root.offsetWidth; // aplica os valores zerados com as transições desligadas
+  requestAnimationFrame(() => blocks.forEach((b) => b.classList.remove('is-resetting')));
+};
 
 /* ---------- Ciclo contínuo ---------- */
 
@@ -383,7 +397,7 @@ const cycleTick = (dt) => {
   if (c.phase === 'gap') {
     c.wait += dt;
     if (c.wait >= CYCLE_GAP_MS) {
-      clearSteps();
+      snapReset(() => clearSteps(true));
       c.phase = 'load';
       c.step = 0;
       c.p = 0;
@@ -605,6 +619,7 @@ const holdSim = (on) => {
 
 const wait = (ms, token) => new Promise((resolve, reject) => {
   const w = { left: ms, start: 0, timer: 0 };
+  w.cancel = () => { clearTimeout(w.timer); sim.waiters.delete(w); reject(new Error('cancelado')); };
   const done = () => {
     sim.waiters.delete(w);
     if (token === term.token) resolve(); else reject(new Error('cancelado'));
@@ -663,6 +678,9 @@ const finishRun = (refocus = false) => {
 // 'manual' (clique no botão: anuncia as etapas e o fim) ou 'cycle' (recomeço automático: não anuncia nada)
 const simulate = async (mode = 'manual') => {
   term.autoDone = true; // o início automático acontece uma vez; depois o ciclo segue sozinho
+  // Uma execução ativa por vez: as esperas da anterior são canceladas na hora (o id da execução
+  // também faz callbacks antigos, como a chegada de um pulso, serem ignorados)
+  [...sim.waiters].forEach((w) => w.cancel());
   term.token += 1;
   const token = term.token;
   term.run.setAttribute('aria-busy', 'true');
@@ -684,9 +702,19 @@ const simulate = async (mode = 'manual') => {
   flow.simulating = true;
   flow.sim = null;
   flow.simLoop = false;
-  resetPulses();
-  clearSteps();
-  term.body.textContent = '';
+  // Pulsos em curso somem; o que acabou de encostar em Código termina de se recolher na borda
+  flow.pulses = flow.pulses.filter((p) => {
+    if (p.arrived) return true;
+    p.el.remove();
+    return false;
+  });
+  flow.loopLabel.classList.remove('is-active');
+  snapReset(() => {
+    clearSteps(mode === 'cycle'); // no recomeço automático o toque de luz em Código continua
+    setProgress(0);
+    setMonitoring(false);
+    term.body.textContent = '';
+  });
   term.idle = false;
   let done = 0;
   const tick = () => { done += 1; setProgress(done); };
