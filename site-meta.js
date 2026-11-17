@@ -125,10 +125,6 @@ const renderFooter = () => {
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const PULSE_SPEED = 0.16; // px por ms ao longo da trilha
-const MIN_HOP_MS = 420; // duração mínima de um pulso entre duas etapas
-const LOAD_MS = 700; // carregamento do anel de cada etapa no fluxo contínuo
-const LOOP_MS = 3000; // tempo do laço de Produção de volta a Código no fluxo contínuo
-const CYCLE_GAP_MS = 1100; // etapas concluídas ficam à mostra antes de um novo ciclo
 const MONITOR_MS = 4000; // a simulação para em Observabilidade ("monitorando") antes de recomeçar sozinha
 const RING_VIEW = 80; // viewBox do anel
 const RING_R = 37; // raio do anel no viewBox
@@ -140,8 +136,6 @@ const flow = {
   segs: [], loopLen: 0, edgeR: 0, loopIn: 0, loopOut: 0,
   pulses: [], visible: false, paused: false, running: false,
   raf: 0, last: 0, simulating: false, vertical: false,
-  // ciclo contínuo: 'gap' (pausa entre ciclos), 'load' (anel carregando), 'travel' (pulso na trilha)
-  cycle: { phase: 'gap', step: 0, p: 0, wait: CYCLE_GAP_MS - 400 },
   sim: null, // carregamento conduzido pela narração do "Simular publicação"
 };
 
@@ -362,53 +356,11 @@ const snapReset = (fn) => {
   requestAnimationFrame(() => blocks.forEach((b) => b.classList.remove('is-resetting')));
 };
 
-/* ---------- Ciclo contínuo ---------- */
-
-const restartCycle = (wait = 0) => {
-  flow.cycle = { phase: 'gap', step: 0, p: 0, wait };
-};
-
-const finishCycleStep = (i) => {
-  completeLoad(i);
-  const c = flow.cycle;
-  c.phase = 'travel';
-  if (i < flow.nodes.length - 1) {
-    // trechos curtos (celular) ganham uma duração mínima para o pulso ser visto
-    spawnPulse('track', i, Math.max(MIN_HOP_MS, flow.segs[i].len / PULSE_SPEED), () => {
-      if (flow.simulating || c !== flow.cycle) return;
-      c.phase = 'load';
-      c.step = i + 1;
-      c.p = 0;
-      beginLoad(i + 1);
-    });
-  } else {
-    // Produção no ar: o pulso segue pelo laço de Observabilidade de volta até a borda de Código
-    spawnPulse('loop', 0, LOOP_MS, () => {
-      if (flow.simulating || c !== flow.cycle) return;
-      ping(0);
-      c.phase = 'gap';
-      c.wait = 0;
-    });
-  }
-};
-
-const cycleTick = (dt) => {
-  const c = flow.cycle;
-  if (c.phase === 'gap') {
-    c.wait += dt;
-    if (c.wait >= CYCLE_GAP_MS) {
-      snapReset(() => clearSteps(true));
-      c.phase = 'load';
-      c.step = 0;
-      c.p = 0;
-      beginLoad(0);
-    }
-  } else if (c.phase === 'load') {
-    c.p += dt / LOAD_MS;
-    setRing(c.step, c.p);
-    if (c.p >= 1) finishCycleStep(c.step);
-  }
-};
+/* ---------- Repouso ----------
+   Uma única fonte de animação: o pipeline só se move pela simulação (simulação -> espera em
+   Observabilidade -> pulso até Código -> nova simulação). Antes da primeira, tudo fica parado:
+   etapas apagadas, sem pulso, e só um brilho suave e fixo em Código. */
+const setReady = (on) => flow.nodes[0]?.classList.toggle('is-ready', on);
 
 // Simulação: o anel avança com a narração da etapa e só completa no "✓"
 const simTick = (now) => {
@@ -418,9 +370,14 @@ const simTick = (now) => {
 };
 
 const tick = (now) => {
+  // Sem simulação e sem pulso no caminho, o loop dorme (nada a animar)
+  if (!flow.simulating && !flow.pulses.length) {
+    flow.running = false;
+    return;
+  }
   const dt = Math.min(64, now - (flow.last || now));
   flow.last = now;
-  if (flow.simulating) simTick(now); else cycleTick(dt);
+  if (flow.simulating) simTick(now);
   flow.pulses = flow.pulses.filter((p) => {
     p.d += PULSE_SPEED * dt * (p.arrived ? Math.max(1, p.speed) : p.speed); // o rastro some no mesmo tempo em qualquer trecho
     if (!p.arrived && p.d >= p.len) arrive(p);
@@ -438,7 +395,7 @@ const tick = (now) => {
 };
 
 const startLoop = () => {
-  if (flow.running || isReduced()) return;
+  if (flow.running || isReduced() || !flow.visible || document.hidden) return;
   flow.running = true;
   flow.last = 0;
   flow.raf = requestAnimationFrame(tick);
@@ -709,7 +666,9 @@ const simulate = async (mode = 'manual') => {
     return false;
   });
   flow.loopLabel.classList.remove('is-active');
+  startLoop();
   snapReset(() => {
+    setReady(false);
     clearSteps(mode === 'cycle'); // no recomeço automático o toque de luz em Código continua
     setProgress(0);
     setMonitoring(false);
@@ -911,21 +870,14 @@ const initFlow = () => {
     if (shown.size && Math.abs(window.scrollY - touchScrollY) > 12) clearTouch();
   }, { passive: true });
 
-  // Simulação automática: começa sozinha quando ~40% da seção está na tela (ou 40% da altura da tela,
-  // se a seção for maior que ela), uma vez por visita, depois que a rolagem para
+  // Simulação automática: começa assim que ~40% da seção está na tela (ou 40% da altura da tela, se a
+  // seção for maior que ela), sem esperar a rolagem parar; vale também para quem abre em /sobre-o-site
   const section = document.getElementById('sobre-o-site') || flow.root;
   let sectionReady = false;
-  let autoTimer = 0;
-  const AUTO_QUIET_MS = 350;
   const maybeAuto = () => {
-    clearTimeout(autoTimer);
-    if (term.autoDone || isReduced() || !sectionReady) return;
-    autoTimer = setTimeout(() => {
-      if (!term.autoDone && !isReduced() && sectionReady && flow.visible && !term.run.disabled) simulate('auto');
-    }, AUTO_QUIET_MS);
+    if (term.autoDone || isReduced() || !sectionReady || !flow.visible || document.hidden || term.run.disabled) return;
+    simulate('auto');
   };
-  // Rolagem em andamento (inclusive a de quem abre direto em /sobre-o-site) adia o início
-  window.addEventListener('scroll', () => { if (autoTimer) maybeAuto(); }, { passive: true });
   new IntersectionObserver(([e]) => {
     const base = Math.min(e.boundingClientRect.height, window.innerHeight);
     sectionReady = e.isIntersecting && e.intersectionRect.height >= base * 0.4;
@@ -955,6 +907,7 @@ const initFlow = () => {
     } else if (flow.visible) {
       holdSim(false);
       startLoop();
+      maybeAuto();
     }
   });
 
@@ -962,14 +915,14 @@ const initFlow = () => {
 
   const applyMotionPref = () => {
     if (isReduced()) {
+      setReady(false);
       applyStatic();
       fillTerminal();
     } else {
       setMonitoring(false);
       clearSteps();
-      restartCycle(CYCLE_GAP_MS - 400);
+      setReady(!term.ran);
       idleTerminal();
-      if (flow.visible) startLoop();
     }
   };
   applyMotionPref();
