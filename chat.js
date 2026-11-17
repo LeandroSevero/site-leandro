@@ -209,7 +209,6 @@ const soundIconOn = document.getElementById('chat-sound-icon-on');
 const soundIconOff = document.getElementById('chat-sound-icon-off');
 const messagesEl = document.getElementById('chat-messages');
 const optionsEl = document.getElementById('chat-options');
-const badge = document.getElementById('chat-fab-badge');
 const headerName = floatPanel ? floatPanel.querySelector('.chat-header-name') : null;
 const headerStatus = floatPanel ? floatPanel.querySelector('.chat-header-status') : null;
 const suggestionBubble = document.getElementById('chat-suggestion-bubble');
@@ -318,7 +317,6 @@ const showSuggestionBubble = () => {
   suggestionBubble.textContent = msg;
   suggestionBubble.removeAttribute('hidden');
   suggestionBubble.classList.add('chat-suggestion-visible');
-  if (badge) badge.style.animation = 'none';
   if (suggestionDismissTimer) clearTimeout(suggestionDismissTimer);
   suggestionDismissTimer = setTimeout(hideSuggestionBubble, 8000);
 };
@@ -336,18 +334,16 @@ const resetIdleTimer = () => {
   }, 30000);
 };
 
+// Botão flutuante: balão de chat fechado, "X" aberto (troca suave no CSS), rótulo no idioma atual
+const FAB_LABELS = {
+  'pt-BR': { open: 'Abrir chat', close: 'Fechar chat' },
+  en: { open: 'Open chat', close: 'Close chat' },
+};
 const setFabIcon = (open) => {
+  const labels = FAB_LABELS[localStorage.getItem('lang') || 'pt-BR'] || FAB_LABELS['pt-BR'];
   fab.setAttribute('aria-expanded', open ? 'true' : 'false');
-  const icon = fab.querySelector('.chat-fab-icon');
-  const arrow = fab.querySelector('.chat-fab-arrow');
-  if (!icon || !arrow) return;
-  if (open) {
-    icon.style.display = 'none';
-    arrow.style.display = '';
-  } else {
-    icon.style.display = '';
-    arrow.style.display = 'none';
-  }
+  fab.setAttribute('aria-label', open ? labels.close : labels.open);
+  fab.classList.toggle('is-open', open);
 };
 
 const getLang = () => localStorage.getItem('lang') || 'pt-BR';
@@ -358,9 +354,16 @@ const getChatAvatarSrc = () => {
   return theme === 'dark' ? chatAvatarDark : chatAvatarLight;
 };
 
+// Respostas seguidas do assistente formam um grupo: o avatar aparece só na primeira delas
+const botBubbleClass = () => {
+  const last = messagesEl.lastElementChild;
+  const continues = last && last.classList.contains('chat-bubble') && !last.classList.contains('user-bubble');
+  return continues ? 'chat-bubble is-cont' : 'chat-bubble';
+};
+
 const addBotBubble = (text) => {
   const bubble = document.createElement('div');
-  bubble.className = 'chat-bubble';
+  bubble.className = botBubbleClass();
   bubble.innerHTML = `
     <div class="chat-bubble-avatar">
       <img src="${getChatAvatarSrc()}" alt="Bot">
@@ -381,7 +384,7 @@ const addCvDownloadBubble = () => {
   const lang = getLang();
   const msgs = CV_DOWNLOAD_MESSAGES[lang] || CV_DOWNLOAD_MESSAGES['pt-BR'];
   const bubble = document.createElement('div');
-  bubble.className = 'chat-bubble';
+  bubble.className = botBubbleClass();
   bubble.innerHTML = `
     <div class="chat-bubble-avatar">
       <img src="${getChatAvatarSrc()}" alt="Bot">
@@ -408,7 +411,7 @@ const addUserBubble = (text) => {
 
 const showTyping = () => {
   const typing = document.createElement('div');
-  typing.className = 'chat-bubble';
+  typing.className = botBubbleClass();
   typing.id = 'typing-indicator';
   typing.innerHTML = `
     <div class="chat-bubble-avatar">
@@ -513,6 +516,7 @@ const resetChat = () => {
   if (messagesEl) messagesEl.innerHTML = '';
   if (optionsEl) optionsEl.innerHTML = '';
   updateHeaderLabels();
+  setFabIcon(isOpen);
   if (isOpen) startChat();
 };
 
@@ -532,7 +536,6 @@ const openChat = () => {
   hideSuggestionBubble();
   floatPanel.removeAttribute('hidden');
   setFabIcon(true);
-  if (badge) badge.remove();
   if (!chatInitialized) {
     updateHeaderLabels();
     startChat();
@@ -576,6 +579,7 @@ const initChatWidget = () => {
   if (soundBtn) soundBtn.addEventListener('click', toggleSound);
 
   updateHeaderLabels();
+  setFabIcon(false);
 
   fab.addEventListener('click', () => {
     isOpen ? closeChat() : openChat();

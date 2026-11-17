@@ -139,10 +139,11 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 - Textos de estado completamente traduzidos
 
 ### Assistente Virtual (Chat)
-- Widget flutuante (FAB) com badge de notificação; o FAB é um `<button>` (`aria-label="Abrir chat"`, `aria-expanded` atualizado ao abrir/fechar, `aria-controls="chat-float"`), acessível por teclado
+- Botão flutuante (FAB) de 56px com ícone de balão de chat em linha (SVG, cor primária, sem logos) sobre vidro translúcido no estilo Liquid Glass: fundo `--glass-bg-strong` com leve tom da cor primária, `backdrop-filter` (permitido aqui por ficar sobre o conteúdo), borda de 1px com brilho no topo e sombra suave, nos dois temas. Sem badge de notificação. Hover com leve elevação/escala (só `transform`); aberto, o ícone gira e vira um "X" (balão e X são dois SVGs empilhados que trocam com `transform`/`opacity`). É um `<button>` com foco visível, `aria-expanded`, `aria-controls="chat-float"` e `aria-label` que alterna entre "Abrir chat" e "Fechar chat" (en: "Open chat" / "Close chat")
+- Janela do chat no mesmo vidro do site, com o leve tom da cor primária do botão. Cabeçalho só com "Assistente do Leandro" e "Online agora" (bolinha verde de status), sem avatar. As respostas do assistente mostram o avatar (o do fone) pequeno, alinhado ao topo da mensagem; em respostas seguidas ele aparece só na primeira do grupo (classe `.is-cont` nas seguintes, que mantêm o alinhamento). Mensagens do visitante sem avatar
 - Aparece após o usuário rolar além da seção hero
 - **12 fluxos de conversa** pré-definidos: sobre, resumo, experiência, cargo atual, tecnologias, formação, certificações, contato
-- Bubble de sugestão automática após 30s de inatividade ou ao rolar >300px
+- Balão de sugestão automática após 30s de inatividade ou ao rolar >300px, no mesmo vidro do botão (translúcido, borda com brilho, sombra suave, pontinha apontando para o botão), sem ícone e com contraste AA nos dois temas
 - Text-to-speech com detecção de idioma e seleção de voz do navegador
 - **Som desativado por padrão** — toast sugere ativar ao abrir o chat pela primeira vez
 - Integração com o modal de contato diretamente pelo chat
@@ -403,7 +404,7 @@ Com o Liquid Glass, o fundo do header usa `--glass-bg-bar`; `--color-header-bg` 
 - CSS com variáveis nativas — sem preprocessador
 - Animações com `requestAnimationFrame` e `IntersectionObserver`
 - **Animações contínuas pausadas quando não aparecem:** cada bloco da página (`main > section`, "Voltar ao topo" e rodapé) é observado por um `IntersectionObserver` (`initMotionPause` em `main.js`); fora da tela ele recebe `.is-offscreen` e todas as animações CSS dentro dele (pulsos, quiques, nuvens do topo, fluxo) ficam com `animation-play-state: paused`. Com a aba oculta (`visibilitychange`), `html.is-page-hidden` pausa tudo
-- **Loops de `requestAnimationFrame` só quando necessários:** o carrossel de certificações, que antes rodava o tempo todo (inclusive fora da tela), só anima com ele na tela e a aba visível; o fluxo do "Por trás deste site" para fora da tela e com a aba oculta (a simulação segura e continua ao voltar); o ponto da Trajetória só roda enquanto se move
+- **Loops de `requestAnimationFrame` só quando necessários:** o carrossel de certificações, que antes rodava o tempo todo (inclusive fora da tela), só anima com ele na tela e a aba visível; o fluxo do "Por trás deste site" para fora da tela e com a aba oculta (a simulação segura e continua ao voltar); o ponto da Trajetória só roda enquanto se move. O carrossel de Tecnologias do celular, que troca de slide a cada 4,5s, também só troca com ele na tela, a aba visível e sem o mouse em cima (antes seguia trocando fora da tela e repintava a página a cada troca)
 - **Pulsos só com `transform` e `opacity`:** a bolinha verde do selo do topo e do destaque de disponibilidade, os pontos do painel ao vivo, o ponto da Trajetória e o brilho do easter egg animavam `box-shadow` (repintura a cada quadro). Agora o anel ou brilho fica numa camada própria (pseudo-elemento) e só escala/esmaece, com o mesmo visual
 - Medição (Chrome com GPU, 1440px, clique no botão do currículo e rolagem logo em seguida, build de produção): os números de antes x depois estão em `.tmp/perf-curriculo/` (traces que abrem no painel Performance do DevTools)
 - Fontes via `font-display: swap`

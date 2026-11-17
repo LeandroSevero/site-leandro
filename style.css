@@ -2035,19 +2035,6 @@ main {
   border: none;
 }
 
-.chat-fab img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center center;
-  display: block;
-}
-
-.chat-fab-arrow {
-  color: #fff;
-  flex-shrink: 0;
-}
-
 .chat-suggestion-bubble {
   position: fixed;
   bottom: 5.5rem;
@@ -2101,23 +2088,6 @@ main {
   box-shadow: 0 6px 28px rgba(var(--color-primary-rgb), 0.5);
 }
 
-.chat-fab-badge {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background-color: #dc2626;
-  color: #fff;
-  font-size: 0.625rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--color-bg);
-}
-
 .chat-float {
   position: fixed;
   bottom: 5.5rem;
@@ -2158,24 +2128,6 @@ main {
 
 [data-theme="dark"] .chat-header {
   background: var(--color-glass3);
-}
-
-.chat-header-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background-color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: 0.35rem;
-}
-
-.chat-header-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
 }
 
 .chat-header-info {
@@ -3818,7 +3770,6 @@ main {
 
 /* --- Botões com cor primária: vidro "líquido" colorido --- */
 [data-theme] .btn-primary,
-[data-theme] .chat-fab,
 [data-theme] .cv-download-btn {
   background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0) 100%);
   box-shadow:
@@ -3837,17 +3788,6 @@ main {
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 -1px 0 rgba(0, 0, 0, 0.12),
     0 8px 26px rgba(var(--color-primary-rgb), 0.42);
-}
-
-[data-theme] .chat-fab {
-  border: 1px solid rgba(255, 255, 255, 0.35);
-}
-
-[data-theme] .chat-fab:hover {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
-    0 8px 28px rgba(var(--color-primary-rgb), 0.5);
 }
 
 /* --- Botão de tema: trilho translúcido com brilho no topo --- */
@@ -5067,4 +5007,156 @@ main {
   width: max(100%, 44px);
   height: max(100%, 44px);
   transform: translate(-50%, -50%);
+}
+
+/* ==========================================================================
+   Assistente do Leandro: botão flutuante, balão automático e janela em vidro
+   (Liquid Glass com leve tom da cor primária). O botão e o balão ficam sobre o
+   conteúdo, então o desfoque (backdrop-filter) é permitido aqui. Animações só
+   com transform e opacity.
+   ========================================================================== */
+[data-theme] .chat-fab {
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  color: var(--color-primary);
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-sheen), linear-gradient(rgba(var(--color-primary-rgb), 0.14), rgba(var(--color-primary-rgb), 0.14));
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease;
+}
+
+[data-theme="dark"] .chat-fab {
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+  box-shadow: var(--glass-highlight), 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme] .chat-fab:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="dark"] .chat-fab:hover {
+  box-shadow: var(--glass-highlight), 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+.chat-fab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* Balão de chat (fechado) e "X" (aberto) empilhados: a troca gira e esmaece */
+.chat-fab-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.chat-fab-close {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+
+.chat-fab.is-open .chat-fab-chat {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+
+.chat-fab.is-open .chat-fab-close {
+  opacity: 1;
+  transform: none;
+}
+
+/* Balão automático: o mesmo vidro do botão, com a pontinha apontando para ele */
+[data-theme] .chat-suggestion-bubble {
+  bottom: 5.75rem;
+  color: var(--color-fg);
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-sheen), linear-gradient(rgba(var(--color-primary-rgb), 0.08), rgba(var(--color-primary-rgb), 0.08));
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="dark"] .chat-suggestion-bubble {
+  border-color: rgba(var(--color-primary-rgb), 0.3);
+  box-shadow: var(--glass-highlight), 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme] .chat-suggestion-bubble::before {
+  display: none;
+}
+
+[data-theme] .chat-suggestion-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  right: 1.35rem;
+  width: 12px;
+  height: 12px;
+  border: 1px solid transparent;
+  border-right-color: inherit;
+  border-bottom-color: inherit;
+  background-color: inherit;
+  background-image: inherit;
+  transform: rotate(45deg);
+  /* só a metade de fora do balão aparece (sem sobrepor o vidro) */
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+[data-theme] .chat-suggestion-bubble::after {
+  border-color: transparent var(--glass-border) var(--glass-border) transparent;
+}
+
+[data-theme="dark"] .chat-suggestion-bubble::after {
+  border-color: transparent rgba(var(--color-primary-rgb), 0.3) rgba(var(--color-primary-rgb), 0.3) transparent;
+}
+
+/* Janela: o mesmo vidro do site, com o leve tom da cor primária do botão */
+[data-theme] .chat-float {
+  bottom: 5.75rem;
+  background-image: var(--glass-sheen), linear-gradient(rgba(var(--color-primary-rgb), 0.05), rgba(var(--color-primary-rgb), 0.05));
+}
+
+[data-theme="dark"] .chat-float {
+  border-color: rgba(var(--color-primary-rgb), 0.22);
+}
+
+[data-theme] .chat-header {
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+}
+
+/* Avatar do assistente pequeno, alinhado ao topo de cada resposta; nas respostas seguidas some
+   (mantém o espaço para o texto continuar alinhado) */
+.chat-bubble:not(.user-bubble) {
+  align-items: flex-start;
+}
+
+.chat-bubble-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 2px;
+}
+
+.chat-bubble.is-cont .chat-bubble-avatar {
+  visibility: hidden;
+}
+
+.chat-bubble.is-cont {
+  margin-top: calc(var(--space-2) * -1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-fab-svg,
+  [data-theme] .chat-fab {
+    transition: none;
+  }
 }
