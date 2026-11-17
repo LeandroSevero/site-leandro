@@ -25,7 +25,7 @@ const updateLogo = (theme) => {
 
 const updateChatImages = (theme) => {
   const src = theme === 'dark' ? chatAvatarDark : chatAvatarLight;
-  document.querySelectorAll('.chat-fab img, .chat-header-avatar img, .chat-bubble-avatar img').forEach(img => {
+  document.querySelectorAll('.chat-bubble-avatar img').forEach(img => {
     img.src = src;
   });
 };
@@ -51,11 +51,13 @@ const toggleTheme = (e) => {
     return;
   }
   if (typeof document.startViewTransition === 'function') {
-    const btn = e?.currentTarget;
-    const r = btn?.getBoundingClientRect?.();
-    const x = r ? r.left + r.width / 2 : innerWidth - 40;
-    const y = r ? r.top + r.height / 2 : 32;
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    // Origem pelo tema de destino, nos cantos da tela visível: claro nasce no canto superior direito,
+    // escuro no canto inferior esquerdo. O raio final é a diagonal da tela, até o canto oposto.
+    const vw = document.documentElement.clientWidth;
+    const vh = window.innerHeight;
+    const x = next === 'light' ? vw : 0;
+    const y = next === 'light' ? 0 : vh;
+    const radius = Math.ceil(Math.hypot(vw, vh));
     const vt = document.startViewTransition(() => setTheme(next));
     vt.ready.then(() => {
       root.animate(
@@ -701,25 +703,38 @@ const initSkillsCarousel = () => {
     currentSkillKey = key;
     updateDesc(key);
 
-    if (manual) {
-      clearInterval(autoTimer);
-      autoTimer = setInterval(() => goTo(current + 1), 4500);
-    }
+    if (manual) restartAuto();
   };
+
+  // Troca automática só com o carrossel na tela, a aba visível e sem o mouse em cima: fora disso o
+  // intervalo para (antes ele seguia trocando de slide fora da tela e repintava a página a cada 4,5s)
+  const wrap = document.getElementById('skills-carousel-wrap');
+  let onScreen = false;
+  let hovered = false;
+  const stopAuto = () => { clearInterval(autoTimer); autoTimer = null; };
+  const startAuto = () => {
+    if (autoTimer || !onScreen || hovered || document.hidden) return;
+    autoTimer = setInterval(() => goTo(current + 1), 4500);
+  };
+  const restartAuto = () => { stopAuto(); startAuto(); };
 
   prevBtn?.addEventListener('click', () => goTo(current - 1, true));
   nextBtn?.addEventListener('click', () => goTo(current + 1, true));
 
   goTo(0);
-  autoTimer = setInterval(() => goTo(current + 1), 4500);
 
-  const wrap = document.getElementById('skills-carousel-wrap');
   if (wrap) {
-    wrap.addEventListener('mouseenter', () => clearInterval(autoTimer));
-    wrap.addEventListener('mouseleave', () => {
-      autoTimer = setInterval(() => goTo(current + 1), 4500);
-    });
+    wrap.addEventListener('mouseenter', () => { hovered = true; stopAuto(); });
+    wrap.addEventListener('mouseleave', () => { hovered = false; startAuto(); });
+    new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+      if (onScreen) startAuto(); else stopAuto();
+    }).observe(wrap);
+  } else {
+    onScreen = true;
+    startAuto();
   }
+  document.addEventListener('visibilitychange', () => (document.hidden ? stopAuto() : startAuto()));
 };
 
 const initLocationMap = () => {
