@@ -5,9 +5,10 @@ const getLang = () => localStorage.getItem('lang') || 'pt-BR';
 const tr = (key) => (dictionaries[getLang()] || dictionaries['pt-BR'])[key] ?? dictionaries['pt-BR'][key];
 const isReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- Currículo: download direto + efeito ---------- */
+/* ---------- Currículo: animação e, ao fim dela, o download ---------- */
 
-const CV_FILL_MS = 800; // barra de progresso preenchendo o botão
+const CV_FILL_MS = 800; // seta descendo + barra de progresso até 100%
+const CV_FIRE_MAX_MS = 880; // teto para disparar o download (dentro da janela de ativação do Safari/iOS)
 const CV_DONE_MS = 2000; // "Baixado!" fica à mostra antes de voltar ao normal
 
 const initCvDownload = () => {
@@ -15,34 +16,70 @@ const initCvDownload = () => {
   const live = document.getElementById('cv-announce');
   if (!btn) return;
   const label = btn.querySelector('.cv-label');
+  const bar = btn.querySelector('.cv-progress');
   let timers = [];
+  let busy = false; // animação ou "Baixado!" em andamento: novos cliques são ignorados
+  let firing = false; // clique programático no próprio link (o download de verdade): passa direto
+
+  const say = (key) => {
+    if (!live) return;
+    live.textContent = '';
+    requestAnimationFrame(() => { live.textContent = tr(key); });
+  };
 
   const reset = () => {
     timers.forEach(clearTimeout);
     timers = [];
+    busy = false;
     btn.classList.remove('is-downloading', 'is-done');
     btn.style.minWidth = '';
     label.textContent = tr('cv.download.label');
   };
 
-  // O download começa no próprio clique (link com atributo download); a animação é só visual
-  btn.addEventListener('click', () => {
-    reset();
+  const showDone = () => {
+    btn.classList.remove('is-downloading');
+    btn.classList.add('is-done');
+    label.textContent = tr('cv.download.done');
+    timers.push(setTimeout(reset, CV_DONE_MS));
+  };
+
+  // Download de verdade: clique programático no PRÓPRIO link (mesmo href e atributo download)
+  const fire = () => {
+    firing = true;
+    btn.click();
+    firing = false;
+    say('cv.download.started');
+    showDone();
+  };
+
+  btn.addEventListener('click', (e) => {
+    if (firing) return; // o clique programático segue o comportamento nativo e baixa
+    // Ctrl/Cmd/Shift/Alt + clique e botões que não o principal: comportamento nativo do navegador
+    if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (busy) return; // durante a animação (ou o "Baixado!"), sem baixar duas vezes
+    busy = true;
+    timers.forEach(clearTimeout);
+    timers = [];
     btn.style.minWidth = `${btn.offsetWidth}px`; // o botão não encolhe com o texto mais curto
-    if (live) {
-      live.textContent = '';
-      requestAnimationFrame(() => { live.textContent = tr('cv.download.started'); });
+    if (isReduced()) {
+      fire(); // sem animação: baixa na hora e mostra "Baixado!"
+      return;
     }
-    const done = () => {
-      btn.classList.remove('is-downloading');
-      btn.classList.add('is-done');
-      label.textContent = tr('cv.download.done');
-      timers.push(setTimeout(reset, CV_DONE_MS));
-    };
-    if (isReduced()) { done(); return; }
-    void btn.offsetWidth; // reinicia as animações se o clique se repetir
+    say('cv.download.preparing');
+    void btn.offsetWidth; // reinicia as animações
     btn.classList.add('is-downloading');
-    timers.push(setTimeout(done, CV_FILL_MS));
+    // Dispara quando a barra chega a 100% (fim da animação), com um teto de segurança
+    let fired = false;
+    const go = () => {
+      if (fired) return;
+      fired = true;
+      bar?.removeEventListener('animationend', onEnd);
+      fire();
+    };
+    const onEnd = (ev) => { if (ev.animationName === 'cv-fill') go(); };
+    bar?.addEventListener('animationend', onEnd);
+    timers.push(setTimeout(go, CV_FIRE_MAX_MS));
   });
 
   document.addEventListener('site:lang', () => {
