@@ -51,11 +51,13 @@ const toggleTheme = (e) => {
     return;
   }
   if (typeof document.startViewTransition === 'function') {
-    const btn = e?.currentTarget;
-    const r = btn?.getBoundingClientRect?.();
-    const x = r ? r.left + r.width / 2 : innerWidth - 40;
-    const y = r ? r.top + r.height / 2 : 32;
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    // Origem pelo tema de destino, nos cantos da tela visível: claro nasce no canto superior direito,
+    // escuro no canto inferior esquerdo. O raio final é a diagonal da tela, até o canto oposto.
+    const vw = document.documentElement.clientWidth;
+    const vh = window.innerHeight;
+    const x = next === 'light' ? vw : 0;
+    const y = next === 'light' ? 0 : vh;
+    const radius = Math.ceil(Math.hypot(vw, vh));
     const vt = document.startViewTransition(() => setTheme(next));
     vt.ready.then(() => {
       root.animate(
