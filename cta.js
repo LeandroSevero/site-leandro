@@ -107,7 +107,7 @@ const initWhatsApp = () => {
     });
   });
 
-  // Modal de contato: a caixa "Tenho uma oportunidade na Europa" revela o botão do WhatsApp
+  // Modal de contato: a caixa "Tenho uma oferta de emprego na Europa" revela o botão do WhatsApp
   const check = document.getElementById('cf-europe');
   const reveal = document.getElementById('cf-whatsapp');
   if (!check || !reveal) return;
