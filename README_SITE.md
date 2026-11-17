@@ -94,7 +94,7 @@ Site estático com funcionalidades avançadas, construído em HTML5, CSS3 e Java
 ### Seção de Experiência
 - Timeline vertical com 6 posições profissionais: Supervisor de DevOps, Analista DevOps, Analista de Infraestrutura de TI, Suporte de Helpdesk e Telecom, Analista de Telecom e Soldado (cargos com nível, em pt e en, iguais nas respostas do chat)
 - Acordeão expansível por cargo com descrição detalhada: um clique (ou toque) em qualquer parte do card abre e fecha a descrição, não só no título (cursor de mão no card). O botão do título continua sendo o controle acessível por teclado (`aria-expanded`); cliques em links e seleção de texto não alternam o card
-- Hierarquia do card: o cargo (h3) é o texto mais destacado (1.05rem no desktop e 1rem no celular, peso 700, cor principal); empresa e local ficam menores e suaves (0.85rem, 0.825rem no celular, peso 400, `--color-fg-muted`, contraste AA). O hover do título (cor primária no claro, gradiente no escuro), a seta ao lado do cargo, o clique no card inteiro e o teclado seguem iguais
+- Hierarquia do card: o cargo (h3) é o texto mais destacado (0.95rem no desktop e 0.925rem no celular, peso 700, cor principal); empresa e local ficam menores e suaves (0.85rem, 0.825rem no celular, peso 400, `--color-fg-muted`, contraste AA). O hover do título (cor primária no claro, gradiente no escuro), a seta ao lado do cargo, o clique no card inteiro e o teclado seguem iguais
 - Tags de tecnologias por posição
 
 ### Seção "Sobre o site" (05.)
