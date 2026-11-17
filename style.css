@@ -2661,7 +2661,7 @@ main {
   margin-top: var(--space-4);
 }
 
-/* Modal: caixa "Tenho uma oportunidade na Europa" e o botão que aparece ao marcar */
+/* Modal: caixa "Tenho uma oferta de emprego na Europa" e o botão que aparece ao marcar */
 .contact-form-europe {
   display: flex;
   flex-direction: column;
